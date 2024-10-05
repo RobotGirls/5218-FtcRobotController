@@ -152,13 +152,31 @@ public final class MecanumDrive {
                                     AxesReference.INTRINSIC,
                                     AxesOrder.ZYX,
                                     AngleUnit.DEGREES,
-                                    180,
+                                    90,
                                     0,
                                     0,
                                     0  // acquisitionTime, not used
                             )
                     )
             );
+            IMU.Parameters myIMUparameters;
+
+            myIMUparameters = new IMU.Parameters(
+                    new RevHubOrientationOnRobot(
+                            RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                    )
+            );
+            // Initialize IMU directly
+            imu.initialize(
+                    new IMU.Parameters(
+                            new RevHubOrientationOnRobot(
+                                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                                    RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                            )
+                    )
+            );
+
             // Initialize IMU using Parameters
             imu.initialize(myIMUparameters);
 
