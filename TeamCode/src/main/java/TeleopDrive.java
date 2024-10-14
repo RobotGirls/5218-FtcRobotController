@@ -2,6 +2,7 @@
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -22,6 +23,8 @@ import com.qualcomm.robotcore.hardware.Servo;
             boolean outtakeOn = false;
 
             DcMotorEx leftFront, leftBack, rightBack, rightFront;
+
+
 
 
             leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -47,12 +50,33 @@ import com.qualcomm.robotcore.hardware.Servo;
 
             rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
             rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
             // vertical lift motor
-            DcMotor liftMotor;
-            liftMotor = hardwareMap.get(DcMotor.class, "Lift Motor");
+            DcMotorEx liftMotor;
+            liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
             liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            Servo marshClawServo = hardwareMap.get(Servo.class, "Marsh Claw Servo");
+
+
+
+//
+            DcMotorEx climbLeftMotor;
+            DcMotorEx climbRightMotor;
+
+            climbLeftMotor = hardwareMap.get(DcMotorEx.class, "climbLeftMotor");
+            climbLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            climbRightMotor = hardwareMap.get(DcMotorEx.class, "climbRightMotor");
+            climbRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+            climbRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            climbLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            Servo marshClawServo = hardwareMap.get(Servo.class, "marshClawServo");
+            Servo marshClawRotationServo = hardwareMap.get(Servo.class, "marshClawRotationServo");
+            marshClawServo.setPosition(0.47);
+            marshClawRotationServo.setPosition(0.8);
 
             waitForStart();
 
@@ -63,6 +87,17 @@ import com.qualcomm.robotcore.hardware.Servo;
                 double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
                 double rx = gamepad1.right_stick_x;
 
+                double climbLeftPower = gamepad2.right_stick_y;
+              //  double climbRightPower = gamepad2.left_stick_y;
+                climbLeftMotor.setPower(climbLeftPower);
+                climbRightMotor.setPower(climbLeftPower);
+
+
+               double liftMotorPower = gamepad2.left_stick_y;
+               liftMotor.setPower(liftMotorPower);
+
+
+
                 // Denominator is the largest motor power (absolute value) or 1
                 // This ensures all the powers maintain the same ratio,
                 // but only if at least one is out of the range [-1, 1]
@@ -72,25 +107,44 @@ import com.qualcomm.robotcore.hardware.Servo;
                 double frontRightPower = (y - x - rx) / denominator;
                 double backRightPower = (y + x - rx) / denominator;
 
+
                 leftFront.setPower(frontLeftPower);
                 leftBack.setPower(backLeftPower);
                 rightFront.setPower(frontRightPower);
-                rightFront.setPower(backRightPower);
-                marshClawServo.setPosition(0.75);
-                if (gamepad2.left_stick_button) {
-                    liftMotor.setPower(1);
+                rightBack.setPower(backRightPower);
+
+
+
+//               marshClawRotationServo.setPosition(-0.2);
+
+
+//               if (gamepad2.left_stick_button) {
+//                    liftMotor.setPower(1);
+//                }
+//                else {
+//                    liftMotor.setPower(0);
+//                }
+                if (gamepad2.y) {
+                    marshClawServo.setPosition(0.3);
+                    telemetry.addData("Pick Up Servo ", marshClawServo.getPosition());
                 }
-                else {
-                    liftMotor.setPower(0);
+                else if (gamepad2.a) {
+                    marshClawServo.setPosition(0.47);
+                    telemetry.addData("Release Servo ", marshClawServo.getPosition());
                 }
-                if (gamepad2.a) {
-                    marshClawServo.setPosition(.75);
+                if (gamepad2.right_bumper) {
+                   marshClawRotationServo.setPosition(.2);
+                    telemetry.addData("Rotate Servo Up", marshClawRotationServo.getPosition());
                 }
-                else if (gamepad1.b) {
-                    marshClawServo.setPosition(.2);
+                else if (gamepad2.left_bumper) {
+                    marshClawRotationServo.setPosition(.8);
+                    telemetry.addData("Rotate Servo Down", marshClawRotationServo.getPosition());
+
                 }
-                telemetry.addData("Release Servo Target", marshClawServo.getPosition());
+
+                telemetry.update();
             }
         }
     }
+
 
