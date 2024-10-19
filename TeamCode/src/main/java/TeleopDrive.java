@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Teleop Drive ")
+@TeleOp(name = "LM0Teleop ")
 
     public class TeleopDrive extends LinearOpMode {
 
@@ -77,6 +77,8 @@ import com.qualcomm.robotcore.hardware.Servo;
             Servo marshClawRotationServo = hardwareMap.get(Servo.class, "marshClawRotationServo");
             marshClawServo.setPosition(0.47);
             marshClawRotationServo.setPosition(0.8);
+            Servo horizantalLiftServo = hardwareMap.get(Servo.class, "horizantalLiftServo");
+            horizantalLiftServo.setPosition(0.8);
 
             waitForStart();
 
@@ -88,7 +90,6 @@ import com.qualcomm.robotcore.hardware.Servo;
                 double rx = gamepad1.right_stick_x;
 
                 double climbLeftPower = gamepad2.right_stick_y;
-              //  double climbRightPower = gamepad2.left_stick_y;
                 climbLeftMotor.setPower(climbLeftPower);
                 climbRightMotor.setPower(climbLeftPower);
 
@@ -115,15 +116,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 
-//               marshClawRotationServo.setPosition(-0.2);
 
+                if (gamepad2.x) {
+                    horizantalLiftServo.setPosition(0);
+                    telemetry.addData("horizantal lift shrinks ", horizantalLiftServo.getPosition());
+                }
+                else if (gamepad2.b) {
+                    horizantalLiftServo.setPosition(.95);
+                    telemetry.addData(" horizantal lift extends ", horizantalLiftServo.getPosition());
+                }
 
-//               if (gamepad2.left_stick_button) {
-//                    liftMotor.setPower(1);
-//                }
-//                else {
-//                    liftMotor.setPower(0);
-//                }
                 if (gamepad2.y) {
                     marshClawServo.setPosition(0.3);
                     telemetry.addData("Pick Up Servo ", marshClawServo.getPosition());
