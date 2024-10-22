@@ -68,6 +68,7 @@ import com.qualcomm.robotcore.hardware.Servo;
             climbLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             climbRightMotor = hardwareMap.get(DcMotorEx.class, "climbRightMotor");
             climbRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            climbLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
             climbRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -75,10 +76,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
             Servo marshClawServo = hardwareMap.get(Servo.class, "marshClawServo");
             Servo marshClawRotationServo = hardwareMap.get(Servo.class, "marshClawRotationServo");
-            marshClawServo.setPosition(0.47);
-            marshClawRotationServo.setPosition(0.8);
+            marshClawServo.setPosition(0.99);
+            marshClawRotationServo.setPosition(0.3);
             Servo horizantalLiftServo = hardwareMap.get(Servo.class, "horizantalLiftServo");
-            horizantalLiftServo.setPosition(0.8);
+            horizantalLiftServo.setPosition(0.7);
 
             waitForStart();
 
@@ -122,24 +123,29 @@ import com.qualcomm.robotcore.hardware.Servo;
                     telemetry.addData("horizantal lift shrinks ", horizantalLiftServo.getPosition());
                 }
                 else if (gamepad2.b) {
+
+
+
+
+
                     horizantalLiftServo.setPosition(.95);
                     telemetry.addData(" horizantal lift extends ", horizantalLiftServo.getPosition());
                 }
 
                 if (gamepad2.y) {
-                    marshClawServo.setPosition(0.3);
+                    marshClawServo.setPosition(.99);
                     telemetry.addData("Pick Up Servo ", marshClawServo.getPosition());
                 }
                 else if (gamepad2.a) {
-                    marshClawServo.setPosition(0.47);
+                    marshClawServo.setPosition(0.3);
                     telemetry.addData("Release Servo ", marshClawServo.getPosition());
                 }
                 if (gamepad2.right_bumper) {
-                   marshClawRotationServo.setPosition(.2);
+                   marshClawRotationServo.setPosition(.3);
                     telemetry.addData("Rotate Servo Up", marshClawRotationServo.getPosition());
                 }
                 else if (gamepad2.left_bumper) {
-                    marshClawRotationServo.setPosition(.8);
+                    marshClawRotationServo.setPosition(.7);
                     telemetry.addData("Rotate Servo Down", marshClawRotationServo.getPosition());
 
                 }

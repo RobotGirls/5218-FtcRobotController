@@ -50,7 +50,7 @@ public class SoftwareRobot extends LinearOpMode {
 
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        //leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         // vertical lift motor
@@ -76,10 +76,10 @@ public class SoftwareRobot extends LinearOpMode {
 //        climbRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        climbLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //
-//        Servo marshClawServo = hardwareMap.get(Servo.class, "marshClawServo");
-//        Servo marshClawRotationServo = hardwareMap.get(Servo.class, "marshClawRotationServo");
-//        marshClawServo.setPosition(0.47);
-//        marshClawRotationServo.setPosition(0.8);
+        Servo marshClawServo = hardwareMap.get(Servo.class, "marshClawServo");
+        Servo marshClawRotationServo = hardwareMap.get(Servo.class, "marshClawRotationServo");
+        marshClawServo.setPosition(0.47);
+        marshClawRotationServo.setPosition(0.8);
 
         waitForStart();
 
