@@ -1,6 +1,7 @@
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -31,7 +32,7 @@ public class LM0ParkAutoRedRight extends Robot {
     private Servo marshClawServo;
     private Servo marshClawRotationServo;
 
-    private static final double CLAW_GRAB = 0.35;
+    private static final double CLAW_GRAB = 0.99;
     private static final double CLAW_RELEASE = 0.6;
     private static final double CLAW_UP = 0.35;
     private static final double CLAW_DOWN = 0.6;
@@ -108,9 +109,9 @@ public class LM0ParkAutoRedRight extends Robot {
 
 
         //driveToParkPath
-        driveToParkPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS,3 , -0.25);
+        driveToParkPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS,5 , 0.25);
 
-        liftToSmallJunctionPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.5);
+        //liftToSmallJunctionPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.5);
 
 
 
@@ -127,8 +128,10 @@ public class LM0ParkAutoRedRight extends Robot {
 
         marshClawRotationServo = hardwareMap.servo.get("marshClawRotationServo");
         marshClawServo = hardwareMap.servo.get("marshClawServo");
+      //  frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      //  frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

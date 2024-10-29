@@ -31,7 +31,7 @@ public class LM0ParkingAutoBLUERIGHT extends Robot {
     private Servo marshClawServo;
     private Servo marshClawRotationServo;
 
-    private static final double CLAW_GRAB = 0.35;
+    private static final double CLAW_GRAB = 0.99;
     private static final double CLAW_RELEASE = 0.6;
     private static final double CLAW_UP = 0.35;
     private static final double CLAW_DOWN = 0.6;
@@ -108,9 +108,9 @@ public class LM0ParkingAutoBLUERIGHT extends Robot {
 
 
         //driveToParkPath
-        driveToParkPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS,3 , -0.25);
+        driveToParkPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS,5 , 0.25);
 
-        liftToSmallJunctionPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.5);
+        //liftToSmallJunctionPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.5);
 
 
 

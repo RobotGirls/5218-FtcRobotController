@@ -1,5 +1,6 @@
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -16,6 +17,7 @@ import team25core.SingleShotTimerTask;
 
 
 @Autonomous(name = "LM0RedLeftAuto")
+@Disabled
 public class LM0RedLeftAuto extends Robot {
 
     private DcMotor frontLeft;
@@ -32,7 +34,7 @@ public class LM0RedLeftAuto extends Robot {
     private Servo marshClawServo;
     private Servo marshClawRotationServo;
 
-    private static final double CLAW_GRAB = 0.35;
+    private static final double CLAW_GRAB = 0.99;
     private static final double CLAW_RELEASE = 0.6;
     private static final double CLAW_UP = 0.35;
     private static final double LIFT_DISTANCE = 12;

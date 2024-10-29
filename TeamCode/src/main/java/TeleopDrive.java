@@ -57,6 +57,7 @@ import com.qualcomm.robotcore.hardware.Servo;
             DcMotorEx liftMotor;
             liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
             liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -70,6 +71,7 @@ import com.qualcomm.robotcore.hardware.Servo;
             climbRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             climbLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+            liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
             climbRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             climbLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -77,9 +79,9 @@ import com.qualcomm.robotcore.hardware.Servo;
             Servo marshClawServo = hardwareMap.get(Servo.class, "marshClawServo");
             Servo marshClawRotationServo = hardwareMap.get(Servo.class, "marshClawRotationServo");
             marshClawServo.setPosition(0.99);
-            marshClawRotationServo.setPosition(0.3);
+            marshClawRotationServo.setPosition(0.4);
             Servo horizantalLiftServo = hardwareMap.get(Servo.class, "horizantalLiftServo");
-            horizantalLiftServo.setPosition(0.7);
+            horizantalLiftServo.setPosition(0.4);
 
             waitForStart();
 
@@ -90,6 +92,8 @@ import com.qualcomm.robotcore.hardware.Servo;
                 double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
                 double rx = gamepad1.right_stick_x;
 
+
+
                 double climbLeftPower = gamepad2.right_stick_y;
                 climbLeftMotor.setPower(climbLeftPower);
                 climbRightMotor.setPower(climbLeftPower);
@@ -97,7 +101,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
                double liftMotorPower = gamepad2.left_stick_y;
                liftMotor.setPower(liftMotorPower);
-
 
 
                 // Denominator is the largest motor power (absolute value) or 1
@@ -115,20 +118,24 @@ import com.qualcomm.robotcore.hardware.Servo;
                 rightFront.setPower(frontRightPower);
                 rightBack.setPower(backRightPower);
 
+                if (climbLeftPower>0){
+
+                    leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                }
+
 
 
 
                 if (gamepad2.x) {
-                    horizantalLiftServo.setPosition(0);
+                    horizantalLiftServo.setPosition(0.4);
                     telemetry.addData("horizantal lift shrinks ", horizantalLiftServo.getPosition());
                 }
                 else if (gamepad2.b) {
 
-
-
-
-
-                    horizantalLiftServo.setPosition(.95);
+                    horizantalLiftServo.setPosition(.7);
                     telemetry.addData(" horizantal lift extends ", horizantalLiftServo.getPosition());
                 }
 
@@ -137,11 +144,11 @@ import com.qualcomm.robotcore.hardware.Servo;
                     telemetry.addData("Pick Up Servo ", marshClawServo.getPosition());
                 }
                 else if (gamepad2.a) {
-                    marshClawServo.setPosition(0.3);
+                    marshClawServo.setPosition(0.15);
                     telemetry.addData("Release Servo ", marshClawServo.getPosition());
                 }
                 if (gamepad2.right_bumper) {
-                   marshClawRotationServo.setPosition(.3);
+                   marshClawRotationServo.setPosition(.4);
                     telemetry.addData("Rotate Servo Up", marshClawRotationServo.getPosition());
                 }
                 else if (gamepad2.left_bumper) {
