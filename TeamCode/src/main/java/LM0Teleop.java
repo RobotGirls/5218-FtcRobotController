@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import team25core.DeadmanMotorTask;
 import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
 import team25core.OneWheelDriveTask;
@@ -71,6 +72,10 @@ public class LM0Teleop extends StandardFourMotorRobot {
     private Servo marshClawServo;
 
     private DcMotor liftMotor;
+    DeadmanMotorTask liftLinearUp;
+    private static final double LIFT_POWER_UP = 0.5;
+    private static final int MAX_LINEAR_HEIGHT = 50;
+
 
 
     private boolean currentlySlow = false;
@@ -93,15 +98,17 @@ public class LM0Teleop extends StandardFourMotorRobot {
         marshClawServo = hardwareMap.servo.get("marshClawServo");
 
         liftMotor = hardwareMap.get(DcMotor.class,"liftMotor");
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftLinearUp = new DeadmanMotorTask(this, liftMotor, LIFT_POWER_UP, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_STICK_UP);
+        liftLinearUp.setMaxMotorPosition(MAX_LINEAR_HEIGHT);
 
         // using encoders to record ticks
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -141,6 +148,7 @@ public class LM0Teleop extends StandardFourMotorRobot {
 
         //Gamepad 1
         this.addTask(drivetask);
+        addTask(liftLinearUp);
 
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
             public void handleEvent(RobotEvent e) {
