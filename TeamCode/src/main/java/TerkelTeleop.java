@@ -40,16 +40,15 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import team25core.DeadmanMotorTask;
 import team25core.GamepadTask;
 import team25core.MechanumGearedDrivetrain;
-import team25core.OneWheelDriveTask;
 import team25core.RobotEvent;
 import team25core.StandardFourMotorRobot;
 import team25core.TwoStickMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
 
-@TeleOp(name = "TwoStickTeleop")
+@TeleOp(name = "TerkelTeleop")
 //@Disabled
-public class LM0Teleop extends StandardFourMotorRobot {
+public class TerkelTeleop extends StandardFourMotorRobot {
 
     private TeleopDriveTask drivetask;
 
@@ -60,16 +59,42 @@ public class LM0Teleop extends StandardFourMotorRobot {
     //added field centric
     private Telemetry.Item buttonTlm;
 
+    //wheelieServo Positions
+    private static final double WHEELIE_GRAB = 0.4;
+    private static final double WHEELIE_RELEASE = 0.99;
 
-    private static final double CLAW_OPEN = 0.4;
-    private static final double CLAW_CLOSE = 0.99;
-    private static final double CLAW_UP = 0.4;
-    private static final double CLAW_DOWN = 0.7;
+    //wheelieRotationServo Positions
+    private static final double WHEELIE_UP = 1;
+    private static final double WHEELIE_DOWN = 0;
+
+    //gizaClawLeftServo Positions
+    private static final double GIZA_CLAW_LEFT_OPEN = 0.4;
+    private static final double GIZA_CLAW_LEFT_CLOSE = 0.7;
+
+    //gizaClawRightServo Positions
+    private static final double GIZA_CLAW_RIGHT_OPEN = 0.5;
+    private static final double GIZA_CLAW_RIGHT_CLOSE = 0.1;
+
+    private static final double HORIZONTAL_EXTENDED=0.1;
+    private static final double HORIZONTAL_RETRACTED=0.99;
+
+
+
+
 
     private BNO055IMU imu;
 
-    private Servo marshClawRotationServo;
+    private Servo horizontalLiftClawServo;
     private Servo marshClawServo;
+
+    private Servo wheelieServo;
+    private Servo wheelieRotationServo;
+
+
+    private Servo gizaClawLeftServo;
+    private Servo gizaClawRightServo;
+
+
 
     private DcMotor liftMotor;
     DeadmanMotorTask liftLinearUp;
@@ -94,15 +119,20 @@ public class LM0Teleop extends StandardFourMotorRobot {
         super.init();
 
 
-        marshClawRotationServo = hardwareMap.servo.get("marshClawRotationServo");
-        marshClawServo = hardwareMap.servo.get("marshClawServo");
+        wheelieRotationServo = hardwareMap.servo.get("wheelieRotationServo");
+        wheelieServo = hardwareMap.servo.get("wheelieServo");
+        gizaClawLeftServo= hardwareMap.servo.get("gizaClawLeftServo");
+        gizaClawRightServo= hardwareMap.servo.get("gizaClawRightServo");
+        horizontalLiftClawServo=hardwareMap.servo.get("horizontalLiftClawServo");
 
-        liftMotor = hardwareMap.get(DcMotor.class,"liftMotor");
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftLinearUp = new DeadmanMotorTask(this, liftMotor, LIFT_POWER_UP, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_STICK_UP);
-        liftLinearUp.setMaxMotorPosition(MAX_LINEAR_HEIGHT);
+
+
+//        liftMotor = hardwareMap.get(DcMotor.class,"liftMotor");
+//        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        liftLinearUp = new DeadmanMotorTask(this, liftMotor, LIFT_POWER_UP, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_STICK_UP);
+//        liftLinearUp.setMaxMotorPosition(MAX_LINEAR_HEIGHT);
 
         // using encoders to record ticks
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -115,8 +145,13 @@ public class LM0Teleop extends StandardFourMotorRobot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        marshClawServo.setPosition(CLAW_CLOSE);
-        marshClawRotationServo.setPosition(CLAW_CLOSE);
+
+        wheelieRotationServo.setPosition(WHEELIE_UP);
+        wheelieServo.setPosition(WHEELIE_GRAB);
+
+        gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
+        gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+        horizontalLiftClawServo.setPosition(HORIZONTAL_RETRACTED);
 
 
         //telemetry
@@ -148,7 +183,7 @@ public class LM0Teleop extends StandardFourMotorRobot {
 
         //Gamepad 1
         this.addTask(drivetask);
-        addTask(liftLinearUp);
+        //addTask(liftLinearUp);
 
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_1) {
             public void handleEvent(RobotEvent e) {
@@ -183,22 +218,43 @@ public class LM0Teleop extends StandardFourMotorRobot {
 
                     case BUTTON_A_DOWN:
                         // set claw's position to 0
-                        marshClawServo.setPosition(CLAW_OPEN);
+                        wheelieServo.setPosition(WHEELIE_GRAB);
                         break;
                     case BUTTON_Y_DOWN:
                         // set claw's position to 1
-                        marshClawServo.setPosition(CLAW_CLOSE);
+                        wheelieServo.setPosition(WHEELIE_RELEASE);
+                        break;
+                    case RIGHT_TRIGGER_DOWN:
+                        // set claw's position to 0
+                        horizontalLiftClawServo.setPosition(HORIZONTAL_EXTENDED);
+                        break;
+                    case LEFT_TRIGGER_DOWN:
+                        // set claw's position to 0
+                        horizontalLiftClawServo.setPosition(HORIZONTAL_RETRACTED);
                         break;
 
                     case RIGHT_BUMPER_DOWN:
-                        marshClawRotationServo.setPosition(CLAW_UP);
+                        wheelieRotationServo.setPosition(WHEELIE_UP);
                         break;
                     case LEFT_BUMPER_DOWN:
-                        marshClawRotationServo.setPosition(CLAW_DOWN);
+                        wheelieRotationServo.setPosition(WHEELIE_DOWN);
                         break;
                     default:
                         buttonTlm.setValue("Not Moving");
                         break;
+                    case BUTTON_X_DOWN:
+                        // set claw's position to 0
+                        gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_OPEN);
+                        gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
+
+                        break;
+                    case BUTTON_B_DOWN:
+                        // set claw's position to 1
+                        gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
+                        gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+                        break;
+
+
                 }
             }
         });

@@ -71,11 +71,11 @@ import com.qualcomm.robotcore.hardware.Servo;
             climbRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             climbLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
             climbRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             climbLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+            liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             Servo marshClawServo = hardwareMap.get(Servo.class, "marshClawServo");
             Servo marshClawRotationServo = hardwareMap.get(Servo.class, "marshClawRotationServo");
             marshClawServo.setPosition(0.99);
