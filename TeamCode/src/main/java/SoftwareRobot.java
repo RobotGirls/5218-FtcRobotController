@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "SoftwareRobot Teleop ")
+@TeleOp(name = "SoftwareRobotTeleop ")
 
 public class SoftwareRobot extends LinearOpMode {
 
