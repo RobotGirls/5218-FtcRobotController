@@ -35,10 +35,11 @@ public class BlueAutoLM1ObsZone extends LinearOpMode {
         Action toSubmersibleTraj = toSubmersible.build();
         
         Action toObservation = toSubmersible.fresh()
-                .lineToY(-5)
+                .waitSeconds(2)
+                .lineToY(5)
                 .waitSeconds(1)
                 .setTangent(Math.toRadians(0))
-                .lineToX(25)
+                .lineToX(30)
                 .waitSeconds(2)
                 //  .setTangent(0)
                 .build();
@@ -54,24 +55,21 @@ public class BlueAutoLM1ObsZone extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        toSubmersibleTraj,
                         lift.liftUp(),
+                        toSubmersibleTraj,
                         lift.liftDown(),
                         claw.openClaw(),
-                        toObservation()
+                        toObservation
 
                 )
         );
-    }
-
-    private Action toObservation() {
     }
 
     public class Lift {
        private DcMotorEx lift;
 
        public Lift(HardwareMap hardwareMap) {
-           lift = hardwareMap.get(DcMotorEx.class, "lift");
+           lift = hardwareMap.get(DcMotorEx.class, "liftMotor");
            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
            lift.setDirection(DcMotorSimple.Direction.FORWARD);
        }
@@ -87,13 +85,16 @@ public class BlueAutoLM1ObsZone extends LinearOpMode {
                if (!initialized) {
                    lift.setPower(0.8);
                    initialized = true;
+                   sleep(300);
+
                }
                // checks lift's current position
                double pos = lift.getCurrentPosition();
                packet.put("liftPos", pos);
-               if (pos < 3000.0) {
+               if (pos < 5000.0) {
                    // true causes the action to rerun
                    return true;
+
                } else {
                    // false stops action rerun
                    lift.setPower(0);
@@ -107,8 +108,10 @@ public class BlueAutoLM1ObsZone extends LinearOpMode {
            return new LiftUp();
        }
 
+
        public class LiftDown implements Action {
            private boolean initialized = false;
+
 
            @Override
            public boolean run(@NonNull TelemetryPacket packet) {
@@ -134,17 +137,22 @@ public class BlueAutoLM1ObsZone extends LinearOpMode {
    }
 
     public class Claw {
-        private Servo claw;
+        private Servo gizaClawLeftServo;
+        private Servo gizaClawRightServo;
 
         public Claw(HardwareMap hardwareMap) {
-            claw = hardwareMap.get(Servo.class, "claw");
+            gizaClawLeftServo = hardwareMap.get(Servo.class, "gizaClawLeftServo");
+            gizaClawRightServo = hardwareMap.get(Servo.class, "gizaClawRightServo");
         }
+
 
         public class CloseClaw implements Action {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(0.5);
+                gizaClawLeftServo.setPosition(0.5);
+                gizaClawRightServo.setPosition(0.5);
+
                 return false;
             }
         }
@@ -156,7 +164,8 @@ public class BlueAutoLM1ObsZone extends LinearOpMode {
         public class OpenClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(0.2);
+                gizaClawLeftServo.setPosition(.2);
+                gizaClawRightServo.setPosition(0.2);
                 return false;
             }
         }
