@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-@Disabled
+
 @TeleOp(name = "LM0Teleop ")
 
     public class TeleopDrive extends LinearOpMode {
@@ -28,10 +28,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 
-            leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-            leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-            rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-            rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+            leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
+            leftBack = hardwareMap.get(DcMotorEx.class, "backLeft");
+            rightBack = hardwareMap.get(DcMotorEx.class, "backRight");
+            rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.teamcode.opmodes;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "SoftwareRobotTeleop ")
 
-public class SoftwareRobot extends LinearOpMode {
+public class SoftwareRobotTeleop extends LinearOpMode {
 
     private final double BLOCK_NOTHING = 0.25;
     private final double BLOCK_BOTH = 0.05;
@@ -50,7 +52,7 @@ public class SoftwareRobot extends LinearOpMode {
 
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-      //  leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        //  leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         // vertical lift motor
@@ -156,5 +158,4 @@ public class SoftwareRobot extends LinearOpMode {
         }
     }
 }
-
 

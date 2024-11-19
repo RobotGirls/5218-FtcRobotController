@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.teamcode.opmodes;
+
 /*
  * Copyright (c) September 2017 FTC Teams 25/5218
  *
@@ -33,9 +35,11 @@
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ContinuousServoTask;
 
 import team25core.DeadmanMotorTask;
 import team25core.GamepadTask;
@@ -61,23 +65,21 @@ public class TerkelTeleop extends StandardFourMotorRobot {
     private Telemetry.Item buttonTlm;
 
     //wheelieServo Positions
-    private static final double WHEELIE_GRAB = 0.4;
+    private static final double WHEELIE_GRAB = 0.1;
     private static final double WHEELIE_RELEASE = 0.99;
 
     //wheelieRotationServo Positions
-    private static final double WHEELIE_UP = 1;
-    private static final double WHEELIE_DOWN = 0;
+    private static final double WHEELIE_UP = .8;
+    private static final double WHEELIE_DOWN = .6;
 
     //gizaClawLeftServo Positions
-    private static final double GIZA_CLAW_LEFT_OPEN = 0.4;
-    private static final double GIZA_CLAW_LEFT_CLOSE = 0.7;
+    private static final double GIZA_CLAW_LEFT_OPEN = 0.55;
+    private static final double GIZA_CLAW_LEFT_CLOSE = 0.2;
 
     //gizaClawRightServo Positions
-    private static final double GIZA_CLAW_RIGHT_OPEN = 0.5;
-    private static final double GIZA_CLAW_RIGHT_CLOSE = 0.1;
+    private static final double GIZA_CLAW_RIGHT_OPEN = 0.45;
+    private static final double GIZA_CLAW_RIGHT_CLOSE = 0.8;
 
-    private static final double HORIZONTAL_EXTENDED=0.1;
-    private static final double HORIZONTAL_RETRACTED=0.99;
 
 
 
@@ -85,8 +87,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
 
     private BNO055IMU imu;
 
-    private Servo horizontalLiftClawServo;
-    private Servo marshClawServo;
+    private Servo horizontalLiftServo;
 
     private Servo wheelieServo;
     private Servo wheelieRotationServo;
@@ -96,6 +97,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
     private Servo gizaClawRightServo;
     private OneWheelDriveTask liftMotorTask;
 
+    private ContinuousServoTask horizontalLiftTask;
 
 
     private DcMotor liftMotor;
@@ -107,7 +109,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
 
     private boolean currentlySlow = false;
 
-   //MecanumFieldCentricDriveScheme scheme;
+    //MecanumFieldCentricDriveScheme scheme;
 
 
     private MechanumGearedDrivetrain drivetrain;
@@ -125,7 +127,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
         wheelieServo = hardwareMap.servo.get("wheelieServo");
         gizaClawLeftServo= hardwareMap.servo.get("gizaClawLeftServo");
         gizaClawRightServo= hardwareMap.servo.get("gizaClawRightServo");
-        horizontalLiftClawServo=hardwareMap.servo.get("horizontalLiftClawServo");
+        horizontalLiftServo=hardwareMap.servo.get("horizontalLiftClawServo");
 
 
 
@@ -152,17 +154,22 @@ public class TerkelTeleop extends StandardFourMotorRobot {
 
         gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
         gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
-        horizontalLiftClawServo.setPosition(HORIZONTAL_RETRACTED);
+       // horizontalLiftServo.setPosition(HORIZONTAL_RETRACTED);
 
 
         liftMotorTask = new OneWheelDriveTask(this, liftMotor, true);
         liftMotorTask.slowDown(false);
+
+        horizontalLiftTask = new ContinuousServoTask(this, horizontalLiftServo, true);  // 'true' for right joystick
+        horizontalLiftTask.slowDown(false);
+
         //telemetry
         buttonTlm = telemetry.addData("buttonState", "unknown");
 
         TwoStickMechanumControlScheme scheme = new TwoStickMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.setNoncanonicalMotorDirection();
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         // Note we are swapping the rights and lefts in the arguments below
         // since the gamesticks were switched for some reason and we need to do
         // more investigation
@@ -213,7 +220,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
 
         //Gamepad 2
         this.addTask(liftMotorTask);
-
+        this.addTask(horizontalLiftTask);
 
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
             public void handleEvent(RobotEvent e) {
@@ -228,14 +235,6 @@ public class TerkelTeleop extends StandardFourMotorRobot {
                     case BUTTON_Y_DOWN:
                         // set claw's position to 1
                         wheelieServo.setPosition(WHEELIE_RELEASE);
-                        break;
-                    case RIGHT_TRIGGER_DOWN:
-                        // set claw's position to 0
-                        horizontalLiftClawServo.setPosition(HORIZONTAL_EXTENDED);
-                        break;
-                    case LEFT_TRIGGER_DOWN:
-                        // set claw's position to 0
-                        horizontalLiftClawServo.setPosition(HORIZONTAL_RETRACTED);
                         break;
 
                     case RIGHT_BUMPER_DOWN:
