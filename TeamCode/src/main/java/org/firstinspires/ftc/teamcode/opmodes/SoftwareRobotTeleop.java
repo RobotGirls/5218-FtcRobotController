@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "SoftwareRobotTeleop ")
+@TeleOp(name = "SoftwareRobotTeleop1 ")
 
 public class SoftwareRobotTeleop extends LinearOpMode {
 
@@ -29,7 +29,7 @@ public class SoftwareRobotTeleop extends LinearOpMode {
 
 
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFont");
         leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
         rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");

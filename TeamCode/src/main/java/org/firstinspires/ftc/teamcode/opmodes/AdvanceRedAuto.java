@@ -238,9 +238,9 @@ public class AdvanceRedAuto extends Robot {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("placed specimen");
-                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_OPEN);
-                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
-                    delay(200);
+                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
+                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+                    delay(150);
                     driveToObservation(driveToObservationPath);
 
 
@@ -286,7 +286,7 @@ public class AdvanceRedAuto extends Robot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+       frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
@@ -347,23 +347,23 @@ public class AdvanceRedAuto extends Robot {
         driveToSubmersiblePath.stop();
         driveToObservationPath.stop();
 
-        driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 13, 0.25);
+        driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 11, 0.75);
         //driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.25);
 
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.25);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 15, 0.25);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.75);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 2, 0.25);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 17, -0.75);
+        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.75);
+        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 13, 0.45);
+        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 9, 0.75);
+        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 4, 0.55);
+        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, -0.75);
         driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.35);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.TURN, 82, 0.25);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.75);
+        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.TURN, 79, 0.5);
+        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.75);
 
 
 
         driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.75);
-        driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.TURN, 80, 0.5);
-        driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 22, -0.25);
+        driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.TURN, 81, 0.5);
+        driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 22, -0.75);
       //  driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, 0.5);
 
 
