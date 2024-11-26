@@ -67,10 +67,10 @@ public class TerkelTeleop extends StandardFourMotorRobot {
     //wheelieServo Positions
     private static final double WHEELIE_GRAB = 0.1;
     private static final double WHEELIE_RELEASE = 0.99;
-
+    private static final double WHEELIE_STOP = 0.5;
     //wheelieRotationServo Positions
     private static final double WHEELIE_UP = .8;
-    private static final double WHEELIE_DOWN = .6;
+    private static final double WHEELIE_DOWN = .1;
 
     //gizaClawLeftServo Positions
     private static final double GIZA_CLAW_LEFT_OPEN = 0.55;
@@ -150,7 +150,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         wheelieRotationServo.setPosition(WHEELIE_UP);
-        wheelieServo.setPosition(WHEELIE_GRAB);
+        wheelieServo.setPosition(WHEELIE_STOP);
 
         gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
         gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
@@ -229,11 +229,11 @@ public class TerkelTeleop extends StandardFourMotorRobot {
                 switch (gamepadEvent.kind) {
 
                     case BUTTON_A_DOWN:
-                        // set claw's position to 0
+                         //set claw's position to 0
                         wheelieServo.setPosition(WHEELIE_GRAB);
                         break;
                     case BUTTON_Y_DOWN:
-                        // set claw's position to 1
+                         //set claw's position to 1
                         wheelieServo.setPosition(WHEELIE_RELEASE);
                         break;
 
