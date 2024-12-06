@@ -68,7 +68,7 @@ public final class Comp5218MecanumDrive {
 //
 
         // drive model parameters
-        public double inPerTick = .00174336;
+        public double inPerTick = .00163014;
         public double lateralInPerTick = inPerTick;
 
         public double trackWidthTicks = 4330.68509 ;
@@ -276,7 +276,7 @@ public final class Comp5218MecanumDrive {
         //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         // leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
 

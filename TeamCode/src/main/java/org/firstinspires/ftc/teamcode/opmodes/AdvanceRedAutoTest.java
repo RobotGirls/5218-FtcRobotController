@@ -3,26 +3,22 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import team25core.DeadReckonPath;
 import team25core.DeadReckonTask;
-import team25core.DistanceSensorTask;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.OneWheelDirectDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.SingleShotTimerTask;
 
-@Autonomous(name = "RedAuto")
-public class AdvanceRedAuto extends Robot {
+@Autonomous(name = "RedAutoTest")
+public class AdvanceRedAutoTest extends Robot {
 
     private ElapsedTime timer;
 
@@ -350,26 +346,26 @@ public class AdvanceRedAuto extends Robot {
         driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 11, 0.75);
         //driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.25);
 
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.75);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 13, 0.45);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 9, 0.75);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 4, 0.55);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, -0.75);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.35);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.TURN, 79, 0.5);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.75);
-
-
-
-        driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.75);
-        driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.TURN, 81, 0.5);
-        driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 22, -0.75);
-      //  driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, 0.5);
-
-
-        driveToObservationPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.95);
-
-        driveToObservationPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 25, 0.85);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.75);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 13, 0.45);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 9, 0.75);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 4, 0.55);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, -0.75);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.35);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.TURN, 79, 0.5);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.75);
+//
+//
+//
+//        driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.75);
+//        driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.TURN, 81, 0.5);
+//        driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 22, -0.75);
+//      //  driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, 0.5);
+//
+//
+//        driveToObservationPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.95);
+//
+//        driveToObservationPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 25, 0.85);
 
     }
 }

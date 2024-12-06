@@ -43,12 +43,12 @@ public class AdvanceRedAuto extends Robot {
 
 
     //gizaClawLeftServo Positions
-    private static final double GIZA_CLAW_LEFT_OPEN = 0.3;
-    private static final double GIZA_CLAW_LEFT_CLOSE = 0.7;
+    private static final double GIZA_CLAW_LEFT_OPEN = 0.25;
+    private static final double GIZA_CLAW_LEFT_CLOSE = 0.65;
 
     //gizaClawRightServo Positions
-    private static final double GIZA_CLAW_RIGHT_OPEN = 0.7;
-    private static final double GIZA_CLAW_RIGHT_CLOSE = 0.1;
+    private static final double GIZA_CLAW_RIGHT_OPEN = 0.65;
+    private static final double GIZA_CLAW_RIGHT_CLOSE = 0.15;
 
 
     private Servo gizaClawRightServo;
@@ -209,6 +209,8 @@ public class AdvanceRedAuto extends Robot {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("liftedToBoard");
+                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
+                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
                     driveAwayFromSpecimen(driveToSpecimenPath);
                 }
             }
@@ -238,10 +240,11 @@ public class AdvanceRedAuto extends Robot {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("placed specimen");
-                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
-                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_OPEN);
+                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
                     delay(150);
                     driveToObservation(driveToObservationPath);
+
 
 
                 }
@@ -270,9 +273,9 @@ public class AdvanceRedAuto extends Robot {
         //sets motors position to 0
         drivetrain.resetEncoders();
 
-//        gizaClawRightServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
-//        gizaClawLeftServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
-
+        gizaClawRightServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
+        gizaClawLeftServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+        // change to open then change it back to close
 
         //motor will try to tun at the targeted velocity
         drivetrain.encodersOn();
@@ -286,7 +289,7 @@ public class AdvanceRedAuto extends Robot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-       frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+       //frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
@@ -367,10 +370,9 @@ public class AdvanceRedAuto extends Robot {
       //  driveToSpecimenPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, 0.5);
 
 
+        driveToObservationPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.95);
 
-        driveToObservationPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, -0.25);
-
-        driveToObservationPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 25, 0.25);
+        driveToObservationPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 25, 0.85);
 
     }
 }

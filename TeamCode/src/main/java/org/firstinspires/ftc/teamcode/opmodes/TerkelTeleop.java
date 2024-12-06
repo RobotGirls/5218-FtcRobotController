@@ -169,7 +169,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
         TwoStickMechanumControlScheme scheme = new TwoStickMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.setNoncanonicalMotorDirection();
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        //frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         // Note we are swapping the rights and lefts in the arguments below
         // since the gamesticks were switched for some reason and we need to do
         // more investigation
