@@ -70,11 +70,11 @@ public class orangeBotTest extends LinearOpMode {
 
         DcMotorEx climbLeftMotor;
         DcMotorEx climbRightMotor;
-        climbLeftMotor = hardwareMap.get(DcMotorEx.class, "climbLeftMotor");
+        climbLeftMotor = hardwareMap.get(DcMotorEx.class, "hangLeftMotor");
         climbLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        climbRightMotor = hardwareMap.get(DcMotorEx.class, "climbRightMotor");
+        climbRightMotor = hardwareMap.get(DcMotorEx.class, "hangRightMotor");
         climbRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        climbLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+     //   climbLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 

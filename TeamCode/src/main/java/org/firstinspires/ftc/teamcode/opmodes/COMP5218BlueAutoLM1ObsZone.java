@@ -35,7 +35,42 @@ public class COMP5218BlueAutoLM1ObsZone extends LinearOpMode {
                 .waitSeconds(2);
         Action toSubmersibleTraj = toSubmersible.build();
 
+//        Action toObservation = toSubmersible.fresh()
+//                .waitSeconds(2)
+//                .lineToY(5)
+//                .waitSeconds(1)
+//                .setTangent(Math.toRadians(0))
+//                .lineToX(30)
+//                .waitSeconds(2)
+//                //  .setTangent(0)
+//                .build();
+//
+//        Pose2d observationEndPose = new Pose2d(30, 5, Math.toRadians(0)); // Example
+//        Action toSample = drive.actionBuilder(observationEndPose)
+//                .waitSeconds(2)
+//                .lineToY(10)
+//                .lineToX(40)
+//                .build();
         Action toObservation = toSubmersible.fresh()
+                .waitSeconds(2)
+                .strafeTo(new Vector2d(35, -5))
+                .lineToY(10)
+                .lineToX(5)
+                .lineToY(-20)
+                .lineToY(10)
+                .waitSeconds(2)
+                .lineToY(-10)
+
+                //  .setTangent(0)
+                .build();
+
+        Pose2d observationEndPose = new Pose2d(5, 10, Math.toRadians(0)); // Example
+        Action toSample = drive.actionBuilder(observationEndPose)
+                .waitSeconds(2)
+                .strafeTo(new Vector2d(-35, 29))
+                .build();
+        Pose2d sampleEndPose = new Pose2d(5, 10, Math.toRadians(0)); // Example
+        Action toHangSpecimen = drive.actionBuilder(sampleEndPose)
                 .waitSeconds(2)
                 .lineToY(5)
                 .waitSeconds(1)
@@ -44,6 +79,7 @@ public class COMP5218BlueAutoLM1ObsZone extends LinearOpMode {
                 .waitSeconds(2)
                 //  .setTangent(0)
                 .build();
+
 
         Actions.runBlocking(claw.closeClaw());
 
@@ -60,7 +96,13 @@ public class COMP5218BlueAutoLM1ObsZone extends LinearOpMode {
                         toSubmersibleTraj,
                         lift.liftDown(),
                         claw.openClaw(),
-                        toObservation
+                        toObservation,
+                        claw.closeClaw(),
+                        lift.liftUp(),
+                        toSample,
+                        lift.liftDown(),
+                        claw.openClaw(),
+                        toHangSpecimen
 
                 )
         );
@@ -172,7 +214,7 @@ public class COMP5218BlueAutoLM1ObsZone extends LinearOpMode {
         }
 
         public Action openClaw() {
-            return new CloseClaw();
+            return new OpenClaw();
 
         }
     }
