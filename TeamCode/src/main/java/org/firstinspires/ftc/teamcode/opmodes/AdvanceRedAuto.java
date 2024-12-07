@@ -60,8 +60,8 @@ public class AdvanceRedAuto extends Robot {
 
 
 
-    public static double LIFT_DISTANCE = 60;
-    public static double LIFT_SPEED = .6;
+    public static double LIFT_DISTANCE = 55;
+    public static double LIFT_SPEED = .95;
 
     public static double LIFT_OFF_WALL_DISTANCE = 60;
     public static double LIFT_OFF_WALL_SPEED = .6;
@@ -191,26 +191,38 @@ public class AdvanceRedAuto extends Robot {
 
 
     public void liftToPlacePixelOnBoard() {
-        this.addTask(new DeadReckonTask(this, liftToBoardPath, liftMotorDrivetrain) {
+        this.addTask(new DeadReckonTask(this, driveToSubmersiblePath, drivetrain) {
             @Override
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
+                    RobotLog.i("infront of submersible");
+                    lowerLiftToPlaceSpecimen();
+
+                }
+            }
+        });
+        this.addTask(new DeadReckonTask(this, liftToBoardPath, liftMotorDrivetrain) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent path = (DeadReckonEvent) e;
+
+                if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("liftedToBoard");
-                    driveToSubmersible(driveToSubmersiblePath);
+                    //driveToObservation(driveToObservationPath);
                 }
             }
         });
     }
     public void liftOffTheWall() {
+        gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
+        gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
         this.addTask(new DeadReckonTask(this,  liftOffTheWallPath, liftMotorDrivetrain) {
             @Override
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("liftedToBoard");
-                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
-                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
                     driveAwayFromSpecimen(driveToSpecimenPath);
                 }
             }
@@ -350,11 +362,11 @@ public class AdvanceRedAuto extends Robot {
         driveToSubmersiblePath.stop();
         driveToObservationPath.stop();
 
-        driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 11, 0.75);
+        driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 14, 0.2);
         //driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.25);
 
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.75);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 13, 0.45);
+        //driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.75);
+        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 9, 0.45);
         driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 9, 0.75);
         driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 4, 0.55);
         driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, -0.75);
