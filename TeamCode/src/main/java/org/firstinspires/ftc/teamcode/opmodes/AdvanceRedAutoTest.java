@@ -22,7 +22,7 @@ import team25core.RobotEvent;
 import team25core.SingleShotTimerTask;
 
 @Autonomous(name = "RedAuto")
-public class AdvanceRedAuto extends Robot {
+public class AdvanceRedAutoTest extends Robot {
 
     private ElapsedTime timer;
 
