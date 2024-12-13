@@ -44,15 +44,20 @@ public class AdvanceRedAutoTest extends Robot {
 
     //gizaClawLeftServo Positions
     private static final double GIZA_CLAW_LEFT_OPEN = 0.25;
-    private static final double GIZA_CLAW_LEFT_CLOSE = 0.65;
+    private static final double GIZA_CLAW_LEFT_CLOSE = 0.8;
 
     //gizaClawRightServo Positions
     private static final double GIZA_CLAW_RIGHT_OPEN = 0.65;
-    private static final double GIZA_CLAW_RIGHT_CLOSE = 0.15;
+    private static final double GIZA_CLAW_RIGHT_CLOSE = 0.05;
+    private static final double MINI_CLAW_OPEN = .8;
+    private static final double MINI_CLAW_CLOSE = 0.05;
+
 
 
     private Servo gizaClawRightServo;
     private Servo gizaClawLeftServo;
+
+    private Servo miniClawServo;
 
 
     public String position;
@@ -61,7 +66,7 @@ public class AdvanceRedAutoTest extends Robot {
 
 
     public static double LIFT_DISTANCE = 60;
-    public static double LIFT_SPEED = .6;
+    public static double LIFT_SPEED = 1;
 
     public static double LIFT_OFF_WALL_DISTANCE = 60;
     public static double LIFT_OFF_WALL_SPEED = .6;
@@ -131,8 +136,7 @@ public class AdvanceRedAutoTest extends Robot {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("infront of submersible");
-                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
-                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+                    miniClawServo.setPosition(MINI_CLAW_CLOSE);
                     delay(100);
                     liftOffTheWall();
 
@@ -191,13 +195,27 @@ public class AdvanceRedAutoTest extends Robot {
 
 
     public void liftToPlacePixelOnBoard() {
+        this.addTask(new DeadReckonTask(this, driveToSubmersiblePath, drivetrain) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent path = (DeadReckonEvent) e;
+                if (path.kind == EventKind.PATH_DONE) {
+                    RobotLog.i("infront of submersible");
+                }
+            }
+        });
+
         this.addTask(new DeadReckonTask(this, liftToBoardPath, liftMotorDrivetrain) {
             @Override
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("liftedToBoard");
-                    driveToSubmersible(driveToSubmersiblePath);
+                    lowerLiftToPlaceSpecimen();
+                    miniClawServo.setPosition(MINI_CLAW_OPEN);
+//                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_OPEN);
+//                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
+                   // driveToSample(driveToSamplePath);
                 }
             }
         });
@@ -221,8 +239,7 @@ public class AdvanceRedAutoTest extends Robot {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("placed specimen");
-                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_OPEN);
-                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
+
                     delay(200);
                     driveToSample(driveToSamplePath);
 
@@ -238,9 +255,8 @@ public class AdvanceRedAutoTest extends Robot {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("placed specimen");
-                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
-                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
-                    delay(150);
+                    miniClawServo.setPosition(MINI_CLAW_OPEN);
+
                     driveToObservation(driveToObservationPath);
 
 
@@ -261,7 +277,9 @@ public class AdvanceRedAutoTest extends Robot {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         gizaClawLeftServo = hardwareMap.servo.get("gizaClawLeftServo");
         gizaClawRightServo = hardwareMap.servo.get("gizaClawRightServo");
+        miniClawServo = hardwareMap.servo.get("miniClawServo");
 
+        miniClawServo.setPosition(MINI_CLAW_CLOSE);
 
 
         // instantiating FourWheelDirectDrivetrain
@@ -272,6 +290,7 @@ public class AdvanceRedAutoTest extends Robot {
 
         gizaClawRightServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
         gizaClawLeftServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+
         // change to open then change it back to close
 
         //motor will try to tun at the targeted velocity
@@ -286,7 +305,7 @@ public class AdvanceRedAutoTest extends Robot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-       frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+       //frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
@@ -347,7 +366,8 @@ public class AdvanceRedAutoTest extends Robot {
         driveToSubmersiblePath.stop();
         driveToObservationPath.stop();
 
-        driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 11, 0.75);
+        driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 14, 0.2);
+
         //driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.25);
 
         driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.75);
@@ -357,7 +377,7 @@ public class AdvanceRedAutoTest extends Robot {
         driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, -0.75);
         driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.35);
         driveToSamplePath.addSegment(DeadReckonPath.SegmentType.TURN, 79, 0.5);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.75);
+        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.75);
 
 
 
