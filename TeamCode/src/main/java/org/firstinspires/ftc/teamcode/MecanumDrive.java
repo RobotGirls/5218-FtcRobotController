@@ -147,43 +147,43 @@ public final class MecanumDrive {
 
             imu = lazyImu.get();
 
-            myIMUparameters = new IMU.Parameters(
-                    new RevHubOrientationOnRobot(
-                            new Orientation(
-                                    AxesReference.INTRINSIC,
-                                    AxesOrder.ZYX,
-                                    AngleUnit.DEGREES,
-                                    90,
-                                    0,
-                                    0,
-                                    0  // acquisitionTime, not used
-                            )
-                    )
-            );
-            IMU.Parameters myIMUparameters;
-
-            myIMUparameters = new IMU.Parameters(
-                    new RevHubOrientationOnRobot(
-                            RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
-                    )
-            );
-            // Initialize IMU directly
-            imu.initialize(
-                    new IMU.Parameters(
-                            new RevHubOrientationOnRobot(
-                                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                                    RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
-                            )
-                    )
-            );
-
-            // Initialize IMU using Parameters
-            imu.initialize(myIMUparameters);
-
-
-            // TODO: reverse encoders if needed
-            //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//            myIMUparameters = new IMU.Parameters(
+//                    new RevHubOrientationOnRobot(
+//                            new Orientation(
+//                                    AxesReference.INTRINSIC,
+//                                    AxesOrder.ZYX,
+//                                    AngleUnit.DEGREES,
+//                                    90,
+//                                    0,
+//                                    0,
+//                                    0  // acquisitionTime, not used
+//                            )
+//                    )
+//            );
+//            IMU.Parameters myIMUparameters;
+//
+//            myIMUparameters = new IMU.Parameters(
+//                    new RevHubOrientationOnRobot(
+//                            RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+//                    )
+//            );
+//            // Initialize IMU directly
+//            imu.initialize(
+//                    new IMU.Parameters(
+//                            new RevHubOrientationOnRobot(
+//                                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                                    RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+//                            )
+//                    )
+//            );
+//
+//            // Initialize IMU using Parameters
+//            imu.initialize(myIMUparameters);
+//
+//
+//            // TODO: reverse encoders if needed
+//            //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         }
 
@@ -276,6 +276,7 @@ public final class MecanumDrive {
         //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        //leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         // leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 

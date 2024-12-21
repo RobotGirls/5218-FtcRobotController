@@ -68,15 +68,15 @@ public final class Comp5218MecanumDrive {
 //
 
         // drive model parameters
-        public double inPerTick = .00174336;
-        public double lateralInPerTick = inPerTick;
+        public double inPerTick = 0.00191326531;
+        public double lateralInPerTick = 0.0013822457658459468;
 
-        public double trackWidthTicks = 4330.68509 ;
+        public double trackWidthTicks = 6206.7545507700115 ;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.737181244;
-        public double kV = 0.000489638;
-        public double kA = 0.0001;
+        public double kS = 0.8436986412311298;
+        public double kV = 0.0003408878312138423;
+        public double kA = 0.000001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -276,7 +276,7 @@ public final class Comp5218MecanumDrive {
         //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         // leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
