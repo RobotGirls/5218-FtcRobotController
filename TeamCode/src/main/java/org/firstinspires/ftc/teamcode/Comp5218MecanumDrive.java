@@ -68,15 +68,15 @@ public final class Comp5218MecanumDrive {
 //
 
         // drive model parameters
-        public double inPerTick = 0.00191326531;
-        public double lateralInPerTick = 0.0013822457658459468;
+        public double inPerTick = 0.001935685295036;
+        public double lateralInPerTick = 0.0013542659126235276;
 
-        public double trackWidthTicks = 6206.7545507700115 ;
+        public double trackWidthTicks = 6148.319769594796 ;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.8436986412311298;
-        public double kV = 0.0003408878312138423;
-        public double kA = 0.000001;
+        public double kS = 0.7183808274861039;
+        public double kV = 0.00035330571870008154;
+        public double kA = 0.0001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -88,9 +88,9 @@ public final class Comp5218MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 1.1;
-        public double lateralGain = 1.6;
-        public double headingGain = 1.5; // shared with turn
+        public double axialGain = 1;
+        public double lateralGain = 1;
+        public double headingGain = 1; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -262,10 +262,10 @@ public final class Comp5218MecanumDrive {
 
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft"); //changed from leftFront to match terkel teleop which uses StandardFourMotorRobot
+        leftBack = hardwareMap.get(DcMotorEx.class, "backLeft"); //changed from leftBack to match terkel teleop which uses StandardFourMotorRobot
+        rightBack = hardwareMap.get(DcMotorEx.class, "backRight"); //changed from rightBack to match terkel teleop which uses StandardFourMotorRobot
+        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");//changed from rightFront to match terkel teleop which uses StandardFourMotorRobot
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
