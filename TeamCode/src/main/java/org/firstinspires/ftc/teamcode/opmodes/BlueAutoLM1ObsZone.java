@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
 
 @Autonomous(name = "BlueObservationAuto")
 public class BlueAutoLM1ObsZone extends LinearOpMode {
@@ -27,7 +27,7 @@ public class BlueAutoLM1ObsZone extends LinearOpMode {
         Claw claw = new Claw(hardwareMap);
 
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(90));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
         TrajectoryActionBuilder toSubmersible = drive.actionBuilder(initialPose)
                 //.turn(Math.toRadians(45))
                 .strafeTo(new Vector2d(-20, 29))
