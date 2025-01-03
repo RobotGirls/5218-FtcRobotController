@@ -291,7 +291,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
                         buttonTlm.setValue("Not Moving");
                         break;
                 }
-                
+
 
                 switch (gamepadEvent.kind) {
                     case RIGHT_TRIGGER_DOWN:
