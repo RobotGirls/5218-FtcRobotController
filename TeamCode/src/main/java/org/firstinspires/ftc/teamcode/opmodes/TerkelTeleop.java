@@ -89,7 +89,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
     private static final double GIZA_CLAW_RIGHT_CLOSE = 0.9;
 
     //miniClawServo Positions
-    private static final double MINI_CLAW_OPEN = 0.9;
+    private static final double MINI_CLAW_OPEN = 0.66;
     private static final double MINI_CLAW_CLOSE = 0.3;
 
 
