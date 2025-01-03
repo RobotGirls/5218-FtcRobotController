@@ -20,8 +20,9 @@ import team25core.OneWheelDirectDrivetrain;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.SingleShotTimerTask;
+import team25core.TwoWheelDirectDrivetrain;
 
-@Autonomous(name = "RedAuto")
+@Autonomous(name = "AUTO")
 public class AdvanceRedAuto extends Robot {
 
     private ElapsedTime timer;
@@ -31,6 +32,9 @@ public class AdvanceRedAuto extends Robot {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
+    private DcMotor hangLeftMotor;
+    private DcMotor hangRightMotor;
+
 
     private DcMotor outtake;
 
@@ -40,21 +44,29 @@ public class AdvanceRedAuto extends Robot {
 
 
     private FourWheelDirectDrivetrain drivetrain;
+    private DeadReckonPath  driveToParkPath;
+    private DeadReckonPath hangLiftPath;
+    private TwoWheelDirectDrivetrain hangLiftDriveTrain;
+    private static final double MINI_CLAW_OPEN = .05;
+    private static final double MINI_CLAW_CLOSE = 0.8;
 
+
+    private Servo miniClawServo;
 
     //gizaClawLeftServo Positions
-    private static final double GIZA_CLAW_LEFT_OPEN = 0.3;
-    private static final double GIZA_CLAW_LEFT_CLOSE = 0.7;
+
+    private static final double GIZA_CLAW_LEFT_OPEN = 0.25;
+    private static final double GIZA_CLAW_LEFT_CLOSE = 0.9;
 
     //gizaClawRightServo Positions
-    private static final double GIZA_CLAW_RIGHT_OPEN = 0.7;
+    private static final double GIZA_CLAW_RIGHT_OPEN = 0.65;
     private static final double GIZA_CLAW_RIGHT_CLOSE = 0.1;
-
 
     private Servo gizaClawRightServo;
     private Servo gizaClawLeftServo;
 
-
+    public static double HANG_LIFT_DISTANCE = 30;
+    public static double HANG_LIFT_SPEED =1;
     public String position;
     private DeadReckonPath outtakePath;
 
@@ -67,7 +79,7 @@ public class AdvanceRedAuto extends Robot {
     public static double LIFT_OFF_WALL_SPEED = .6;
 
 
-    public static double LOWER_DISTANCE = 45;
+    public static double LOWER_DISTANCE = 10;
     public static double LOWER_LIFT_SPEED = -0.6;
 
 
@@ -122,6 +134,7 @@ public class AdvanceRedAuto extends Robot {
         });
     }
     public void driveToSample(DeadReckonPath driveToSamplePath) {
+
         whereAmI.setValue("in driveToSignalZone");
         RobotLog.i("drives straight onto the launch line");
         delay(200);
@@ -130,11 +143,31 @@ public class AdvanceRedAuto extends Robot {
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
+                    driveToPark(driveToParkPath);
                     RobotLog.i("infront of submersible");
-                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
-                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+
                     delay(100);
-                    liftOffTheWall();
+                   // liftOffTheWall();
+
+
+
+                }
+            }
+        });
+    }
+    public void driveToPark(DeadReckonPath driveToParkPath) {
+        gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
+        gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+        whereAmI.setValue("in driveToSignalZone");
+        RobotLog.i("drives straight onto the launch line");
+        this.addTask(new DeadReckonTask(this, driveToParkPath, drivetrain) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent path = (DeadReckonEvent) e;
+                if (path.kind == EventKind.PATH_DONE) {
+
+                    RobotLog.i("infront of submersible");
+
 
 
 
@@ -157,7 +190,18 @@ public class AdvanceRedAuto extends Robot {
             }
         });
     }
-
+    public void hangLiftUp() {
+        this.addTask(new DeadReckonTask(this,  hangLiftPath, hangLiftDriveTrain) {
+            @Override
+            public void handleEvent(RobotEvent e) {
+                DeadReckonEvent path = (DeadReckonEvent) e;
+                RobotLog.i(" hangLiftUp");
+                if (path.kind == EventKind.PATH_DONE) {
+                    liftToPlacePixelOnBoard();
+                }
+            }
+        });
+    }
     public void driveToObservation(DeadReckonPath driveToObservationPath) {
         whereAmI.setValue("in driveToSignalZone");
         RobotLog.i("drives straight onto the launch line");
@@ -235,8 +279,6 @@ public class AdvanceRedAuto extends Robot {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("placed specimen");
-                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_OPEN);
-                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
                     delay(200);
                     driveToSample(driveToSamplePath);
 
@@ -275,6 +317,7 @@ public class AdvanceRedAuto extends Robot {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         gizaClawLeftServo = hardwareMap.servo.get("gizaClawLeftServo");
         gizaClawRightServo = hardwareMap.servo.get("gizaClawRightServo");
+        miniClawServo = hardwareMap.servo.get("miniClawServo");
 
 
 
@@ -284,8 +327,8 @@ public class AdvanceRedAuto extends Robot {
         //sets motors position to 0
         drivetrain.resetEncoders();
 
-//        gizaClawRightServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
-//        gizaClawLeftServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+        gizaClawRightServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
+        gizaClawLeftServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
 
 
         //motor will try to tun at the targeted velocity
@@ -300,7 +343,7 @@ public class AdvanceRedAuto extends Robot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-       frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+      // frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
@@ -310,6 +353,23 @@ public class AdvanceRedAuto extends Robot {
         liftMotorDrivetrain = new OneWheelDirectDrivetrain(liftMotor);
         liftMotorDrivetrain.resetEncoders();
         liftMotorDrivetrain.encodersOn();
+        hangRightMotor = hardwareMap.get(DcMotor.class, "hangRightMotor");
+        hangRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hangRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hangRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        hangLeftMotor = hardwareMap.get(DcMotor.class, "hangLeftMotor");
+        hangLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hangLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hangLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hangRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+        hangLiftDriveTrain= new TwoWheelDirectDrivetrain(hangLeftMotor, hangRightMotor);
+        hangLiftDriveTrain.resetEncoders();
+        hangLiftDriveTrain.encodersOn();
+
 
 
         // telemetry shown on the phone
@@ -323,11 +383,14 @@ public class AdvanceRedAuto extends Robot {
     {
         timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         whereAmI.setValue("in Start");
-        liftToPlacePixelOnBoard();
+        hangLiftUp();
     }
 
     public void initPaths() {
 
+        hangLiftPath= new DeadReckonPath();
+        hangLiftPath.stop();
+        hangLiftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT,HANG_LIFT_DISTANCE, HANG_LIFT_SPEED);
 
         driveToObservationPath = new DeadReckonPath();
 
@@ -356,6 +419,8 @@ public class AdvanceRedAuto extends Robot {
         lowerLiftPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, LOWER_DISTANCE, LOWER_LIFT_SPEED);
 
 
+        driveToParkPath = new DeadReckonPath();
+        driveToParkPath.stop();
 
 
         driveToSubmersiblePath.stop();
@@ -365,13 +430,17 @@ public class AdvanceRedAuto extends Robot {
         //driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.25);
 
         //driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 2, -0.75);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 9, 0.45);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 9, 0.75);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 4, 0.55);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 15, -0.75);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.35);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.TURN, 79, 0.5);
-        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, 0.75);
+
+        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 3, -0.6);
+
+
+        driveToParkPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 14, 0.45);
+        driveToParkPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 10, 0.75);
+        driveToParkPath.addSegment(DeadReckonPath.SegmentType.SIDEWAYS, 4, 0.55);
+        driveToParkPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 19, -0.45);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.35);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.TURN, 79, 0.5);
+//        driveToSamplePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, 0.75);
 
 
 

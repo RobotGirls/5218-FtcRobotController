@@ -68,8 +68,8 @@ public class TerkelTeleop extends StandardFourMotorRobot {
     //wheelieServo Positions
 //    private static final double WHEELIE_GRAB = 0.1;
 //    private static final double WHEELIE_RELEASE = 0.99;
-    private static final double WHEELIE_GRAB =1;
-    private static final double WHEELIE_RELEASE =-1;
+    private static final double WHEELIE_GRAB =0.1;
+    private static final double WHEELIE_RELEASE =0.9;
     private static final double WHEELIE_STOP = 0;
     private static final double WHEELIE_STOP_A = 0;
 
@@ -77,20 +77,20 @@ public class TerkelTeleop extends StandardFourMotorRobot {
 
 
     //wheelieRotationServo Positions
-    private static final double WHEELIE_UP = .99;
-    private static final double WHEELIE_DOWN = .7;
+    private static final double WHEELIE_UP = 0.1;
+    private static final double WHEELIE_DOWN = 0.9;
 
     //gizaClawLeftServo Positions
-    private static final double GIZA_CLAW_LEFT_OPEN = 0.45;
-    private static final double GIZA_CLAW_LEFT_CLOSE = 0.025;
+    private static final double GIZA_CLAW_LEFT_OPEN = 0.5;
+    private static final double GIZA_CLAW_LEFT_CLOSE = 0.;
 
     //gizaClawRightServo Positions
-    private static final double GIZA_CLAW_RIGHT_OPEN = 0.65;
+    private static final double GIZA_CLAW_RIGHT_OPEN = 0.6;
     private static final double GIZA_CLAW_RIGHT_CLOSE = 0.9;
 
     //miniClawServo Positions
-    private static final double MINI_CLAW_OPEN = .8;
-    private static final double MINI_CLAW_CLOSE = 0.1;
+    private static final double MINI_CLAW_OPEN = 0.9;
+    private static final double MINI_CLAW_CLOSE = 0.05;
 
 
 
@@ -273,30 +273,25 @@ public class TerkelTeleop extends StandardFourMotorRobot {
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent gamepadEvent = (GamepadEvent) e;
-
-
-                // Handle other buttons as needed
                 switch (gamepadEvent.kind) {
-                    case BUTTON_A_UP:
-                        wheelieServo.setPosition(WHEELIE_GRAB);  // Rotate in reverse
+                    case DPAD_UP_DOWN:
+                        // If slow, then normal speed. If fast, then slow speed of motors.
+                        //pertains to slowmode
+                        if (currentlySlow) {
+                            liftMotorTask.slowDown(1.0);
+                            currentlySlow = false;
+                        } else {
+                            liftMotorTask.slowDown(0.3);
+                            currentlySlow = true;
+                        }
                         break;
-
-                    case BUTTON_A_DOWN:
-
-                        wheelieServo.setPosition(WHEELIE_STOP_A);  // Stop on release
-                        break;
-
-                    case BUTTON_Y_DOWN:
-                        wheelieServo.setPosition(WHEELIE_RELEASE);  // Rotate in reverse
-                        break;
-
-                    case BUTTON_Y_UP:
-                        wheelieServo.setPosition(WHEELIE_STOP);  // Stop on release
-                        break;
+                        //Holaaa my name is Isabella Barrientos and my codename is Jason Durullo and i love eating food and cleaning my computer
 
                     default:
+                        buttonTlm.setValue("Not Moving");
                         break;
                 }
+                
 
                 switch (gamepadEvent.kind) {
                     case RIGHT_TRIGGER_DOWN:
