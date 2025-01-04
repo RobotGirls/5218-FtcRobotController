@@ -56,6 +56,10 @@ import java.util.List;
 
 @Config
 public final class Comp5218MecanumDrive {
+    public void setPoseEstimate(Pose2d initialPose) {
+    }
+
+
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
