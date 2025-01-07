@@ -1,13 +1,11 @@
-package org.firstinspires.ftc.teamcode.tuning;
+package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
-import org.firstinspires.ftc.teamcode.TankDrive;
-
+@Autonomous(name = "AutoTest1")
 public final class AutoTest1 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -18,11 +16,11 @@ public final class AutoTest1 extends LinearOpMode {
 
         Actions.runBlocking(
                 drive.actionBuilder(beginPose)
-                        .lineToXConstantHeading(27)
-                        .lineToYConstantHeading(-27)
-                        .lineToXConstantHeading(47)
-                        .lineToYConstantHeading(-37)
-                        .lineToXConstantHeading(3)
+                        .lineToY(27)
+                        .lineToX(-27)
+                        .lineToY(47)
+                        .lineToX(-37)
+                        .lineToY(3)
                         .build());
     }
 }
