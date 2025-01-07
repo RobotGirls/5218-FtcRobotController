@@ -157,6 +157,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+
 //        liftLinearUp = new DeadmanMotorTask(this, liftMotor, LIFT_POWER_UP, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_STICK_UP);
 //        liftLinearUp.setMaxMotorPosition(MAX_LINEAR_HEIGHT); using encoders to record ticks
        // backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -189,6 +190,8 @@ public class TerkelTeleop extends StandardFourMotorRobot {
 
         //telemetry
         buttonTlm = telemetry.addData("buttonState", "unknown");
+
+
 
         TwoStickMechanumControlScheme scheme = new TwoStickMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(motorMap);
