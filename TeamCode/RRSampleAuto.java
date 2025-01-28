@@ -20,8 +20,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
 
-@Autonomous(name = "RRauto")
-public class RoadRunnerAuto extends LinearOpMode {
+@Autonomous(name = "RRSampleAuto")
+public class RRSampleAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -33,37 +33,15 @@ public class RoadRunnerAuto extends LinearOpMode {
         WRClaw wrClaw = new WRClaw(hardwareMap);
         HangLift hangLift = new HangLift(hardwareMap);
 
-        // Trajectories.strafeTo(new Vector2d(-8, 44)
-       // TrajectoryActionBuilder toSub = drive.actionBuilder(initialPose).lineToY(44);
-//        TrajectoryActionBuilder toSub = drive.actionBuilder(initialPose).strafeTo(new Vector2d(-2, 44));
-//
-//        TrajectoryActionBuilder closerSub = toSub.endTrajectory().lineToY(35);
-//        TrajectoryActionBuilder fromSub = closerSub.endTrajectory().lineToY(65);
-
-        // Start trajectory
-        TrajectoryActionBuilder toSub = drive.actionBuilder(initialPose)
-                .strafeTo(new Vector2d(-2, 44));
-        telemetry.addData("Current Trajectory", "Running toSub");
-        telemetry.update();
-
-
-        TrajectoryActionBuilder closerSub = toSub.endTrajectory()
-                .lineToY(38);
-        telemetry.addData("Current Trajectory", "closerSub");
-        telemetry.update();
-
-
-        TrajectoryActionBuilder fromSub = closerSub.endTrajectory()
-                //.reversed(true)
-                .lineToY(60);
-
-
-
+        // Trajectories
+        TrajectoryActionBuilder toSub = drive.actionBuilder(initialPose).lineToY(44);
+        TrajectoryActionBuilder closerSub = toSub.endTrajectory().lineToY(40);
+        TrajectoryActionBuilder fromSub = closerSub.endTrajectory().lineToY(55);
 
         // Correct the chaining of the toSample trajectory, and use .build() to convert TrajectoryActionBuilder to Action
-        TrajectoryActionBuilder toSample = closerSub.endTrajectory().lineToX(42)
-               // .lineToY(8)
-              // .lineToY(60)
+        TrajectoryActionBuilder toSample = fromSub.endTrajectory().strafeTo(new Vector2d(-42, 8))
+                .lineToY(60)
+                .lineToY(8)
                 .lineToX(-52)
                 .lineToY(60)
                 .lineToY(35)
@@ -79,19 +57,19 @@ public class RoadRunnerAuto extends LinearOpMode {
 
 
 
-                //lift down
+        //lift down
         TrajectoryActionBuilder closerSub2 = toHangS.endTrajectory().lineToY(50);
 
-                //claw open and lift up
+        //claw open and lift up
         TrajectoryActionBuilder HP = closerSub2.endTrajectory().strafeTo(new Vector2d(-48, 50))
                 .turn(3.2)
-                 .lineToY(60);
+                .lineToY(60);
         // close claw
         //lift up
         TrajectoryActionBuilder toSub2 = HP.endTrajectory().strafeTo(new Vector2d(8, 44))
-         .strafeTo(new Vector2d(-8, 44))
-         .turn(-3.2)
-        .lineToY(40);
+                .strafeTo(new Vector2d(-8, 44))
+                .turn(-3.2)
+                .lineToY(40);
 
         //loower lift
 
@@ -123,52 +101,44 @@ public class RoadRunnerAuto extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-      Actions.runBlocking(
+        Actions.runBlocking(
                 new SequentialAction(
-                        hangLiftUp, // Starts the lift-up sequence
-
+                        hangLiftUp,
                         new ParallelAction(
                                 toSub.build(), // Ensure toSub is built as an Action
-                                lift.liftUp() // Parallel lifting and movement
+                                lift.liftUp()
                         ),
-                        new WaitAction(1000), // Wait after lift
-                        closerSub.build(), // Moves the robot closer to the sub
-                        moveBackAndLowerLift, // Moves back and lowers the lift
-                        fromSub.build(), // Executes the fromSub trajectory
-                        new WaitAction(1000), // Wait after lift
-                        liftDownAndOpenClaw, // Lowers lift and opens the claw
-
+                        closerSub.build(),
+                        moveBackAndLowerLift,
+                        fromSub.build(),
+                        liftDownAndOpenClaw,
                         new SequentialAction(
-                                toSample.build(),  // Executes the trajectory toSample
-                                waitAndCloseClaw // Closes the claw after waiting
+                                toSample.build(),  // Executes the trajectory toSample as an Action
+                                waitAndCloseClaw
+
                         ),
+                        new ParallelAction(
+                                lift.liftUp(),
+                                toHangS.build()
+                        ),
+                        moveBackAndLowerLift,
+                        closerSub2.build(),
+                        liftDownAndOpenClaw,
+                        HP.build(),
+                        waitAndCloseClaw,
 
                         new ParallelAction(
-                                lift.liftUp(), // Lift up while moving to HangS
-                                toHangS.build() // Parallel lift and movement to HangS
+                                lift.liftUp(),
+                                toSub2.build()
                         ),
-                        new WaitAction(1000), // Wait after lift
+                        moveBackAndLowerLift,
+                        prepPark.build(),
+                        liftDownAndOpenClaw
 
-                        moveBackAndLowerLift, // Moves back and lowers the lift
-                        closerSub2.build(), // Closer to the sub 2 position
-                        liftDownAndOpenClaw, // Lowers lift and opens the claw
 
-                        HP.build(), // Executes HP actions
-                        waitAndCloseClaw, // Wait and close claw after HP action
 
-                        new ParallelAction(
-                                lift.liftUp(), // Lift up for sub2
-                                toSub2.build() // Moves to Sub2 in parallel with lift
-                        ),
-                        new WaitAction(1000), // Wait after lift
-
-                        moveBackAndLowerLift, // Moves back and lowers the lift
-                        prepPark.build(), // Executes park preparation
-
-                        liftDownAndOpenClaw // Final lift down and open claw
                 )
         );
-
     }
 
     // Other classes (Lift, Claw, WRClaw, HangLift, etc.) remain unchanged
@@ -191,7 +161,7 @@ public class RoadRunnerAuto extends LinearOpMode {
         }
     }
 
-//    public class Lift {
+    //    public class Lift {
 //        private DcMotorEx lift;
 //
 //        public Lift(HardwareMap hardwareMap) {
@@ -298,116 +268,116 @@ public class RoadRunnerAuto extends LinearOpMode {
 //            };
 //        }
 //    }
-public class Lift {
-    private DcMotorEx lift;
-    private boolean encoderReset = false;
+    public class Lift {
+        private DcMotorEx lift;
+        private boolean encoderReset = false;
 
-    public Lift(HardwareMap hardwareMap) {
-        lift = hardwareMap.get(DcMotorEx.class, "liftMotor");
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift.setDirection(DcMotorSimple.Direction.FORWARD);
-        // Reset encoder once during initialization
-        resetEncoder();
-    }
+        public Lift(HardwareMap hardwareMap) {
+            lift = hardwareMap.get(DcMotorEx.class, "liftMotor");
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lift.setDirection(DcMotorSimple.Direction.FORWARD);
+            // Reset encoder once during initialization
+            resetEncoder();
+        }
 
-    private void resetEncoder() {
-        if (!encoderReset) {
-            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            encoderReset = true;
+        private void resetEncoder() {
+            if (!encoderReset) {
+                lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                encoderReset = true;
+            }
+        }
+
+        // Lift up method
+        public Action liftUp() {
+            return new Action() {
+                private boolean initialized = false;
+
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet) {
+                    if (!initialized) {
+                        resetEncoder();
+                        lift.setPower(-1); // Start moving the lift up
+                        initialized = true;
+                    }
+
+                    // Current lift position
+                    double liftPos = lift.getCurrentPosition();
+                    packet.put("liftPos", liftPos);
+                    telemetry.addData("lift Encoder", liftPos);
+                    telemetry.update();
+
+                    // Threshold for stopping (prevent overshooting)
+                    if (liftPos <= -6000) {
+                        lift.setPower(0); // Stop lift movement
+                        return false; // Stop the action
+                    }
+
+                    return true;
+                }
+            };
+        }
+
+        // Lower lift method
+        public Action lowerLift() {
+            return new Action() {
+                private boolean initialized = false;
+
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet) {
+                    if (!initialized) {
+                        resetEncoder();
+                        lift.setPower(1); // Start lowering the lift
+                        initialized = true;
+                    }
+
+                    // Current lift position
+                    double liftPos = lift.getCurrentPosition();
+                    packet.put("liftPos", liftPos);
+                    telemetry.addData("lift Encoder", liftPos);
+                    telemetry.update();
+
+                    // Threshold for stopping (prevent overshooting)
+                    if (liftPos >= -5000) {
+                        lift.setPower(0); // Stop lift movement
+                        return false; // Stop the action
+                    }
+
+                    return true;
+                }
+            };
+        }
+
+        // Another lower lift method (lower to another position)
+        public Action lowerLift2() {
+            return new Action() {
+                private boolean initialized = false;
+
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet) {
+                    if (!initialized) {
+                        resetEncoder();
+                        lift.setPower(1); // Start lowering the lift
+                        initialized = true;
+                    }
+
+                    // Current lift position
+                    double liftPos = lift.getCurrentPosition();
+                    packet.put("liftPos", liftPos);
+                    telemetry.addData("lift Encoder", liftPos);
+                    telemetry.update();
+
+                    // Threshold for stopping (prevent overshooting)
+                    if (liftPos >= -3000) {
+                        lift.setPower(0); // Stop lift movement
+                        return false; // Stop the action
+                    }
+
+                    return true;
+                }
+            };
         }
     }
-
-    // Lift up method
-    public Action liftUp() {
-        return new Action() {
-            private boolean initialized = false;
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                if (!initialized) {
-                    resetEncoder();
-                    lift.setPower(-1); // Start moving the lift up
-                    initialized = true;
-                }
-
-                // Current lift position
-                double liftPos = lift.getCurrentPosition();
-                packet.put("liftPos", liftPos);
-                telemetry.addData("lift Encoder", liftPos);
-                telemetry.update();
-
-                // Threshold for stopping (prevent overshooting)
-                if (liftPos <= -6500) {
-                    lift.setPower(0); // Stop lift movement
-                    return false; // Stop the action
-                }
-
-                return true;
-            }
-        };
-    }
-
-    // Lower lift method
-    public Action lowerLift() {
-        return new Action() {
-            private boolean initialized = false;
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                if (!initialized) {
-                    resetEncoder();
-                    lift.setPower(1); // Start lowering the lift
-                    initialized = true;
-                }
-
-                // Current lift position
-                double liftPos = lift.getCurrentPosition();
-                packet.put("liftPos", liftPos);
-                telemetry.addData("lift Encoder", liftPos);
-                telemetry.update();
-
-                // Threshold for stopping (prevent overshooting)
-                if (liftPos >= -6200) {
-                    lift.setPower(0); // Stop lift movement
-                    return false; // Stop the action
-                }
-
-                return true;
-            }
-        };
-    }
-
-    // Another lower lift method (lower to another position)
-    public Action lowerLift2() {
-        return new Action() {
-            private boolean initialized = false;
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                if (!initialized) {
-                    resetEncoder();
-                    lift.setPower(1); // Start lowering the lift
-                    initialized = true;
-                }
-
-                // Current lift position
-                double liftPos = lift.getCurrentPosition();
-                packet.put("liftPos", liftPos);
-                telemetry.addData("lift Encoder", liftPos);
-                telemetry.update();
-
-                // Threshold for stopping (prevent overshooting)
-                if (liftPos >= -1000) {
-                    lift.setPower(0); // Stop lift movement
-                    return false; // Stop the action
-                }
-
-                return true;
-            }
-        };
-    }
-}
 
 
     // Claw mechanism class
@@ -437,7 +407,7 @@ public class Lift {
             return new Action() {
                 @Override
                 public boolean run(@NonNull TelemetryPacket packet) {
-                    miniClawServo.setPosition(0.80);
+                    miniClawServo.setPosition(0.75);
                     return false;
                 }
             };
@@ -538,7 +508,7 @@ public class Lift {
                         hangRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         hangLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         hangRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                       // sleep(200);
+                        sleep(200);
                         hangLeftMotor.setPower(-1);
                         hangRightMotor.setPower(-1);
                         initialized = true;
@@ -550,7 +520,7 @@ public class Lift {
                     packet.put("hangRightPos", rightPos);
                     telemetry.addData("Left Encoder", leftPos);
                     telemetry.addData("Right Encoder", rightPos);
-                   // telemetry.addData("Right Encoder", rightPos);
+                    // telemetry.addData("Right Encoder", rightPos);
 
                     telemetry.update();
 

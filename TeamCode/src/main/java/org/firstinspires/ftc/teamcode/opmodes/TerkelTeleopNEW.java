@@ -52,9 +52,9 @@ import team25core.TwoStickMechanumControlScheme;
 import team25core.TeleopDriveTask;
 
 
-@TeleOp(name = "CompRobotTeleop")
+@TeleOp(name = "CompRobotTeleop2.0")
 //@Disabled
-public class TerkelTeleop extends StandardFourMotorRobot {
+public class TerkelTeleopNEW extends StandardFourMotorRobot {
 
     private TeleopDriveTask drivetask;
 
@@ -62,19 +62,25 @@ public class TerkelTeleop extends StandardFourMotorRobot {
         CLOCKWISE,
         COUNTERCLOCKWISE,
     }
+
     //added field centric
     private Telemetry.Item buttonTlm;
+    private Telemetry.Item liftTlm;
+
 
     //wheelieServo Positions
 //    private static final double WHEELIE_GRAB = 0.1;
 //    private static final double WHEELIE_RELEASE = 0.99;
-    private static final double WHEELIE_GRAB =0.1;
-    private static final double WHEELIE_RELEASE =0.9;
+    private static final double WHEELIE_GRAB = 0.1;
+    private static final double WHEELIE_RELEASE = 0.9;
     private static final double WHEELIE_STOP = 0;
     private static final double WHEELIE_STOP_A = 0;
 
-
-
+    private static final int LIFT_POSITION_LOW = 500;
+    private static final int LIFT_POSITION_MID = 1500;
+    private static final int LIFT_POSITION_HIGH = 2500;
+    private static final int MIN_LIFT_POSITION = 0;    // Encoder value for the bottom position
+    private static final int MAX_LIFT_POSITION = -9000; // Encoder value for the top position
 
     //wheelieRotationServo Positions
     private static final double WHEELIE_UP = 0.05;
@@ -91,7 +97,6 @@ public class TerkelTeleop extends StandardFourMotorRobot {
     //miniClawServo Positions
     private static final double MINI_CLAW_OPEN = 0.3;
     private static final double MINI_CLAW_CLOSE = 0.75;
-
 
 
     private boolean wasButtonAPressed = false;
@@ -117,9 +122,10 @@ public class TerkelTeleop extends StandardFourMotorRobot {
 
     private DcMotor liftMotor;
     DeadmanMotorTask liftLinearUp;
-    private static final double LIFT_POWER_UP = 0.5;
-    private static final int MAX_LINEAR_HEIGHT = 50;
+    private static final double LIFT_POWER_DOWN = -1;
 
+    private static final double LIFT_POWER_UP = 1;
+    //private static final int MAX_LINEAR_HEIGHT = 5000;
 
 
     private boolean currentlySlow = false;
@@ -140,36 +146,36 @@ public class TerkelTeleop extends StandardFourMotorRobot {
         miniClawServo = hardwareMap.servo.get("miniClawServo");
         wheelieRotationServo = hardwareMap.servo.get("wheelieRotationServo");
         wheelieServo = hardwareMap.servo.get("wheelieServo");
-        gizaClawLeftServo= hardwareMap.servo.get("gizaClawLeftServo");
-        gizaClawRightServo= hardwareMap.servo.get("gizaClawRightServo");
-        horizontalLiftServo=hardwareMap.servo.get("horizontalLiftClawServo");
+        gizaClawLeftServo = hardwareMap.servo.get("gizaClawLeftServo");
+        gizaClawRightServo = hardwareMap.servo.get("gizaClawRightServo");
+        horizontalLiftServo = hardwareMap.servo.get("horizontalLiftClawServo");
 
-        hangLeftMotor = hardwareMap.get(DcMotor.class,"hangLeftMotor");
+        hangLeftMotor = hardwareMap.get(DcMotor.class, "hangLeftMotor");
         hangLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        hangRightMotor = hardwareMap.get(DcMotor.class,"hangRightMotor");
+        hangRightMotor = hardwareMap.get(DcMotor.class, "hangRightMotor");
         hangRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        liftMotor = hardwareMap.get(DcMotor.class,"liftMotor");
+        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+//        liftLinearUp = new DeadmanMotorTask(this, liftMotor, LIFT_POWER_DOWN, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_STICK_UP);
+//
 //        liftLinearUp = new DeadmanMotorTask(this, liftMotor, LIFT_POWER_UP, GamepadTask.GamepadNumber.GAMEPAD_2, DeadmanMotorTask.DeadmanButton.LEFT_STICK_UP);
-//        liftLinearUp.setMaxMotorPosition(MAX_LINEAR_HEIGHT); using encoders to record ticks
-       // backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      //  backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      //  frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-       // frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//       // liftLinearUp.setMaxMotorPosition(MAX_LINEAR_HEIGHT); //using encoders to record ticks
+        // backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //  backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //  frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
 
         wheelieRotationServo.setPosition(WHEELIE_DOWN);
@@ -193,7 +199,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
         TwoStickMechanumControlScheme scheme = new TwoStickMechanumControlScheme(gamepad1);
         drivetrain = new MechanumGearedDrivetrain(motorMap);
         drivetrain.setNoncanonicalMotorDirection();
-       // liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        // liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         // Note we are swapping the rights and lefts in the arguments below
         // since the gamesticks were switched for some reason and we need to do
         // more investigation
@@ -201,8 +207,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
         drivetask = new TeleopDriveTask(this, scheme, frontLeft, frontRight, backLeft, backRight);
     }
 
-    public void initIMU()
-    {
+    public void initIMU() {
         // Retrieve the IMU from the hardware map
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -244,13 +249,22 @@ public class TerkelTeleop extends StandardFourMotorRobot {
             }
         });
 
+
         //Gamepad 2
         this.addTask(liftMotorTask);
         this.addTask(horizontalLiftTask);
+        // Define encoder positions for the lift
+        final int LIFT_POSITION_WALL = -500;
+        final int LIFT_POSITION_RUNG = -6500;
+
 
         this.addTask(new GamepadTask(this, GamepadTask.GamepadNumber.GAMEPAD_2) {
             public void handleEvent(RobotEvent e) {
                 GamepadEvent gamepadEvent = (GamepadEvent) e;
+                int liftPosition = liftMotor.getCurrentPosition(); // Get the current encoder position
+                telemetry.addData("Lift Encoder Position", liftPosition);
+                telemetry.update(); // Refresh the telemetry display
+
                 switch (gamepadEvent.kind) {
                     case DPAD_UP_DOWN:
                         // If slow, then normal speed. If fast, then slow speed of motors.
@@ -283,7 +297,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
                         break;
                     case BUTTON_A_UP:
                         hangRightMotor.setPower(0);
-                        hangLeftMotor.setPower(0);                     hangLeftMotor.setPower(0);
+                        hangLeftMotor.setPower(0);
 
                         break;
                     case BUTTON_Y_UP:
@@ -315,19 +329,36 @@ public class TerkelTeleop extends StandardFourMotorRobot {
                         buttonTlm.setValue("Not Moving");
                         break;
                     case BUTTON_X_DOWN:
-                        // set claw's position to 0
-                        gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_OPEN);
-                        gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
+                        moveLiftToPosition(LIFT_POSITION_RUNG);
 
                         break;
+
                     case BUTTON_B_DOWN:
-                        // set claw's position to 1
-                        gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
-                        gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+                        moveLiftToPosition(LIFT_POSITION_WALL);
+
                         break;
 
 
                 }
+            }
+
+            private static final int MIN_LIFT_POSITION = -9000; // Highest lift position
+            private static final int MAX_LIFT_POSITION = 0;
+
+            private void moveLiftToPosition(int targetPosition) {
+                targetPosition = Math.max(MIN_LIFT_POSITION, Math.min(targetPosition, MAX_LIFT_POSITION));
+
+                liftMotor.setTargetPosition(targetPosition);
+                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftMotor.setPower(targetPosition > liftMotor.getCurrentPosition() ? LIFT_POWER_UP : LIFT_POWER_DOWN);
+
+                while (liftMotor.isBusy()) {
+                }
+                int currentPosition = liftMotor.getCurrentPosition();
+                telemetry.addData("Current Position", currentPosition);
+                liftMotor.setPower(0);
+                liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             }
         });
     }

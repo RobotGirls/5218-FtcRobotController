@@ -11,54 +11,148 @@ public class MeepMeepTesting {
         MeepMeep meepMeep = new MeepMeep(800);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-               .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+
+        // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 17)
                 .build();
-                 myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-8, 65,300 ))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(8, 65,Math.toRadians(2) ))
+                .strafeTo(new Vector2d(45,56))
+                .turn(0.7)
+                .strafeTo(new Vector2d(52,55))
+                .strafeTo(new Vector2d(38,10))
+                .build());
 
-                // raise lift stimiltanulous
-                .lineToY(35)
 
-                //lower lift before this
-                .lineToY(60)
-                //open claw after
+//        Pose2d initialPose = new Pose2d(-8, 65, 300);
+////               .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 17)
+////                .build();
+//
+////
+
+//                 .lineToY(44)
+//
+//                 .lineToY(40)
+//
+//                 .lineToY(55)
+//
+//                 .strafeTo(new Vector2d(-42, 8))
+//                 .strafeTo(new Vector2d(-42, 60))
+//                 .strafeTo(new Vector2d(-42, 8))
+//                 .strafeTo(new Vector2d(-52, 8))
+//                 .strafeTo(new Vector2d(-52, 60))
+//                 .strafeTo(new Vector2d(-52, 35))
+//
+//                 .turn(3.2)
+//                 .lineToY(58)
+//                 .strafeTo(new Vector2d(-8, 44))
+//                 .turn(-3.2)
+//                 .lineToY(35)
+//
 //
 
-                .strafeTo(new Vector2d(-42,8))
-                .strafeTo(new Vector2d(-42,60)) // Adjusted for consistency
-                .strafeTo(new Vector2d(-42,8))
+//          // raise lift stimiltanulous
+//                .lineToY(35)
+//
+//           //lower lift before this
+//                .lineToY(60)
+//           //open claw after
+//
+////lowwer lift
+//                .strafeTo(new Vector2d(-42,8))
+//                .strafeTo(new Vector2d(-42,60)) // Adjusted for consistency
+//                .strafeTo(new Vector2d(-42,8))
+//
+//
+//                .strafeTo(new Vector2d(-52,8))
+//                .strafeTo(new Vector2d(-52,60))
+//                .strafeTo(new Vector2d(-52,35))
+//
+//                .turn(3.2)
+//
+//                .strafeTo(new Vector2d(-52,58))
+//
+//
+//                .strafeTo(new Vector2d(-8,38))
+//                .turn(-3.2)
+//                .strafeTo(new Vector2d(-8,35))
+//                .strafeTo(new Vector2d(-8,42))
+//
+//
+//                .strafeTo(new Vector2d(-54,54))
+//                .turn(3.2)
+//                .strafeTo(new Vector2d(-54,56))
+//                .turn(-3.2)
+//
+//                .strafeTo(new Vector2d(-8,38))
+//                .strafeTo(new Vector2d(-8,54))
+//
+//
+//                .strafeTo(new Vector2d(-60.5,8))
+//                .strafeTo(new Vector2d(-60.5,58))
 
-                .strafeTo(new Vector2d(-52,8))
-                .strafeTo(new Vector2d(-52,60))
-                .strafeTo(new Vector2d(-52,35))
-//lowwer lift
-                .turn(3.2)
-                .strafeTo(new Vector2d(-52,58))
-//close claw then raise liftt
-                .strafeTo(new Vector2d(-8,38))
-                .turn(-3.2)
-                .strafeTo(new Vector2d(-8,35))
-                         //lower lift
-                .strafeTo(new Vector2d(-8,42))
-                         //open claw
 
 
-                .strafeTo(new Vector2d(-54,54))
-                .turn(3.2)
-                         //close claw
-                .strafeTo(new Vector2d(-54,56))
-                         //raise lift
-                .turn(-3.2)
-
-                .strafeTo(new Vector2d(-8,38))
-                         //lower lift
-                .strafeTo(new Vector2d(-8,54))
-                         //open claw
-                         //lower lift
 
 
-                .strafeTo(new Vector2d(-60.5,8))
-                .strafeTo(new Vector2d(-60.5,58))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//                 myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-8, 65,300 ))
+//
+//                // raise lift stimiltanulous
+//                .lineToY(35)
+//
+//                //lower lift before this
+//                .lineToY(60)
+//                //open claw after
+////
+//
+//                .strafeTo(new Vector2d(-42,8))
+//                .strafeTo(new Vector2d(-42,60)) // Adjusted for consistency
+//                .strafeTo(new Vector2d(-42,8))
+//
+//                .strafeTo(new Vector2d(-52,8))
+//                .strafeTo(new Vector2d(-52,60))
+//                .strafeTo(new Vector2d(-52,35))
+////lowwer lift
+//                .turn(3.2)
+//                .strafeTo(new Vector2d(-52,58))
+////close claw then raise liftt
+//                .strafeTo(new Vector2d(-8,38))
+//                .turn(-3.2)
+//                .strafeTo(new Vector2d(-8,35))
+//                         //lower lift
+//                .strafeTo(new Vector2d(-8,42))
+//                         //open claw
+//
+//
+//                .strafeTo(new Vector2d(-54,54))
+//                .turn(3.2)
+//                         //close claw
+//                .strafeTo(new Vector2d(-54,56))
+//                         //raise lift
+//                .turn(-3.2)
+//
+//                .strafeTo(new Vector2d(-8,38))
+//                         //lower lift
+//                .strafeTo(new Vector2d(-8,54))
+//                         //open claw
+//                         //lower lift
+//
+//
+//                .strafeTo(new Vector2d(-60.5,8))
+//                .strafeTo(new Vector2d(-60.5,58))
 
 
 
@@ -66,8 +160,8 @@ public class MeepMeepTesting {
 
 
 //sample auto
-//                .setConstraints(60, 60, Math.toRadians(360), Math.toRadians(360), 15)
-//                .build();
+                //.setConstraints(60, 60, Math.toRadians(360), Math.toRadians(360), 15)
+              //  .build();
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-8, -65, Math.toRadians(180) ))
 //                .strafeTo(new Vector2d(-52,-56))
 //
@@ -77,16 +171,22 @@ public class MeepMeepTesting {
 //                //add a forward?
 //                .turn(-2.3)
 //                .strafeTo(new Vector2d(-45,-28))
-//                .strafeTo(new Vector2d(-52,-56))
-//                .turn(2.3)
-//                .strafeTo(new Vector2d(-54,-56))
-//                .turn(-2.3)
-//                .strafeTo(new Vector2d(-56,-28))
+//
 //                .strafeTo(new Vector2d(-52,-56))
 //                .turn(2.3)
 //                .strafeTo(new Vector2d(-54,-56))
 //
-
+//
+//                .turn(-2.3)
+//                .strafeTo(new Vector2d(-56,-28))
+//
+//                .strafeTo(new Vector2d(-52,-56))
+//                .turn(2.3)
+//                .strafeTo(new Vector2d(-54,-56))
+////                .turn(-1)
+////                .strafeTo(new Vector2d(-56,-28))
+//
+//
 
 
 
@@ -152,14 +252,14 @@ public class MeepMeepTesting {
 // blue specimen auto
         // myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-8, 65,300 ))
 
-                // raise lift stimiltanulous
+              //  // raise lift stimiltanulous
 //                .lineToY(35)
 
-                //lower lift before this
+             //   //lower lift before this
 //                .lineToY(60)
-                //open claw after
+             //   //open claw after
 //
-//lowwer lift
+////lowwer lift
 //                .strafeTo(new Vector2d(-42,8))
 //                .strafeTo(new Vector2d(-42,60)) // Adjusted for consistency
 //                .strafeTo(new Vector2d(-42,8))
@@ -206,7 +306,7 @@ public class MeepMeepTesting {
 
 
 
-                .build());
+//                .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
