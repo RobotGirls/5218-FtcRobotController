@@ -43,11 +43,15 @@ public class AdvanceRedBucketAuto extends Robot {
 
 
     //gizaClawLeftServo Positions
-    private static final double GIZA_CLAW_LEFT_OPEN = 0.3;
+    private static final double GIZA_CLAW_LEFT_OPEN = 0.2;
     private static final double GIZA_CLAW_LEFT_CLOSE = 0.7;
 
+    //miniClawServo Positions
+    private static final double MINI_CLAW_OPEN = 0.7;
+    private static final double MINI_CLAW_CLOSE = 0.7;
+
     //gizaClawRightServo Positions
-    private static final double GIZA_CLAW_RIGHT_OPEN = 0.7;
+    private static final double GIZA_CLAW_RIGHT_OPEN = 0.8;
     private static final double GIZA_CLAW_RIGHT_CLOSE = 0.1;
     //wheelieServo Positions
     private static final double WHEELIE_GRAB = 0.1;
@@ -57,13 +61,16 @@ public class AdvanceRedBucketAuto extends Robot {
     private Servo gizaClawLeftServo;
     private Servo wheelieServo;
 
+    private Servo miniClawServo;
+
+
     public String position;
     private DeadReckonPath outtakePath;
 
 
 
     public static double LIFT_DISTANCE = 125;
-    public static double LIFT_SPEED = .6;
+    public static double LIFT_SPEED = .9;
     public static double LOWER_DISTANCE = 80;
     public static double LOWER_LIFT_SPEED = -0.6;
 
@@ -114,13 +121,14 @@ public class AdvanceRedBucketAuto extends Robot {
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("infront of submersible");
                     lowerLiftToPlaceSpecimen();
+                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_OPEN);
+                    gizaClawLeftServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
                     driveToBar(driveToBarPath);
                 }
             }
         });
     }
     public void driveToBar(DeadReckonPath driveToBarPath) {
-        //lowerLiftToPlaceSpecimen();
         whereAmI.setValue("in driveToSignalZone");
         RobotLog.i("drives straight onto the launch line");
         //delay(200);
@@ -131,7 +139,8 @@ public class AdvanceRedBucketAuto extends Robot {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("infront of submersible");
-                    //lowerLiftToPlaceSpecimen();
+                    miniClawServo.setPosition(MINI_CLAW_CLOSE);
+                    driveToObservation(driveToObservationPath);
                 }
             }
         });
@@ -147,7 +156,7 @@ public class AdvanceRedBucketAuto extends Robot {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("drive to observation");
-                    delay(300);
+                  //  delay(300);
                     lowerLiftToPlaceSpecimen();
                     //wheelieServo.setPosition(WHEELIE_RELEASE);
                     // gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
@@ -176,12 +185,13 @@ public class AdvanceRedBucketAuto extends Robot {
 
     public void liftToPlacePixelOnBoard() {
         this.addTask(new DeadReckonTask(this, liftToBoardPath, liftMotorDrivetrain) {
+
             @Override
             public void handleEvent(RobotEvent e) {
+                driveToObservation(driveToObservationPath);
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("liftedToBoard");
-                    driveToObservation(driveToObservationPath);
                 }
             }
         });
@@ -215,7 +225,7 @@ public class AdvanceRedBucketAuto extends Robot {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         gizaClawLeftServo = hardwareMap.servo.get("gizaClawLeftServo");
         gizaClawRightServo = hardwareMap.servo.get("gizaClawRightServo");
-
+        miniClawServo = hardwareMap.servo.get("miniClawServo");
 
 
         // instantiating FourWheelDirectDrivetrain
@@ -224,8 +234,9 @@ public class AdvanceRedBucketAuto extends Robot {
         //sets motors position to 0
         drivetrain.resetEncoders();
 
-//        gizaClawRightServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
-//        gizaClawLeftServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+        gizaClawRightServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
+        gizaClawLeftServo.setPosition(GIZA_CLAW_RIGHT_CLOSE);
+        miniClawServo.setPosition(MINI_CLAW_OPEN);
 //     gizaClawRightServo.setPosition(GIZA_CLAW_LEFT_CLOSE);
         // wheelieServo.setPosition(WHEELIE_GRAB);
 
