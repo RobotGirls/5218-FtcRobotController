@@ -20,12 +20,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
 
-@Autonomous(name = "RRSampleBLUEAuto")
-public class RRSampleAuto extends LinearOpMode {
+@Autonomous(name = "RRSampleREDAuto")
+public class RRREDSAMPLE extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d initialPose = new Pose2d(8, 65, Math.toRadians(2));
+        Pose2d initialPose = new Pose2d(-8, -65, Math.toRadians(180));
         Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
 
         Lift lift = new Lift(hardwareMap);
@@ -34,79 +34,77 @@ public class RRSampleAuto extends LinearOpMode {
         HangLift hangLift = new HangLift(hardwareMap);
 
 
-       // Action waitAndCloseClaw = new SequentialAction( claw.closeClaw());
+        // Action waitAndCloseClaw = new SequentialAction( claw.closeClaw());
 
         // Correct the chaining of the toSample trajectory, and use .build() to convert TrajectoryActionBuilder to Action
         TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
-                .strafeTo(new Vector2d(28,50) )
-                .turn(0.8 );
+                .strafeTo(new Vector2d(-28,-58) )
+                .turn(-0.9 );
 
 
         //open claw after toBasket
         TrajectoryActionBuilder CloserBasket = toBasket.endTrajectory().fresh()
-                .strafeTo(new Vector2d(32,55));
+                .strafeTo(new Vector2d(-32,-60));
 //        TrajectoryActionBuilder CloserBasket2 = toBasket2.endTrajectory().fresh()
 //                .strafeTo(new Vector2d(30,60));
 //        TrajectoryActionBuilder CloserBasket3 = toBasket.endTrajectory().fresh()
 //                .strafeTo(new Vector2d(30,60));
         TrajectoryActionBuilder awayBasket = CloserBasket.endTrajectory().fresh()
-                .lineToY(60);
+                .lineToY(-55);
 
         TrajectoryActionBuilder toSample = CloserBasket.fresh()
-                .strafeTo(new Vector2d(32,45))
-                .turn(-2.4);
-              //  .lineToY(48);
+                .strafeTo(new Vector2d(-29,-50))
+                .turn(-2.55);
+        //  .lineToY(48);
         //lower lift stimultanlous with toSample
         //close claw at the end of to Sample
 
         TrajectoryActionBuilder closerSample = toSample.fresh()
-                .strafeTo(new Vector2d(33,30))
-                .strafeTo(new Vector2d(33,28));
-
+                .lineToY(-45);
 
 
         TrajectoryActionBuilder toBasket2 = closerSample.endTrajectory().fresh()
 //                .lineToY(50)
-                .turn(2.5 )
-                .strafeTo(new Vector2d(28,50) );
-              //  .turn(0.8 );
+                .turn(2.6 )
+                .strafeTo(new Vector2d(-28,-60) );
+        //  .turn(0.8 );
 
         TrajectoryActionBuilder CloserBasket2 = toBasket2.endTrajectory().fresh()
-                .strafeTo(new Vector2d(32,55));
+                .strafeTo(new Vector2d(-32,-62));
 
         TrajectoryActionBuilder awayBasket2 = CloserBasket2.endTrajectory().fresh()
-                .lineToY(50);
+                .lineToY(-50);
 
         //open claw at the end of toBasket 2
         // lift the lift up stimutanously with to Basket2
 
         TrajectoryActionBuilder toSample2 = awayBasket2.endTrajectory().fresh()
-                .strafeTo(new Vector2d(33,40))
+                .strafeTo(new Vector2d(-33,-40))
                 .turn(-2.4)
-                .lineToY(38.25);
+                .lineToY(-38.25);
         //close claw after toSample2
         //lower lift stimutanouslytoSample2
 
         TrajectoryActionBuilder toBasket3 = toSample2.endTrajectory().fresh()
-                .lineToY(46)
+                .lineToY(-46)
                 .turn(2.45)
-                .strafeTo(new Vector2d(55,53));
+                .strafeTo(new Vector2d(-55,-53));
         //open claw
         //lift lift stimutanously
         TrajectoryActionBuilder CloserBasket3 = toBasket3.endTrajectory().fresh()
-                .strafeTo(new Vector2d(30,58.75));
+                .strafeTo(new Vector2d(-30,-58.75));
 
         TrajectoryActionBuilder awayBasket3 = CloserBasket3.endTrajectory().fresh()
-                .lineToY(50);
+                .lineToY(-50);
 
 //        TrajectoryActionBuilder toSample3 = awayBasket3.endTrajectory().fresh()
 //                .strafeTo(new Vector2d(5,24));
 
 
         TrajectoryActionBuilder toPark = awayBasket2.endTrajectory().fresh()
-                .strafeTo(new Vector2d(15,-20))
-             //   .turn(2.5)
-                .lineToX(-2);
+                .strafeTo(new Vector2d(15,20));
+                //   .turn(2.5)
+               // .lineToX(-2);
 
 
 
@@ -127,11 +125,11 @@ public class RRSampleAuto extends LinearOpMode {
 
         Action toHP = toSample.build(); // Ensure this uses the correct build method
         Action waitAndCloseClaw = new SequentialAction(new WaitAction(500), claw.closeClaw());
-        Action waitAndOpenClaw = new SequentialAction(new WaitAction(2000), claw.openClaw());
+        Action waitAndOpenClaw = new SequentialAction(new WaitAction(1000), claw.openClaw());
         Action closeClawAndWait = new SequentialAction(claw.closeClaw(),new WaitAction(1500));
 
         //Actions.runBlocking(claw.closeClaw);
-        Action waitAndOpenClaw1 = new SequentialAction(new WaitAction(2000), claw.openClaw());
+        Action waitAndOpenClaw1 = new SequentialAction(new WaitAction(1000), claw.openClaw());
 
 
         // Running Actions
@@ -158,7 +156,7 @@ public class RRSampleAuto extends LinearOpMode {
                         waitAndCloseClaw,
                         new WaitAction(200),
                         new ParallelAction(
-                              //  new WaitAction(2000),// Parallel actions: move to basket2 and lift up
+                                //  new WaitAction(2000),// Parallel actions: move to basket2 and lift up
                                 toBasket2.build(),
                                 wrClaw.upWRClaw()
                         ),
@@ -167,14 +165,14 @@ public class RRSampleAuto extends LinearOpMode {
                         waitAndOpenClaw1,// Close the basket after moving to basket
                         new WaitAction(1000),
                         awayBasket.build(),
-//                        new ParallelAction(
-//                                toPark.build(),
-//// Parallel actions: move to sample2 and lower lift
-////                                toSample2.build(),
-////                                wrClaw.downWRClaw(),
-//                                lift.lowerLift()
-//
-//                        ),
+                        new ParallelAction(
+                                toPark.build(),
+// Parallel actions: move to sample2 and lower lift
+//                                toSample2.build(),
+//                                wrClaw.downWRClaw(),
+                                lift.lowerLift()
+
+                        ),
 //                        waitAndCloseClaw,
 //                        new WaitAction(1500), // Wait after lift
 //                        new ParallelAction(                // Parallel actions: move to basket3 and lift up
