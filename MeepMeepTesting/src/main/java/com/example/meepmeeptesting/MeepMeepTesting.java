@@ -21,52 +21,55 @@ public class MeepMeepTesting {
 
                 .lineToY(36)
                 //raise lift
-                .lineToY(45)
+
                 //lower lift and open claw
-                .splineTo(new Vector2d(-35,35),-300)
+                .strafeTo(new Vector2d(-35,35))
                 .strafeTo(new Vector2d(-35,10))
                 .strafeTo(new Vector2d(-45,10))
                 .strafeTo(new Vector2d(-45,58))
-                .lineToY(45)
-                .turn(3.2)
-                .lineToY(60)
+               // .lineToY(45)
+                //rotate arm back
+                .waitSeconds(0.2)
+                        // .lineToY(60)
                 //close claw
-                .waitSeconds(0.09)
-                .lineToY(58)
-                .splineTo(new Vector2d(0,48),-300)
-                //raise lift
+
+                .waitSeconds(0.2)
+//                .lineToY(58)
+                // raise lift
+                //rotate arm front
+                .splineTo(new Vector2d(0,48),300)
                 .lineToY(36)
+                //lower lift
                 .lineToY(45)
-//                .waitSeconds(0.5)
+//                //open claw
+             .splineTo(new Vector2d(-40,58),-300)
+//                //rotate arm back
+                .strafeTo(new Vector2d(-2,35))
+//                //close claw
+//                // raise lift
+//                //rotate arm front
+//               // .lineToY(36)
+                .strafeTo(new Vector2d(-2,45))
 //                //lower lift
-//                .splineTo(new Vector2d(-50,50),300)
-//                .lineToY(58)                                       2 specimines
-                .splineTo(new Vector2d(-40,36),300)
-                .splineTo(new Vector2d(-55,10),-300)
-                .strafeTo(new Vector2d(-55,58))
-                .lineToY(45)
-                .turn(3.1)
-                .lineToY(60)
-                .waitSeconds(0.09)
-                .lineToY(58)
-                .splineTo(new Vector2d(0,50),-300)
-                //raise lift
-                .lineToY(36)
-                .lineToY(45)
-                .splineTo(new Vector2d(-50,55),-300)
+//                //open claw
+                .splineTo(new Vector2d(-40,60),-300)
 
-
-
-
-
-
-
-
-
-
-
-
-
+                //2 specimines
+//                .splineTo(new Vector2d(-35,36),-300)
+//                .strafeTo(new Vector2d(-35,10))
+//                .strafeTo(new Vector2d(-55,10))
+//                .strafeTo(new Vector2d(-55,58))
+//                .lineToY(45)
+//                .waitSeconds(0.2)
+//                .lineToY(60)
+//                .waitSeconds(0.2)
+//                .lineToY(58)
+//                .splineTo(new Vector2d(0,50),300)
+//                //raise lift
+//                .lineToY(36)
+//                .lineToY(45)
+//                .splineTo(new Vector2d(-50,45),-300)
+//                .lineToY(58)
 
         // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
 //                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 17)

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -10,23 +13,32 @@ public class ContinuousServoTask extends RobotTask
 
 {
     protected Robot robot;
-    protected Servo servo;
+    protected CRServo servo;
+
     public double right;
     public double left;
 
     public double ceiling;
 
     public boolean slow = false;
+    public boolean clockwise = false;
     public boolean useRightJoystick = false;
     public boolean ceilingOn = false;
 
     public double slowMultiplier = 0.5;
 
-    public ContinuousServoTask(Robot robot, Servo servo, boolean useRightJoystick) {
+    public ContinuousServoTask(Robot robot, CRServo servo, boolean useRightJoystick) {
         super(robot);
         this.servo = servo;
         this.robot = robot;
         this.useRightJoystick = useRightJoystick;
+    }
+    public ContinuousServoTask(Robot robot, CRServo servo, boolean useRightJoystick, boolean myClockwise) {
+        super(robot);
+        this.servo = servo;
+        this.robot = robot;
+        this.useRightJoystick = useRightJoystick;
+        this.clockwise = myClockwise;
     }
     private void getJoystick()
     {
@@ -77,9 +89,9 @@ public class ContinuousServoTask extends RobotTask
         double servoPosition;
 
         if (Math.abs(joystickValue) < breakPosition) {
-            servoPosition = 0.5;
+            servoPosition = 0;
         } else {
-            servoPosition = 0.5 + (joystickValue * 0.5);
+            servoPosition = (joystickValue);
         }
 
         if (ceilingOn) {
@@ -89,8 +101,14 @@ public class ContinuousServoTask extends RobotTask
                 servoPosition = 1 - ceiling;
             }
         }
+        //telemetry.addData("ContinuousServoTask Servo Position", servoPosition);
 
-        servo.setPosition(servoPosition);
+        //servo.setPosition(servoPosition);
+        if (clockwise) {
+            servoPosition=(-servoPosition);
+        }
+
+        servo.setPower(servoPosition);
 
         return false;
 
