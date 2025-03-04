@@ -45,7 +45,7 @@ public class ContinuousServoTask extends RobotTask
         Gamepad gamepad = robot.gamepad2;
 
         left = -gamepad.left_stick_y * slowMultiplier;
-        right = -gamepad.right_stick_y * slowMultiplier;
+        right = gamepad.right_stick_y * slowMultiplier;
     }
 
     public void slowDown(boolean slow)
@@ -85,11 +85,12 @@ public class ContinuousServoTask extends RobotTask
         getJoystick();
         double joystickValue = useRightJoystick? right: left;
 
-        double breakPosition = 0.05;
+        double breakPosition = 0;
         double servoPosition;
 
         if (Math.abs(joystickValue) < breakPosition) {
             servoPosition = 0;
+            servo.setPower(servoPosition);
         } else {
             servoPosition = (joystickValue);
         }
@@ -109,6 +110,7 @@ public class ContinuousServoTask extends RobotTask
         }
 
         servo.setPower(servoPosition);
+
 
         return false;
 

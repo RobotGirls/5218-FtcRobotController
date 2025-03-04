@@ -19,40 +19,62 @@ public class MeepMeepTesting {
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-8, 65, 300))
                 // ^ positions for specimen auto
 
-                .lineToY(36)
-                //raise lift
+                .lineToY(53)
+                .lineToY(55)
+                .strafeTo(new Vector2d(-35, 40))
+                .strafeTo(new Vector2d(-35, 30))
+                .strafeTo(new Vector2d(-45, 30))
+                .strafeTo(new Vector2d(-45, 62))
+                .strafeTo(new Vector2d(0, 40))
+                //.strafeTo(new Vector2d(0, 45))
+                .strafeTo(new Vector2d(-39, 62))
+                .strafeTo(new Vector2d(0, 40))
+                .strafeTo(new Vector2d(-39, 62))
+                .strafeTo(new Vector2d(-39, 62))
 
-                //lower lift and open claw
-                .strafeTo(new Vector2d(-35,35))
-                .strafeTo(new Vector2d(-35,10))
-                .strafeTo(new Vector2d(-45,10))
-                .strafeTo(new Vector2d(-45,58))
-               // .lineToY(45)
+
+
+
+
+
+
+
+//                .lineToY(36)
+//                //raise lift
+//
+//                //lower lift and open claw
+//                .strafeTo(new Vector2d(-35,35))
+//                .strafeTo(new Vector2d(-35,10))
+//                .strafeTo(new Vector2d(-45,10))
+//                .strafeTo(new Vector2d(-45,58))
+//
+//                .strafeTo(new Vector2d(-2, 44))
+//                .strafeTo(new Vector2d(-2, 40))// .lineToY(45)
                 //rotate arm back
-                .waitSeconds(0.2)
-                        // .lineToY(60)
-                //close claw
-
-                .waitSeconds(0.2)
-//                .lineToY(58)
-                // raise lift
-                //rotate arm front
-                .splineTo(new Vector2d(0,48),300)
-                .lineToY(36)
-                //lower lift
-                .lineToY(45)
-//                //open claw
-             .splineTo(new Vector2d(-40,58),-300)
-//                //rotate arm back
-                .strafeTo(new Vector2d(-2,35))
+//                .waitSeconds(0.2)
+//                        // .lineToY(60)
 //                //close claw
+//
+//                .waitSeconds(0.2)
+////                .lineToY(58)
 //                // raise lift
 //                //rotate arm front
-//               // .lineToY(36)
-                .strafeTo(new Vector2d(-2,45))
+//                .splineTo(new Vector2d(0,48),300)
+//                .lineToY(36)
 //                //lower lift
-//                //open claw
-                .splineTo(new Vector2d(-40,60),-300)
+//                .lineToY(45)
+////                //open claw
+//             .splineTo(new Vector2d(-40,58),-300)
+////                //rotate arm back
+//                .strafeTo(new Vector2d(-2,35))
+////                //close claw
+////                // raise lift
+////                //rotate arm front
+////               // .lineToY(36)
+//                .strafeTo(new Vector2d(-2,45))
+////                //lower lift
+////                //open claw
+//                .splineTo(new Vector2d(-40,60),-300)
 
                 //2 specimines
 //                .splineTo(new Vector2d(-35,36),-300)

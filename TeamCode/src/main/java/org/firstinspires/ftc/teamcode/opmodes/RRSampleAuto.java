@@ -28,23 +28,22 @@ public class RRSampleAuto extends LinearOpMode {
         Pose2d initialPose = new Pose2d(8, 65, Math.toRadians(2));
         Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
 
-        Lift lift = new Lift(hardwareMap);
+       TwoLift lift = new TwoLift(hardwareMap);
         Claw claw = new Claw(hardwareMap);
         WRClaw wrClaw = new WRClaw(hardwareMap);
         HangLift hangLift = new HangLift(hardwareMap);
-
-
-       // Action waitAndCloseClaw = new SequentialAction( claw.closeClaw());
+        ArmServo armServo = new ArmServo(hardwareMap);
+        // Action waitAndCloseClaw = new SequentialAction( claw.closeClaw());
 
         // Correct the chaining of the toSample trajectory, and use .build() to convert TrajectoryActionBuilder to Action
         TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
-                .strafeTo(new Vector2d(28,50) )
-                .turn(0.8 );
+                .strafeTo(new Vector2d(28, 50))
+                .turn(0.8);
 
 
         //open claw after toBasket
         TrajectoryActionBuilder CloserBasket = toBasket.endTrajectory().fresh()
-                .strafeTo(new Vector2d(32,55));
+                .strafeTo(new Vector2d(32, 55));
 //        TrajectoryActionBuilder CloserBasket2 = toBasket2.endTrajectory().fresh()
 //                .strafeTo(new Vector2d(30,60));
 //        TrajectoryActionBuilder CloserBasket3 = toBasket.endTrajectory().fresh()
@@ -53,26 +52,25 @@ public class RRSampleAuto extends LinearOpMode {
                 .lineToY(60);
 
         TrajectoryActionBuilder toSample = CloserBasket.fresh()
-                .strafeTo(new Vector2d(32,45))
+                .strafeTo(new Vector2d(32, 45))
                 .turn(-2.4);
-              //  .lineToY(48);
+        //  .lineToY(48);
         //lower lift stimultanlous with toSample
         //close claw at the end of to Sample
 
         TrajectoryActionBuilder closerSample = toSample.fresh()
-                .strafeTo(new Vector2d(33,30))
-                .strafeTo(new Vector2d(33,28));
-
+                .strafeTo(new Vector2d(33, 30))
+                .strafeTo(new Vector2d(33, 28));
 
 
         TrajectoryActionBuilder toBasket2 = closerSample.endTrajectory().fresh()
 //                .lineToY(50)
-                .turn(2.5 )
-                .strafeTo(new Vector2d(28,50) );
-              //  .turn(0.8 );
+                .turn(2.5)
+                .strafeTo(new Vector2d(28, 50));
+        //  .turn(0.8 );
 
         TrajectoryActionBuilder CloserBasket2 = toBasket2.endTrajectory().fresh()
-                .strafeTo(new Vector2d(32,55));
+                .strafeTo(new Vector2d(32, 55));
 
         TrajectoryActionBuilder awayBasket2 = CloserBasket2.endTrajectory().fresh()
                 .lineToY(50);
@@ -81,7 +79,7 @@ public class RRSampleAuto extends LinearOpMode {
         // lift the lift up stimutanously with to Basket2
 
         TrajectoryActionBuilder toSample2 = awayBasket2.endTrajectory().fresh()
-                .strafeTo(new Vector2d(33,40))
+                .strafeTo(new Vector2d(33, 40))
                 .turn(-2.4)
                 .lineToY(38.25);
         //close claw after toSample2
@@ -90,11 +88,11 @@ public class RRSampleAuto extends LinearOpMode {
         TrajectoryActionBuilder toBasket3 = toSample2.endTrajectory().fresh()
                 .lineToY(46)
                 .turn(2.45)
-                .strafeTo(new Vector2d(55,53));
+                .strafeTo(new Vector2d(55, 53));
         //open claw
         //lift lift stimutanously
         TrajectoryActionBuilder CloserBasket3 = toBasket3.endTrajectory().fresh()
-                .strafeTo(new Vector2d(30,58.75));
+                .strafeTo(new Vector2d(30, 58.75));
 
         TrajectoryActionBuilder awayBasket3 = CloserBasket3.endTrajectory().fresh()
                 .lineToY(50);
@@ -104,31 +102,21 @@ public class RRSampleAuto extends LinearOpMode {
 
 
         TrajectoryActionBuilder toPark = awayBasket2.endTrajectory().fresh()
-                .strafeTo(new Vector2d(15,-20))
-             //   .turn(2.5)
+                .strafeTo(new Vector2d(15, -20))
+                //   .turn(2.5)
                 .lineToX(-2);
 
 
-
-
-
-
-
-
-
-
-
-
         // Actions
-        Action hangLiftUp = hangLift.hangLiftUp();
+        //  Action hangLiftUp = hangLift.hangLiftUp();
         Action liftAndOpenClaw = new SequentialAction(lift.liftUp(), claw.openClaw());
         Action moveBackAndLowerLift = new SequentialAction(lift.lowerLift());
-        Action liftDownAndOpenClaw = new SequentialAction( claw.openClaw(),lift.lowerLift2());
+     //   Action liftDownAndOpenClaw = new SequentialAction(claw.openClaw(), lift.lowerLift2());
 
         Action toHP = toSample.build(); // Ensure this uses the correct build method
         Action waitAndCloseClaw = new SequentialAction(new WaitAction(500), claw.closeClaw());
         Action waitAndOpenClaw = new SequentialAction(new WaitAction(2000), claw.openClaw());
-        Action closeClawAndWait = new SequentialAction(claw.closeClaw(),new WaitAction(1500));
+        Action closeClawAndWait = new SequentialAction(claw.closeClaw(), new WaitAction(1500));
 
         //Actions.runBlocking(claw.closeClaw);
         Action waitAndOpenClaw1 = new SequentialAction(new WaitAction(2000), claw.openClaw());
@@ -140,33 +128,115 @@ public class RRSampleAuto extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        hangLiftUp,                        // Lift up the hang first
+                        hangLift.hangLiftUp(),
+                        wrClaw.upWRClaw(),// Perform parallel actions: move to basket and lift up
                         new ParallelAction(
-                                wrClaw.upWRClaw(),// Perform parallel actions: move to basket and lift up
+                               // wrClaw.upWRClaw(),// Perform parallel actions: move to basket and lift up
                                 toBasket.build(),
                                 lift.liftUp()
                         ),
                         CloserBasket.build(),
-                        waitAndOpenClaw,
-                        awayBasket.build(),
+                        armServo.armFront(),
+                        claw.openClaw()
 
 
-                        toSample.build(),
-                        lift.lowerLift(),
-                        wrClaw.downWRClaw(),
-                        closerSample.build(),
-                        waitAndCloseClaw,
-                        new WaitAction(200),
-                        new ParallelAction(
-                              //  new WaitAction(2000),// Parallel actions: move to basket2 and lift up
-                                toBasket2.build(),
-                                wrClaw.upWRClaw()
-                        ),
-                        lift.liftUp(),
-                        CloserBasket2.build(),
-                        waitAndOpenClaw1,// Close the basket after moving to basket
-                        new WaitAction(1000),
-                        awayBasket.build(),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//                        awayBasket.build(),
+//
+//
+//                        toSample.build(),
+//                        lift.lowerLift(),
+//                        wrClaw.downWRClaw(),
+//                        closerSample.build(),
+//                        waitAndCloseClaw,
+//                        new WaitAction(200),
+//                        new ParallelAction(
+//                                //  new WaitAction(2000),// Parallel actions: move to basket2 and lift up
+//                                toBasket2.build(),
+//                                wrClaw.upWRClaw()
+//                        ),
+//                        lift.liftUp(),
+//                        CloserBasket2.build(),
+//                        waitAndOpenClaw1,// Close the basket after moving to basket
+//                        new WaitAction(1000),
+//                        awayBasket.build(),
 //                        new ParallelAction(
 //                                toPark.build(),
 //// Parallel actions: move to sample2 and lower lift
@@ -192,7 +262,7 @@ public class RRSampleAuto extends LinearOpMode {
 //                        awayBasket3.build(),// Open the claw after basket3 actions
 
                         // claw.closeClaw(),
-                        toPark.build()
+//                        toPark.build()
 
                 )
         );
@@ -218,117 +288,117 @@ public class RRSampleAuto extends LinearOpMode {
         }
     }
 
-    public class Lift {
-        private DcMotorEx lift;
-        private boolean encoderReset = false;
+//    public class Lift {
+//        private DcMotorEx lift;
+//        private boolean encoderReset = false;
+//
+//        public Lift(HardwareMap hardwareMap) {
+//            lift = hardwareMap.get(DcMotorEx.class, "liftMotor");
+//            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            lift.setDirection(DcMotorSimple.Direction.FORWARD);
+//            // Reset encoder once during initialization
+//            resetEncoder();
+//        }
+//
+//        private void resetEncoder() {
+//            if (!encoderReset) {
+//                lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                encoderReset = true;
+//            }
+//        }
+//
+//        // Lift up method
+//        public Action liftUp() {
+//            return new Action() {
+//                private boolean initialized = false;
+//
+//                @Override
+//                public boolean run(@NonNull TelemetryPacket packet) {
+//                    if (!initialized) {
+//                        resetEncoder();
+//                        lift.setPower(-1); // Start moving the lift up
+//                        initialized = true;
+//                    }
+//
+//                    // Current lift position
+//                    double liftPos = lift.getCurrentPosition();
+//                    packet.put("liftPos", liftPos);
+//                    telemetry.addData("lift Encoder", liftPos);
+//                    telemetry.update();
+//
+//                    // Threshold for stopping (prevent overshooting)
+//                    if (liftPos <= -10000) {
+//                        lift.setPower(0); // Stop lift movement
+//                        return false; // Stop the action
+//                    }
+//
+//                    return true;
+//                }
+//            };
+//        }
+//
+//        // Lower lift method
+//        public Action lowerLift() {
+//            return new Action() {
+//                private boolean initialized = false;
+//
+//                @Override
+//                public boolean run(@NonNull TelemetryPacket packet) {
+//                    if (!initialized) {
+//                        resetEncoder();
+//                        lift.setPower(1); // Start lowering the lift
+//                        initialized = true;
+//                    }
+//
+//                    // Current lift position
+//                    double liftPos = lift.getCurrentPosition();
+//                    packet.put("liftPos", liftPos);
+//                    telemetry.addData("lift Encoder", liftPos);
+//                    telemetry.update();
+//
+//                    // Threshold for stopping (prevent overshooting)
+//                    if (liftPos >= 0) {
+//                        lift.setPower(0); // Stop lift movement
+//                        return false; // Stop the action
+//                    }
+//
+//                    return true;
+//                }
+//            };
+//        }
 
-        public Lift(HardwareMap hardwareMap) {
-            lift = hardwareMap.get(DcMotorEx.class, "liftMotor");
-            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lift.setDirection(DcMotorSimple.Direction.FORWARD);
-            // Reset encoder once during initialization
-            resetEncoder();
-        }
-
-        private void resetEncoder() {
-            if (!encoderReset) {
-                lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                encoderReset = true;
-            }
-        }
-
-        // Lift up method
-        public Action liftUp() {
-            return new Action() {
-                private boolean initialized = false;
-
-                @Override
-                public boolean run(@NonNull TelemetryPacket packet) {
-                    if (!initialized) {
-                        resetEncoder();
-                        lift.setPower(-1); // Start moving the lift up
-                        initialized = true;
-                    }
-
-                    // Current lift position
-                    double liftPos = lift.getCurrentPosition();
-                    packet.put("liftPos", liftPos);
-                    telemetry.addData("lift Encoder", liftPos);
-                    telemetry.update();
-
-                    // Threshold for stopping (prevent overshooting)
-                    if (liftPos <= -10000) {
-                        lift.setPower(0); // Stop lift movement
-                        return false; // Stop the action
-                    }
-
-                    return true;
-                }
-            };
-        }
-
-        // Lower lift method
-        public Action lowerLift() {
-            return new Action() {
-                private boolean initialized = false;
-
-                @Override
-                public boolean run(@NonNull TelemetryPacket packet) {
-                    if (!initialized) {
-                        resetEncoder();
-                        lift.setPower(1); // Start lowering the lift
-                        initialized = true;
-                    }
-
-                    // Current lift position
-                    double liftPos = lift.getCurrentPosition();
-                    packet.put("liftPos", liftPos);
-                    telemetry.addData("lift Encoder", liftPos);
-                    telemetry.update();
-
-                    // Threshold for stopping (prevent overshooting)
-                    if (liftPos >= 0) {
-                        lift.setPower(0); // Stop lift movement
-                        return false; // Stop the action
-                    }
-
-                    return true;
-                }
-            };
-        }
-
-        // Another lower lift method (lower to another position)
-        public Action lowerLift2() {
-            return new Action() {
-                private boolean initialized = false;
-
-                @Override
-                public boolean run(@NonNull TelemetryPacket packet) {
-                    if (!initialized) {
-                        resetEncoder();
-                        lift.setPower(1); // Start lowering the lift
-                        initialized = true;
-                    }
-
-                    // Current lift position
-                    double liftPos = lift.getCurrentPosition();
-                    packet.put("liftPos", liftPos);
-                    telemetry.addData("lift Encoder", liftPos);
-                    telemetry.update();
-
-                    // Threshold for stopping (prevent overshooting)
-                    if (liftPos >= -3000) {
-                        lift.setPower(0); // Stop lift movement
-                        return false; // Stop the action
-                    }
-
-                    return true;
-                }
-            };
-        }
-    }
-
+//        // Another lower lift method (lower to another position)
+//        public Action lowerLift2() {
+//            return new Action() {
+//                private boolean initialized = false;
+//
+//                @Override
+//                public boolean run(@NonNull TelemetryPacket packet) {
+//                    if (!initialized) {
+//                        resetEncoder();
+//                        lift.setPower(1); // Start lowering the lift
+//                        initialized = true;
+//                    }
+//
+//                    // Current lift position
+//                    double liftPos = lift.getCurrentPosition();
+//                    packet.put("liftPos", liftPos);
+//                    telemetry.addData("lift Encoder", liftPos);
+//                    telemetry.update();
+//
+//                    // Threshold for stopping (prevent overshooting)
+//                    if (liftPos >= -3000) {
+//                        lift.setPower(0); // Stop lift movement
+//                        return false; // Stop the action
+//                    }
+//
+//                    return true;
+//                }
+//            };
+//        }
+//    }
+//
 
     // Claw mechanism class
     public class Claw {
@@ -339,6 +409,7 @@ public class RRSampleAuto extends LinearOpMode {
             initminiClawServo(); // Initialize the servo to the down position
 
         }
+
         public void initminiClawServo() {
             miniClawServo.setPosition(0.75); // Set to the down position
         }
@@ -376,7 +447,7 @@ public class RRSampleAuto extends LinearOpMode {
 
         // Initializes the WR servo to the down position
         public void initWRServo() {
-            wheelieRotationServo.setPosition(0.6); // Set to the down position
+            wheelieRotationServo.setPosition(0.9); // Set to the down position
         }
 
         public Action upWRClaw() {
@@ -393,14 +464,12 @@ public class RRSampleAuto extends LinearOpMode {
             return new Action() {
                 @Override
                 public boolean run(@NonNull TelemetryPacket packet) {
-                    wheelieRotationServo.setPosition(0.6);
+                    wheelieRotationServo.setPosition(0.9);
                     return false;
                 }
             };
         }
     }
-
-    // HangLift mechanism class
     public class HangLift {
         private DcMotorEx hangLeftMotor;
         private DcMotorEx hangRightMotor;
@@ -429,8 +498,8 @@ public class RRSampleAuto extends LinearOpMode {
                         hangRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         hangLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         hangRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        sleep(200);
-                        hangLeftMotor.setPower(-1);
+                        // sleep(200);
+                        hangLeftMotor.setPower(1);
                         hangRightMotor.setPower(-1);
                         initialized = true;
                     }
@@ -445,14 +514,170 @@ public class RRSampleAuto extends LinearOpMode {
 
                     telemetry.update();
 
-                    if (leftPos <= -3200 && rightPos <= -3200) {
+                    if (leftPos >= 3500 && rightPos <= -3500) {
                         hangLeftMotor.setPower(0);
                         hangRightMotor.setPower(0);
                         return false; // Stop the action
                     }
                     return true;
                 }
+
             };
         }
+    }
+
+
+    // armServo mechanism class
+    public class ArmServo {
+        private Servo armServo;
+
+        public ArmServo(HardwareMap hardwareMap) {
+            armServo = hardwareMap.get(Servo.class, "armServo");
+            initArmServo(); // Initialize the servo to the down position
+        }
+
+        // Initializes the initArmServo to the down position
+        public void initArmServo() {
+            armServo.setPosition(0.71); // Set to the down position
+        }
+
+        public Action armFront() {
+            return new Action() {
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet) {
+                    armServo.setPosition(0.07);
+                    return false;  // Action completed
+                }
+            };
+        }
+
+        public Action armBack() {
+            return new Action() {
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet) {
+                    armServo.setPosition(0.73);
+                    return false;  // Action completed
+                }
+            };
+        }
+    }
+
+
+
+    public class TwoLift {
+        private DcMotorEx liftRightMotor;
+        private DcMotorEx liftLeftMotor;
+
+        private boolean encoderReset = false;
+
+        public TwoLift(HardwareMap hardwareMap) {
+            liftLeftMotor = hardwareMap.get(DcMotorEx.class, "liftLeftMotor");
+            liftLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            liftLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+            liftRightMotor = hardwareMap.get(DcMotorEx.class, "liftRightMotor");
+            liftRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            liftRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            // Reset encoder once during initialization
+            resetEncoder();
+        }
+
+        private void resetEncoder() {
+            if (!encoderReset) {
+                liftLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                liftLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                liftRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                encoderReset = true;
+            }
+        }
+
+        // Lift up method
+        public Action liftUp() {
+            return new Action() {
+                private boolean initialized = false;
+
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet) {
+                    if (!initialized) {
+                        resetEncoder();
+                        liftLeftMotor.setPower(-.65);
+                        liftRightMotor.setPower(-.65);
+//                        liftLeftMotor.setPower(-.85);
+//                        liftRightMotor.setPower(-.85); // Start moving the lift up
+//// Start moving the lift up
+                        initialized = true;
+                    }
+
+                    // Current lift position
+                    double liftPosR = liftRightMotor.getCurrentPosition();
+
+                    double liftPosL = liftLeftMotor.getCurrentPosition();
+                    packet.put("liftPosRight", liftPosR);
+                    packet.put("liftPosLeft", liftPosL);
+
+                    telemetry.addData("lift Encoder", liftPosL);
+                    telemetry.addData("lift Encoder", liftPosR);
+
+                    telemetry.update();
+
+                    //   Threshold for stopping (prevent overshooting)
+                    if (liftPosR <= -2000 | liftPosL >= 2000) {
+                        liftLeftMotor.setPower(0);
+                        liftRightMotor.setPower(0); // Stop lift movement
+// Stop lift movement
+                        return false; // Stop the action
+                    }
+
+//                    if ( liftPosL >= 2000) {
+//                        liftLeftMotor.setPower(0);
+//                        liftRightMotor.setPower(0); // Stop lift movement
+//// Stop lift movement
+//                        return false; // Stop the action
+//                    }
+
+                    return true;
+                }
+            };
+        }
+
+        // Lower lift method
+        public Action lowerLift() {
+            return new Action() {
+                private boolean initialized = false;
+
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet) {
+                    if (!initialized) {
+                        // resetEncoder();
+                        liftLeftMotor.setPower(1); // Start lowering the lift
+
+                        liftRightMotor.setPower(1); // Start lowering the lift
+                        initialized = true;
+                    }
+
+                    // Current lift position
+                    double liftPosR = liftRightMotor.getCurrentPosition();
+
+                    double liftPosL = liftLeftMotor.getCurrentPosition();
+                    packet.put("liftPosRight", liftPosR);
+                    packet.put("liftPosLeft", liftPosL);
+
+                    telemetry.addData("lift Encoder", liftPosL);
+                    telemetry.addData("lift Encoder", liftPosR);
+
+                    // Threshold for stopping (prevent overshooting)
+                    if (liftPosR <= -2 | liftPosL >= 2) {
+                        liftRightMotor.setPower(0);
+                        liftLeftMotor.setPower(0); // Stop lift movement
+// Stop lift movement
+                        return false; // Stop the action
+                    }
+
+                    return true;
+                }
+            };
+        }
+
     }
 }

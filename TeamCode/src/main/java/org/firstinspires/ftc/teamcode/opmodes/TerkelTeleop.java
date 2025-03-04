@@ -72,17 +72,18 @@ public class TerkelTeleop extends StandardFourMotorRobot {
     //wheelieServo Positions
 //    private static final double WHEELIE_GRAB = 0.1;
 //    private static final double WHEELIE_RELEASE = 0.99;
-    private static final double WHEELIE_GRAB =0.1;
+   // private static final double WHEELIE_GRAB =0.1;
     private static final double WHEELIE_RELEASE =0.9;
     private static final double WHEELIE_STOP = 0;
     private static final double WHEELIE_STOP_A = 0;
 
+    private static final double WHEELIE_GRAB = 0;
 
 
 
     //wheelieRotationServo Positions
     private static final double WHEELIE_UP = 0.05;
-    private static final double WHEELIE_DOWN = 0.6;
+    private static final double WHEELIE_DOWN = .95;
 
     //gizaClawLeftServo Positions
     private static final double GIZA_CLAW_LEFT_OPEN = 0.5;
@@ -94,7 +95,7 @@ public class TerkelTeleop extends StandardFourMotorRobot {
 
     //miniClawServo Positions
     private static final double MINI_CLAW_OPEN = 0.3;
-    private static final double MINI_CLAW_CLOSE = 0.2;
+    private static final double MINI_CLAW_CLOSE = 0.75;
 
     //groundMiniClawServo Positions
     private static final double GM_CLAW_OPEN = 0.3;
@@ -102,8 +103,10 @@ public class TerkelTeleop extends StandardFourMotorRobot {
 
 
     //armServo Positions
-    private static final double ARM_FRONT = .07;
-    private static final double ARM_BACK = .7;
+    private static final double ARM_FRONT = .18;
+    private static final double ARM_BACK = .83;
+    //armServo Positions
+    private static final double ARM_PASS = 0;
 
     private boolean wasButtonAPressed = false;
     private boolean wasButtonYPressed = false;
@@ -126,7 +129,9 @@ private CRServo horizontalRightServo;
     private Servo miniClawServo;
     private Servo gizaClawLeftServo;
     private Servo gizaClawRightServo;
-    private OneWheelDriveTask liftMotorTask;
+    private OneWheelDriveTask liftLeftMotorTask;
+
+    private OneWheelDriveTask liftRightMotorTask;
 
     //private ContinuousTwoServoTask horizontalLiftTask;
    // private ContinuousServoTask horizontalRightLiftTask;
@@ -172,9 +177,11 @@ private CRServo horizontalRightServo;
         hangLeftMotor = hardwareMap.get(DcMotor.class,"hangLeftMotor");
         hangLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        armServo.setPosition(ARM_FRONT);
+        armServo.setPosition(ARM_BACK);
         groundMiniClawServo.setPosition(GM_CLAW_CLOSE);
         miniClawServo.setPosition(MINI_CLAW_CLOSE);
+        wheelieRotationServo.setPosition(WHEELIE_UP);
+
 
         hangRightMotor = hardwareMap.get(DcMotor.class,"hangRightMotor");
         hangRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -216,8 +223,11 @@ private CRServo horizontalRightServo;
           // right negative (backwards)
          horizontalRightServo.setPower(0);
 
-    //    liftMotorTask = new OneWheelDriveTask(this, liftMotor, true);
-//        liftMotorTask.slowDown(false);
+//        liftRightMotorTask = new OneWheelDriveTask(this, liftRightMotor, true);
+//        liftRightMotorTask.slowDown(false);
+//
+//        liftLeftMotorTask = new OneWheelDriveTask(this, liftLeftMotor, true);
+//        liftLeftMotorTask.slowDown(false);
 
       //  this.addTask(new ContinuousTwoServoTask(this, horizontalLeftServo, horizontalRightServo, true));
 
@@ -228,7 +238,7 @@ private CRServo horizontalRightServo;
 
         horizontalRightLiftTask.slowDown(false);
 
-        twoLiftTask=new TwoWheelDriveTask(this, liftLeftMotor,liftRightMotor,true);
+       twoLiftTask=new TwoWheelDriveTask(this, liftLeftMotor,liftRightMotor,true);
         //telemetry
         buttonTlm = telemetry.addData("buttonState", "unknown");
 
@@ -268,6 +278,7 @@ private CRServo horizontalRightServo;
                 GamepadEvent gamepadEvent = (GamepadEvent) e;
 
                 switch (gamepadEvent.kind) {
+
                     case BUTTON_X_DOWN:
                         // If slow, then normal speed. If fast, then slow speed of motors.
                         //pertains to slowmode
@@ -279,7 +290,23 @@ private CRServo horizontalRightServo;
                             currentlySlow = true;
                         }
                         break;
+                    case LEFT_TRIGGER_DOWN:
+                        wheelieRotationServo.setPosition(WHEELIE_DOWN);
+                        break;
+                    case RIGHT_TRIGGER_DOWN:
+                        // set claw's position to 1
+                        wheelieRotationServo.setPosition(WHEELIE_UP);
+                        break;
 
+                    case RIGHT_BUMPER_DOWN:
+                        groundMiniClawServo.setPosition(GM_CLAW_OPEN);
+
+                        break;
+
+
+                    case LEFT_BUMPER_DOWN:
+                        groundMiniClawServo.setPosition(GM_CLAW_CLOSE);
+                        break;
                     default:
                         buttonTlm.setValue("Not Moving");
                         break;
@@ -289,12 +316,21 @@ private CRServo horizontalRightServo;
         });
 
         //Gamepad 2
-       // this.addTask(liftMotorTask);
-       // this.addTask(horizontalRightLiftTask);
+       // this.addTask(liftRightMotorTask);
+        // this.addTask(liftLeftMotorTask);
+
+        // this.addTask(horizontalRightLiftTask);
         this.addTask(horizontalRightLiftTask);
         this.addTask(twoLiftTask);
         this.addTask(horizontalLeftLiftTask);
+        double liftPosR = liftRightMotor.getCurrentPosition();
 
+        double liftPosL = liftLeftMotor.getCurrentPosition();
+
+        telemetry.addData("lift Encoder", liftPosL);
+        telemetry.addData("lift Encoder", liftPosR);
+
+        telemetry.update();
 
 
 
@@ -320,15 +356,25 @@ private CRServo horizontalRightServo;
 //                        break;
              //   }
                 switch (gamepadEvent.kind) {
+
+//                    case DPAD_RIGHT_DOWN:
+//                        armServo.setPosition(ARM_PASS);
+//                        wheelieRotationServo.setPosition(WHEELIE_GRAB);
+//                        miniClawServo.setPosition(MINI_CLAW_CLOSE);
+//                       // groundMiniClawServo.setPosition(GM_CLAW_OPEN);
+
+
+
+                        //break;
                     case DPAD_UP_DOWN:
-                        hangRightMotor.setPower(-0.6);
-                        hangLeftMotor.setPower(-0.6);
+                        hangRightMotor.setPower(-1);
+                        hangLeftMotor.setPower(-1);
                         break;
 
 
                     case DPAD_DOWN_DOWN:
-                        hangLeftMotor.setPower(0.6);
-                        hangRightMotor.setPower(0.6);
+                        hangLeftMotor.setPower(1);
+                        hangRightMotor.setPower(1);
 
                         break;
                     case DPAD_UP_UP:
@@ -346,21 +392,21 @@ private CRServo horizontalRightServo;
                 }
 
                 switch (gamepadEvent.kind) {
-                    case RIGHT_TRIGGER_DOWN:
-                        // set claw's position to 0
-                        groundMiniClawServo.setPosition(GM_CLAW_OPEN);
-                        break;
-                    case LEFT_TRIGGER_DOWN:
-                        // set claw's position to 1
-                        groundMiniClawServo.setPosition(GM_CLAW_CLOSE);
-                        break;
-
-                    case RIGHT_BUMPER_DOWN:
-                        wheelieRotationServo.setPosition(WHEELIE_UP);
-                        break;
-                    case LEFT_BUMPER_DOWN:
-                        wheelieRotationServo.setPosition(WHEELIE_DOWN);
-                        break;
+//                    case RIGHT_TRIGGER_DOWN:
+//                        // set claw's position to 0
+//                        groundMiniClawServo.setPosition(GM_CLAW_OPEN);
+//                        break;
+//                    case LEFT_TRIGGER_DOWN:
+//                        // set claw's position to 1
+//                        groundMiniClawServo.setPosition(GM_CLAW_CLOSE);
+//                        break;
+//
+//                    case RIGHT_BUMPER_DOWN:
+//                        wheelieRotationServo.setPosition(WHEELIE_UP);
+//                        break;
+//                    case LEFT_BUMPER_DOWN:
+//                        wheelieRotationServo.setPosition(WHEELIE_DOWN);
+//                        break;
 
                     case BUTTON_A_DOWN:
                         armServo.setPosition(ARM_FRONT);

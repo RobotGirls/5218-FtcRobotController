@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ContinuousServoTask;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import team25core.DeadReckonPath;
@@ -16,9 +18,12 @@ import team25core.DeadReckonTask;
 import team25core.DistanceSensorTask;
 import team25core.FourWheelDirectDrivetrain;
 import team25core.OneWheelDirectDrivetrain;
+import team25core.OneWheelDriveTask;
 import team25core.Robot;
 import team25core.RobotEvent;
 import team25core.SingleShotTimerTask;
+import team25core.TwoWheelDirectDrivetrain;
+import team25core.vision.apriltags.TwoWheelDriveTask;
 
 @Autonomous(name = "BlueAuto")
 public class TerkelAuto extends Robot {
@@ -32,26 +37,68 @@ public class TerkelAuto extends Robot {
     private DcMotor backRight;
     private DcMotor outtake;
 
-    private OneWheelDirectDrivetrain liftMotorDrivetrain;
+    private TwoWheelDirectDrivetrain liftDriveTrain;
     private DcMotor liftMotor;
     private OneWheelDirectDrivetrain outtakeDrivetrain;
 
 
     private FourWheelDirectDrivetrain drivetrain;
-    private static final double GIZA_CLAW_LEFT_CLOSE = 0.1;
-    private static final double GIZA_CLAW_LEFT_OPEN = 0.6;
+//    private static final double GIZA_CLAW_LEFT_CLOSE = 0.1;
+//    private static final double GIZA_CLAW_LEFT_OPEN = 0.6;
+//
+//    //gizaClawRightServo Positions
+//    private static final double GIZA_CLAW_RIGHT_CLOSE = 0.9;
+//    private static final double GIZA_CLAW_RIGHT_OPEN = 0.4;
+//
+//    private Servo gizaClawRightServo;
+//    private Servo gizaClawLeftServo;
 
-    //gizaClawRightServo Positions
-    private static final double GIZA_CLAW_RIGHT_CLOSE = 0.9;
-    private static final double GIZA_CLAW_RIGHT_OPEN = 0.4;
+    private static final double WHEELIE_UP = 0.05;
+    private static final double WHEELIE_DOWN = .95;
 
-    private Servo gizaClawRightServo;
-    private Servo gizaClawLeftServo;
+    private static final double MINI_CLAW_OPEN = 0.3;
+    private static final double MINI_CLAW_CLOSE = 0.75;
+
+    //groundMiniClawServo Positions
+    private static final double GM_CLAW_OPEN = 0.3;
+    private static final double GM_CLAW_CLOSE = 0.75;
+
+
+    //armServo Positions
+    private static final double ARM_FRONT = .07;
+    private static final double ARM_BACK = .71;
+    //armServo Positions
 
 
     public String position;
     private DeadReckonPath outtakePath;
 
+    private CRServo horizontalLeftServo;
+    private CRServo horizontalRightServo;
+
+    private Servo horizontalLiftServo;
+    private Servo armServo;
+    private Servo groundMiniClawServo;
+
+
+    private Servo wheelieServo;
+    private Servo wheelieRotationServo;
+
+    private Servo miniClawServo;
+    private Servo gizaClawLeftServo;
+    private Servo gizaClawRightServo;
+
+
+    //private ContinuousTwoServoTask horizontalLiftTask;
+    // private ContinuousServoTask horizontalRightLiftTask;
+
+    private ContinuousServoTask horizontalRightLiftTask;
+    private ContinuousServoTask horizontalLeftLiftTask;
+    private TwoWheelDriveTask twoLiftTask;
+    private DcMotor hangLeftMotor;
+    private DcMotor hangRightMotor;
+    private DcMotor liftRightMotor;
+    private DcMotor liftLeftMotor;
 
 
     public static double LIFT_DISTANCE = 60;
@@ -103,7 +150,7 @@ public class TerkelAuto extends Robot {
 //                gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("infront of submersible");
-                    lowerLiftToPlaceSpecimen();
+                   // lowerLiftToPlaceSpecimen();
 
                 }
             }
@@ -144,7 +191,7 @@ public class TerkelAuto extends Robot {
 
 
     public void liftToPlacePixelOnBoard() {
-        this.addTask(new DeadReckonTask(this, liftToBoardPath, liftMotorDrivetrain) {
+        this.addTask(new DeadReckonTask(this, liftToBoardPath, liftDriveTrain) {
             @Override
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent path = (DeadReckonEvent) e;
@@ -156,14 +203,14 @@ public class TerkelAuto extends Robot {
         });
     }
     public void lowerLiftToPlaceSpecimen() {
-        this.addTask(new DeadReckonTask(this, lowerLiftPath, liftMotorDrivetrain) {
+        this.addTask(new DeadReckonTask(this, lowerLiftPath, liftDriveTrain) {
             @Override
             public void handleEvent(RobotEvent e) {
                 DeadReckonEvent path = (DeadReckonEvent) e;
                 if (path.kind == EventKind.PATH_DONE) {
                     RobotLog.i("placed specimen");
-                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_OPEN);
-                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
+//                    gizaClawLeftServo.setPosition(GIZA_CLAW_LEFT_OPEN);
+//                    gizaClawRightServo.setPosition(GIZA_CLAW_RIGHT_OPEN);
                     driveToObservation(driveToObservationPath);
 
 
@@ -176,6 +223,10 @@ public class TerkelAuto extends Robot {
 
     public void init()
     {
+        groundMiniClawServo = hardwareMap.servo.get("groundMiniClawServo");
+        armServo = hardwareMap.servo.get("armServo");
+        miniClawServo = hardwareMap.servo.get("miniClawServo");
+        wheelieRotationServo = hardwareMap.servo.get("wheelieRotationServo");
         // hardware mapping
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -184,7 +235,31 @@ public class TerkelAuto extends Robot {
         gizaClawLeftServo = hardwareMap.servo.get("gizaClawLeftServo");
         gizaClawRightServo = hardwareMap.servo.get("gizaClawRightServo");
 
+        horizontalLeftServo=hardwareMap.crservo.get("hzLeftServo");
+        horizontalRightServo=hardwareMap.crservo.get("horizontalRightServo");
 
+        hangLeftMotor = hardwareMap.get(DcMotor.class,"hangLeftMotor");
+        hangLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        armServo.setPosition(ARM_BACK);
+        groundMiniClawServo.setPosition(GM_CLAW_CLOSE);
+        miniClawServo.setPosition(MINI_CLAW_CLOSE);
+        wheelieRotationServo.setPosition(WHEELIE_UP);
+        hangRightMotor = hardwareMap.get(DcMotor.class,"hangRightMotor");
+        hangRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hangRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        liftRightMotor = hardwareMap.get(DcMotor.class,"liftRightMotor");
+        liftRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        liftLeftMotor = hardwareMap.get(DcMotor.class,"liftLeftMotor");
+        liftLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        liftDriveTrain = new TwoWheelDirectDrivetrain(liftRightMotor,liftLeftMotor);
 
         // instantiating FourWheelDirectDrivetrain
         drivetrain = new FourWheelDirectDrivetrain(frontRight, backRight, frontLeft, backLeft);
@@ -203,6 +278,10 @@ public class TerkelAuto extends Robot {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //left positive (backwards)
+        horizontalLeftServo.setPower(0);
+        // right negative (backwards)
+        horizontalRightServo.setPower(0);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -215,9 +294,9 @@ public class TerkelAuto extends Robot {
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotorDrivetrain = new OneWheelDirectDrivetrain(liftMotor);
-        liftMotorDrivetrain.resetEncoders();
-        liftMotorDrivetrain.encodersOn();
+
+       // twoLiftTask=new TwoWheelDriveTask(this, liftLeftMotor,liftRightMotor,true);
+        //telemetry
 
 
         // telemetry shown on the phone
@@ -256,7 +335,7 @@ public class TerkelAuto extends Robot {
         driveToSubmersiblePath.stop();
         driveToObservationPath.stop();
 
-        driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 13, 0.25);
+        driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 13, 0.5);
         //driveToSubmersiblePath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 5, -0.25);
         driveToObservationPath.addSegment(DeadReckonPath.SegmentType.STRAIGHT, 8, -0.25);
 

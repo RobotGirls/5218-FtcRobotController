@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -40,9 +41,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
@@ -55,11 +53,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public final class Comp5218MecanumDrive {
+public final class WildCardMecanumDrive {
     public void setPoseEstimate(Pose2d initialPose) {
     }
-
-
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
@@ -67,19 +63,17 @@ public final class Comp5218MecanumDrive {
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
                 RevHubOrientationOnRobot.LogoFacingDirection.UP;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-
-//
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
         // drive model parameters
         public double inPerTick = .00158177;
-        public double lateralInPerTick = 0.0013542659126235276;
-
-        public double trackWidthTicks = 6148.319769594796 ;
+        public double lateralInPerTick = 0;
+        public double trackWidthTicks = 6335.869623474078;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.7183808274861039;
-        public double kV = 0.00035330571870008154;
+        public double kS = 1.019413862814786;
+        public double kV = 0.00034573575457291024;
+
         public double kA = 0.0001;
 
         // path profile parameters (in inches)
@@ -92,16 +86,14 @@ public final class Comp5218MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0.8;
-        public double lateralGain = 1;
-        public double headingGain = 1.2; // shared with turn
+        public double axialGain = 0.0;
+        public double lateralGain = 0.0;
+        public double headingGain = 0.0; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
         public double headingVelGain = 0.0; // shared with turn
     }
-
-
 
     public static Params PARAMS = new Params();
 
@@ -117,7 +109,6 @@ public final class Comp5218MecanumDrive {
             ));
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
-
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     public final VoltageSensor voltageSensor;
@@ -144,51 +135,15 @@ public final class Comp5218MecanumDrive {
         private boolean initialized;
 
         public DriveLocalizer() {
-            leftFront = new OverflowEncoder(new RawEncoder(Comp5218MecanumDrive.this.leftFront));
-            leftBack = new OverflowEncoder(new RawEncoder(Comp5218MecanumDrive.this.leftBack));
-            rightBack = new OverflowEncoder(new RawEncoder(Comp5218MecanumDrive.this.rightBack));
-            rightFront = new OverflowEncoder(new RawEncoder(Comp5218MecanumDrive.this.rightFront));
+            leftFront = new OverflowEncoder(new RawEncoder(WildCardMecanumDrive.this.leftFront));
+            leftBack = new OverflowEncoder(new RawEncoder(WildCardMecanumDrive.this.leftBack));
+            rightBack = new OverflowEncoder(new RawEncoder(WildCardMecanumDrive.this.rightBack));
+            rightFront = new OverflowEncoder(new RawEncoder(WildCardMecanumDrive.this.rightFront));
 
             imu = lazyImu.get();
 
-            myIMUparameters = new IMU.Parameters(
-                    new RevHubOrientationOnRobot(
-                            new Orientation(
-                                    AxesReference.INTRINSIC,
-                                    AxesOrder.ZYX,
-                                    AngleUnit.DEGREES,
-                                    90,
-                                    0,
-                                    0,
-                                    0  // acquisitionTime, not used
-                            )
-                    )
-            );
-            IMU.Parameters myIMUparameters;
-
-            myIMUparameters = new IMU.Parameters(
-                    new RevHubOrientationOnRobot(
-                            RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
-                    )
-            );
-            // Initialize IMU directly
-            imu.initialize(
-                    new IMU.Parameters(
-                            new RevHubOrientationOnRobot(
-                                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                                    RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
-                            )
-                    )
-            );
-
-            // Initialize IMU using Parameters
-            imu.initialize(myIMUparameters);
-
-
             // TODO: reverse encoders if needed
             //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-
         }
 
         @Override
@@ -255,7 +210,7 @@ public final class Comp5218MecanumDrive {
         }
     }
 
-    public Comp5218MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+    public WildCardMecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
@@ -266,10 +221,10 @@ public final class Comp5218MecanumDrive {
 
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft"); //changed from leftFront to match terkel teleop which uses StandardFourMotorRobot
-        leftBack = hardwareMap.get(DcMotorEx.class, "backLeft"); //changed from leftBack to match terkel teleop which uses StandardFourMotorRobot
-        rightBack = hardwareMap.get(DcMotorEx.class, "backRight"); //changed from rightBack to match terkel teleop which uses StandardFourMotorRobot
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");//changed from rightFront to match terkel teleop which uses StandardFourMotorRobot
+        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        leftBack = hardwareMap.get(DcMotorEx.class, "backLeft");
+        rightBack = hardwareMap.get(DcMotorEx.class, "backRight");
+        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -278,11 +233,6 @@ public final class Comp5218MecanumDrive {
 
         // TODO: reverse motor directions if needed
         //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-//         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        // leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
@@ -291,7 +241,7 @@ public final class Comp5218MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        // localizer = new DriveLocalizer();
+       // localizer = new DriveLocalizer();
         localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
