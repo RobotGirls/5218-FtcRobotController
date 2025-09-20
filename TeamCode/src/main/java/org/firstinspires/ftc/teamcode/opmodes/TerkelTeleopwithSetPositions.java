@@ -379,7 +379,7 @@ public class TerkelTeleopwithSetPositions extends StandardFourMotorRobot {
                         // set position to high bar
                         // FIXME !!!!! We need to uncomment this when we are ready
                         // meanwhile, we want to print out the encoder positions
-                        // first for each motor, so we do not DAMANGE the lift
+                        // first for each motor, so we do not DAMAGE the lift
                         //setLiftToHighBarPosition();
                         break;
 
