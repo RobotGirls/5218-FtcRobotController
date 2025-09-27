@@ -1,0 +1,161 @@
+package org.firstinspires.ftc.teamcode.opmodes;
+
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+
+@TeleOp(name = "SoftwareRobotTeleop1 ")
+
+public class SoftwareRobotTeleop extends LinearOpMode {
+
+    private final double BLOCK_NOTHING = 0.25;
+    private final double BLOCK_BOTH = 0.05;
+
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+
+        boolean intakeOn = false;
+        boolean outtakeOn = false;
+
+        DcMotorEx leftFront, leftBack, rightBack, rightFront;
+
+
+
+
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFont");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // note: you must set this after stop and reset encoder; otherwise, the robot won't move
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        //  leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+        // vertical lift motor
+//            DcMotor liftMotor;
+//           liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+//           liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+
+//            DcMotorEx climbRightMotor;
+//            climbRightMotor = hardwareMap.get(DcMotorEx.class, "climbRightMotor");
+//            climbRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        DcMotorEx climbLeftMotor;
+        DcMotorEx climbRightMotor;
+        climbLeftMotor = hardwareMap.get(DcMotorEx.class, "climbLeftMotor");
+        climbLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        climbRightMotor = hardwareMap.get(DcMotorEx.class, "climbRightMotor");
+        climbRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        climbLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+
+        climbRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        climbLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+//
+//        Servo marshClawServo = hardwareMap.get(Servo.class, "marshClawServo");
+//        Servo marshClawRotationServo = hardwareMap.get(Servo.class, "marshClawRotationServo");
+//        marshClawServo.setPosition(0.47);
+//        marshClawRotationServo.setPosition(0.8);
+
+        waitForStart();
+
+        if (isStopRequested()) return;
+
+        while (opModeIsActive() && !isStopRequested()) {
+            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double rx = gamepad1.right_stick_x;
+
+//            double climbLeftPower = gamepad2.right_stick_y;
+//            double climbRightPower = gamepad2.left_stick_y;
+////            climbLeftMotor.setPower(climbLeftPower);
+//            climbRightMotor.setPower(climbRightPower);
+//
+
+//                double climbRightPower = gamepad2.right_stick_y;
+//                climbRightMotor.setPower(climbRightPower);
+
+
+
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio,
+            // but only if at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
+
+            double climbLeftPower = gamepad2.right_stick_y;
+            climbLeftMotor.setPower(climbLeftPower);
+            climbRightMotor.setPower(climbLeftPower);
+
+
+            leftFront.setPower(frontLeftPower);
+            leftBack.setPower(backLeftPower);
+            rightFront.setPower(frontRightPower);
+            rightBack.setPower(backRightPower);
+//
+
+
+//               marshClawRotationServo.setPosition(-0.2);
+
+
+//               if (gamepad2.left_stick_button) {
+//                    liftMotor.setPower(1);
+//                }
+//                else {
+//                    liftMotor.setPower(0);
+//                }
+//            if (gamepad2.y) {
+//                marshClawServo.setPosition(0.3);
+//                telemetry.addData("Pick Up Servo ", marshClawServo.getPosition());
+//            }
+//            else if (gamepad2.a) {
+//                marshClawServo.setPosition(0.47);
+//                telemetry.addData("Release Servo ", marshClawServo.getPosition());
+//            }
+//            if (gamepad2.right_bumper) {
+//                marshClawRotationServo.setPosition(.2);
+//                telemetry.addData("Rotate Servo Up", marshClawRotationServo.getPosition());
+//            }
+//            else if (gamepad2.left_bumper) {
+//                marshClawRotationServo.setPosition(.8);
+//                telemetry.addData("Rotate Servo Down", marshClawRotationServo.getPosition());
+
+            //}
+
+            telemetry.update();
+        }
+    }
+}
+

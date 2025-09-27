@@ -55,7 +55,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public final class MecanumDrive {
+public final class Comp5218MecanumDrive {
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
@@ -68,7 +68,7 @@ public final class MecanumDrive {
 //
 
         // drive model parameters
-        public double inPerTick = 0.00311;
+        public double inPerTick = .00174336;
         public double lateralInPerTick = inPerTick;
 
         public double trackWidthTicks = 4330.68509 ;
@@ -140,10 +140,10 @@ public final class MecanumDrive {
         private boolean initialized;
 
         public DriveLocalizer() {
-            leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
-            leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
-            rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
-            rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
+            leftFront = new OverflowEncoder(new RawEncoder(Comp5218MecanumDrive.this.leftFront));
+            leftBack = new OverflowEncoder(new RawEncoder(Comp5218MecanumDrive.this.leftBack));
+            rightBack = new OverflowEncoder(new RawEncoder(Comp5218MecanumDrive.this.rightBack));
+            rightFront = new OverflowEncoder(new RawEncoder(Comp5218MecanumDrive.this.rightFront));
 
             imu = lazyImu.get();
 
@@ -251,7 +251,7 @@ public final class MecanumDrive {
         }
     }
 
-    public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+    public Comp5218MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
@@ -276,7 +276,7 @@ public final class MecanumDrive {
         //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         // leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
