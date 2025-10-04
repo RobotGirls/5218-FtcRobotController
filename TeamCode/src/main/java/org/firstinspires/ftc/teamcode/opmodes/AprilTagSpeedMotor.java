@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -41,6 +40,10 @@ public class AprilTagSpeedMotor extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
+        // --- Control constants (tune these) ---
+        int targetWidth = 100;   // Pixel width at which robot should stop
+        double kP = 0.01;        // Proportional constant
+
         while(opModeIsActive()) {
             if (!rateLimit.hasExpired()) {
                 continue;
@@ -55,24 +58,21 @@ public class AprilTagSpeedMotor extends LinearOpMode {
                 int tagWidthPx = blocks[0].width;
 
                 if (tagWidthPx > 0) {
-                    // Estimate distance (inverse of width in pixels)
-                    double distanceEstimate = 1.0 / tagWidthPx;
+                    // Error = how far away from stopping point
+                    int error = targetWidth - tagWidthPx;
 
-                    // Stop threshold: if close enough, stop
-                    double stopThreshold = 0.01; // tune this for your setup
+                    // Motor power proportional to error
+                    double motorPower = kP * error;
 
-                    double motorPower = 0.0;
-                    if (distanceEstimate > stopThreshold) {
-                        // Farther → faster
-                        double k = 50.0; // scaling constant, tune experimentally
-                        motorPower = k * distanceEstimate;
-                        motorPower = Math.min(Math.max(motorPower, 0.0), 1.0);
-                    }
+                    // Clamp between 0 and 1
+                    motorPower = Math.max(0.0, Math.min(1.0, motorPower));
 
                     driveMotor.setPower(motorPower);
 
+                    // Telemetry for debugging
                     telemetry.addData("Tag Width (px)", tagWidthPx);
-                    telemetry.addData("Estimated Distance", distanceEstimate);
+                    telemetry.addData("Target Width", targetWidth);
+                    telemetry.addData("Error", error);
                     telemetry.addData("Motor Power", motorPower);
                 }
             } else {
