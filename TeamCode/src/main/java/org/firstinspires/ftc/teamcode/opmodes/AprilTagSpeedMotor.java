@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmodes/AprilTagSpeedMotor.java
 package org.firstinspires.ftc.teamcode.opmodes;
+=======
+
+>>>>>>> Stashed changes:TeamCode/src/main/java/AprilTagSpeedMotor.java
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,8 +24,8 @@ public class AprilTagSpeedMotor extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
-        driveMotor = hardwareMap.get(DcMotor.class, "TestingMotor"); // configure this in Robot Config
+        huskyLens = hardwareMap.get(HuskyLens.class, "huskyLens");
+        driveMotor = hardwareMap.get(DcMotor.class, "DcMotor"); // configure this in Robot Config
         driveMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         driveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
