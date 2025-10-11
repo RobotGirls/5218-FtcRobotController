@@ -16,17 +16,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
 
 @Disabled
 @Autonomous(name = "BlueObservationAuto")
-public class BlueAutoTop extends LinearOpMode {
+public class RedAutoTop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Lift lift = new Lift(hardwareMap);
-        Claw claw = new Claw(hardwareMap);
+        Launcher launcher = new Launcher(hardwareMap);
+        Intake intake = new Intake(hardwareMap);
 
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(90));
         Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
