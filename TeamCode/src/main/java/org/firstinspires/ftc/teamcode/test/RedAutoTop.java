@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
 
 @Disabled
-@Autonomous(name = "BlueObservationAuto")
+@Autonomous(name = "RedAutoTop")
 public class RedAutoTop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -29,59 +29,36 @@ public class RedAutoTop extends LinearOpMode {
 
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(90));
         Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
-        TrajectoryActionBuilder toSubmersible = drive.actionBuilder(initialPose)
-                //.turn(Math.toRadians(45))
-                .strafeTo(new Vector2d(-20, 29))
+        TrajectoryActionBuilder toLaunchingPosition = drive.actionBuilder(initialPose)
+                .lineToY(15)
                 .waitSeconds(2);
-        Action toSubmersibleTraj = toSubmersible.build();
+        Action toLaunchingPositionTraj = toLaunchingPosition.build();
 
-//        Action toObservation = toSubmersible.fresh()
-//                .waitSeconds(2)
-//                .lineToY(5)
-//                .waitSeconds(1)
-//                .setTangent(Math.toRadians(0))
-//                .lineToX(30)
-//                .waitSeconds(2)
-//                //  .setTangent(0)
-//                .build();
-//
-//        Pose2d observationEndPose = new Pose2d(30, 5, Math.toRadians(0)); // Example
-//        Action toSample = drive.actionBuilder(observationEndPose)
-//                .waitSeconds(2)
-//                .lineToY(10)
-//                .lineToX(40)
-//                .build();
-        Action toObservation = toSubmersible.fresh()
-                .waitSeconds(2)
-                .strafeTo(new Vector2d(35, -5))
-                .lineToY(10)
-                .lineToX(5)
-                .lineToY(-20)
-                .lineToY(10)
-                .waitSeconds(2)
-                .lineToY(-10)
-
-                //  .setTangent(0)
+        Action toSpikeMark = toLaunchingPosition.fresh()
+                .turn(Math.toRadians(315))
+                .lineToY(47)
+                .waitSeconds(2.5)
                 .build();
+        Pose2d SpikeMarkEndPose = new Pose2d(-49, 47, Math.toRadians(90)); // Example
+        Action toLaunchingPosition2 = drive.actionBuilder(SpikeMarkEndPose)
 
-        Pose2d observationEndPose = new Pose2d(5, 10, Math.toRadians(0)); // Example
-        Action toSample = drive.actionBuilder(observationEndPose)
+                .turn(Math.toRadians(150))
+                .lineToY(25)
+                .turn(Math.toRadians(255))
                 .waitSeconds(2)
-                .strafeTo(new Vector2d(-35, 29))
+
                 .build();
-        Pose2d sampleEndPose = new Pose2d(5, 10, Math.toRadians(0)); // Example
-        Action toHangSpecimen = drive.actionBuilder(sampleEndPose)
-                .waitSeconds(2)
-                .lineToY(5)
-                .waitSeconds(1)
-                .setTangent(Math.toRadians(0))
-                .lineToX(30)
-                .waitSeconds(2)
-                //  .setTangent(0)
+        Pose2d LaunchingPosition2EndPose = new Pose2d(-49, 25, Math.toRadians(135));
+        Action toParking = drive.actionBuilder(LaunchingPosition2EndPose)
+                .lineToY(-34)
+                .turn(Math.toRadians(45))
+
                 .build();
+        Pose2d  ParkingEndPose = new Pose2d(-49,-34,Math.toRadians(180));
 
 
-        Actions.runBlocking(claw.closeClaw());
+
+
 
 
         while (!isStopRequested() && !opModeIsActive()) {
@@ -92,17 +69,25 @@ public class RedAutoTop extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        lift.liftUp(),
-                        toSubmersibleTraj,
-                        lift.liftDown(),
-                        claw.openClaw(),
-                        toObservation,
-                        claw.closeClaw(),
-                        lift.liftUp(),
-                        toSample,
-                        lift.liftDown(),
-                        claw.openClaw(),
-                        toHangSpecimen
+                        toLaunchingPositionTraj,
+                        launcher.launcherForward(),
+                        toSpikeMark,
+                        intake.intakeIn(),
+                        toLaunchingPosition2,
+                        launcher.launcherForward(),
+                        toParking
+
+                   // For Reference:
+                      //  toSubmersibleTraj,
+                      //  lift.liftDown(),
+                      //  claw.openClaw(),
+                      //  toObservation,
+                      //  claw.closeClaw(),
+                       // lift.liftUp(),
+                       // toSample,
+                        //lift.liftDown(),
+                      //  claw.openClaw(),
+                      //  toHangSpecimen
 
                 )
         );
