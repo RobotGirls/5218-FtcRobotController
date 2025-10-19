@@ -20,8 +20,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
 
 @Disabled
-@Autonomous(name = "RedAutoTop")
-public class RedAutoTop extends LinearOpMode {
+@Autonomous(name = "BlueTopAuto")
+public class BlueTopAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Launcher launcher = new Launcher(hardwareMap);
@@ -30,32 +30,31 @@ public class RedAutoTop extends LinearOpMode {
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(90));
         Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
         TrajectoryActionBuilder toLaunchingPosition = drive.actionBuilder(initialPose)
-                .strafeTo(new Vector2d(-34,-34))
+                .lineToY(15)
                 .waitSeconds(2);
         Action toLaunchingPositionTraj = toLaunchingPosition.build();
 
         Action toSpikeMark = toLaunchingPosition.fresh()
-                .strafeTo(new Vector2d(-16,-34))
-                .turn(Math.toRadians(45))
-                .strafeTo(new Vector2d(-16,-45))
-                .waitSeconds(1.5)
+                .turn(Math.toRadians(315))
+                .lineToY(47)
+                .waitSeconds(2.5)
                 .build();
-        Pose2d SpikeMarkEndPose = new Pose2d(-16, -45, Math.toRadians(45)); // Example
+        Pose2d SpikeMarkEndPose = new Pose2d(-49, 47, Math.toRadians(90)); // Example
         Action toLaunchingPosition2 = drive.actionBuilder(SpikeMarkEndPose)
 
-                .strafeTo(new Vector2d(-16,-16))
-                .turn(Math.toRadians(135))
+                .turn(Math.toRadians(150))
+                .lineToY(25)
+                .turn(Math.toRadians(255))
                 .waitSeconds(2)
 
                 .build();
-        Pose2d LaunchingPosition2EndPose = new Pose2d(-16, -16, Math.toRadians(180));
+        Pose2d LaunchingPosition2EndPose = new Pose2d(-49, 25, Math.toRadians(135));
         Action toParking = drive.actionBuilder(LaunchingPosition2EndPose)
-                .strafeTo(new Vector2d(38,25))
+                .lineToY(-34)
                 .turn(Math.toRadians(45))
 
-
                 .build();
-        Pose2d  ParkingEndPose = new Pose2d(38,25,Math.toRadians(225));
+        Pose2d  ParkingEndPose = new Pose2d(-49,-34,Math.toRadians(180));
 
 
 
@@ -78,17 +77,17 @@ public class RedAutoTop extends LinearOpMode {
                         launcher.launcherForward(),
                         toParking
 
-                   // For Reference:
-                      //  toSubmersibleTraj,
-                      //  lift.liftDown(),
-                      //  claw.openClaw(),
-                      //  toObservation,
-                      //  claw.closeClaw(),
-                       // lift.liftUp(),
-                       // toSample,
+                        // For Reference:
+                        //  toSubmersibleTraj,
+                        //  lift.liftDown(),
+                        //  claw.openClaw(),
+                        //  toObservation,
+                        //  claw.closeClaw(),
+                        // lift.liftUp(),
+                        // toSample,
                         //lift.liftDown(),
-                      //  claw.openClaw(),
-                      //  toHangSpecimen
+                        //  claw.openClaw(),
+                        //  toHangSpecimen
 
                 )
         );
@@ -119,7 +118,7 @@ public class RedAutoTop extends LinearOpMode {
                 }
 
 
-               return true;
+                return true;
 
             }
         }
@@ -139,7 +138,7 @@ public class RedAutoTop extends LinearOpMode {
                     initialized = true;
                 }
 
-               return true;
+                return true;
             }
         }
         public Action launcherBackwards() {
@@ -204,3 +203,4 @@ public class RedAutoTop extends LinearOpMode {
 
     }
 }
+
