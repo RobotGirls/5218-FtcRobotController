@@ -121,10 +121,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 //                if (climbLeftPower>0){
 //
-//                    leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//                    leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//                    rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//                    rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                   leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                  rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //                }
 //
 
