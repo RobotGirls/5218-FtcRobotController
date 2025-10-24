@@ -47,7 +47,7 @@ public class NewLinearOpmode extends LinearOpMode {
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+       // rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
@@ -67,11 +67,11 @@ public class NewLinearOpmode extends LinearOpMode {
         FlywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Transport Motor
-        DcMotorEx TransportMotor;
-
-       TransportMotor = hardwareMap.get(DcMotorEx.class, "TransportMotor");
-        TransportMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        TransportMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        DcMotorEx TransportMotor;
+//
+//       TransportMotor = hardwareMap.get(DcMotorEx.class, "TransportMotor");
+//        TransportMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        TransportMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -93,16 +93,16 @@ public class NewLinearOpmode extends LinearOpMode {
             FlywheelMotor.setPower(FlywheelPower);
 
 
-            //transport
-            double TransportPower = 0.0;
-
-            if (gamepad2.y) {
-                TransportPower = 1.0; // Forward
-            } else if (gamepad2.a) {
-                TransportPower = -1.0; // Reverse
-            }
-
-            TransportMotor.setPower(TransportPower);
+//            //transport
+//            double TransportPower = 0.0;
+//
+//            if (gamepad2.y) {
+//                TransportPower = 1.0; // Forward
+//            } else if (gamepad2.a) {
+//                TransportPower = -1.0; // Reverse
+//            }
+//
+//            TransportMotor.setPower(TransportPower);
 
 
             //double IntakeMotorPower = gamepad2.left_stick_y;
@@ -131,14 +131,14 @@ public class NewLinearOpmode extends LinearOpMode {
             rightFront.setPower(frontRightPower);
             rightBack.setPower(backRightPower);
 
-            if (TransportPower>0){
-
-                leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            }
-
+//            if (TransportPower>0){
+//
+//                leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//                leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//                rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//                rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            }
+//
 
 
             telemetry.update();
