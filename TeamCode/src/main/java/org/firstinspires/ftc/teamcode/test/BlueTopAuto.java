@@ -31,7 +31,7 @@ public class BlueTopAuto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         TrajectoryActionBuilder toLaunchingPosition = drive.actionBuilder(initialPose)
                 .lineToY(15)
-                .waitSeconds(2);
+                .waitSeconds(4);
         Action toLaunchingPositionTraj = toLaunchingPosition.build();
 
         Action toSpikeMark = toLaunchingPosition.fresh()
@@ -70,9 +70,7 @@ public class BlueTopAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         toLaunchingPositionTraj,
-                        launcher.launcherForward(),
                         toSpikeMark,
-                        intake.intakeIn(),
                         toLaunchingPosition2,
                         launcher.launcherForward(),
                         toParking

@@ -98,7 +98,7 @@ public class RedAutoTop extends LinearOpMode {
         private DcMotorEx launcher;
 
         public Launcher(HardwareMap hardwareMap) {
-            launcher = hardwareMap.get(DcMotorEx.class, "launcherMotor");
+            launcher = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
             launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             launcher.setDirection(DcMotorSimple.Direction.FORWARD);
         }
@@ -153,7 +153,7 @@ public class RedAutoTop extends LinearOpMode {
 
 
         public Intake(HardwareMap hardwareMap) {
-            intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+            intakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
 
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
