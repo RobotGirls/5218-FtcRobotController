@@ -17,9 +17,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Disabled
+
 @Autonomous(name = "BlueTopAuto")
 public class BlueTopAuto extends LinearOpMode {
     @Override
@@ -28,7 +28,7 @@ public class BlueTopAuto extends LinearOpMode {
         Intake intake = new Intake(hardwareMap);
 
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(90));
-        Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         TrajectoryActionBuilder toLaunchingPosition = drive.actionBuilder(initialPose)
                 .lineToY(15)
                 .waitSeconds(2);
