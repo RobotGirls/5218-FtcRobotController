@@ -81,7 +81,7 @@ public class RedAutoTop extends LinearOpMode {
                 .build();
 
 
-        Actions.runBlocking(claw.closeClaw());
+       // Actions.runBlocking(claw.closeClaw());
 
 
         while (!isStopRequested() && !opModeIsActive()) {
@@ -92,17 +92,17 @@ public class RedAutoTop extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        lift.liftUp(),
-                        toSubmersibleTraj,
-                        lift.liftDown(),
-                        claw.openClaw(),
-                        toObservation,
-                        claw.closeClaw(),
-                        lift.liftUp(),
-                        toSample,
-                        lift.liftDown(),
-                        claw.openClaw(),
-                        toHangSpecimen
+                        //lift.liftUp(),
+                       // toSubmersibleTraj,
+//                        lift.liftDown(),
+//                        claw.openClaw(),
+//                        toObservation,
+//                        claw.closeClaw(),
+//                        lift.liftUp(),
+//                        toSample,
+//                        lift.liftDown(),
+//                        claw.openClaw(),
+//                        toHangSpecimen
 
                 )
         );

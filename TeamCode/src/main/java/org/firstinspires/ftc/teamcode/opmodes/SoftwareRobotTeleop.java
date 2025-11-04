@@ -29,7 +29,7 @@ public class SoftwareRobotTeleop extends LinearOpMode {
 
 
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFont");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
         rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
