@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <RevRobotics20HDHexMotor name="frontLeft" port="0" />
+            <RevRobotics20HDHexMotor name="backLeft" port="1" />
+            <RevRobotics20HDHexMotor name="par" port="2" />
+            <RevRobotics20HDHexMotor name="backRight" port="3" />
+        </LynxModule>
+        <LynxModule name="Control Hub" port="173">
+            <RevRobotics20HDHexMotor name="IntakeMotor" port="0" />
+            <RevRobotics20HDHexMotor name="FlywheelMotor" port="1" />
+            <RevRobotics20HDHexMotor name="frontRight" port="2" />
+            <RevRobotics20HDHexMotor name="perp" port="3" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+            <HuskyLens name="HuskyLens" port="0" bus="2" />
+        </LynxModule>
+    </LynxUsbDevice>
+    <EthernetDevice name="5218Limelights" serialNumber="EthernetOverUsb:eth0:172.29.0.31" name="5218Limelights" port="-1" ipAddress="172.29.0.1" />
+</Robot>
