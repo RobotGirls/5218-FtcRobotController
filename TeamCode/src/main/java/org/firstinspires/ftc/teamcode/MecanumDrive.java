@@ -63,14 +63,15 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        public double inPerTick = 0.00204547779091;
-        public double lateralInPerTick = 0.00263091556053;//inPerTick;
-        public double trackWidthTicks = 0.0001492207178;
+        public double inPerTick = 0.00220159248523;
+        public double lateralInPerTick = 0.001773291788466655 ;//inPerTick;
+       // public double trackWidthTicks = 0.0001492207178;
+        public double trackWidthTicks = 6501.555080498727;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.802553453850992 ;
-        public double kV = 0.00033993740206721915;
-        public double kA = 0;
+        public double kS = 0.7278746268340548;
+        public double kV = 0.0003506072980682329;
+        public double kA = 0.10;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -84,9 +85,9 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0.0;
-        public double lateralGain = 0.0;
-        public double headingGain = 0.0; // shared with turn
+        public double axialGain = 5.0;
+        public double lateralGain = 5.0;
+        public double headingGain = 5.0;// shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -244,6 +245,7 @@ public final class MecanumDrive {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
