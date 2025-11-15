@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Autonomous(name = "RedBottomAuto")
 
@@ -31,7 +32,8 @@ public class RedBottomAuto extends LinearOpMode {
 
         Pose2d initialPose = new Pose2d(62, 10, Math.toRadians(90));
 
-        Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
+       // Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
+         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         TrajectoryActionBuilder toLaunchZone = drive.actionBuilder(initialPose)
                 .turn(Math.toRadians(180))
@@ -39,34 +41,31 @@ public class RedBottomAuto extends LinearOpMode {
                 .strafeTo(new Vector2d(-22,25))
                 .turn(Math.toRadians(45));
 
-        TrajectoryActionBuilder toArtifact = drive.actionBuilder(new Pose2d(-22,25,Math.toRadians(225)))
-               .turn(Math.toRadians(-136))
-               .strafeTo(new Vector2d(-30,47))
-               .strafeTo(new Vector2d(-14,47));
+//      //TrajectoryActionBuilder toArtifact = drive.actionBuilder(new Pose2d(-22,25,Math.toRadians(225)))
+//       //      .turn(Math.toRadians(-136))
+//      //       .strafeTo(new Vector2d(-30,47))
+//               .strafeTo(new Vector2d(-14,47));
         
 
 
-       Action toLaunchZone2 = toArtifact.endTrajectory().fresh()
-               .strafeTo(new Vector2d(-40,20))
-               .turn(Math.toRadians(-36))
-               .waitSeconds(1.5)
+//       Action toLaunchZone2 = toArtifact.endTrajectory().fresh()
+//               .strafeTo(new Vector2d(-40,20))
+//               .turn(Math.toRadians(-36))
+//
+//            .build();
+//
+//
+//
+//       Pose2d LaunchZone2EndPose = new Pose2d(38,-22,Math.toRadians(269));
+//       Action toParking = drive.actionBuilder(LaunchZone2EndPose)
+//               .strafeTo(new Vector2d(38,-22))
+//               .turn(Math.toRadians(45))
+//                    .build();
 
-               .build();
-
-
-
-       Pose2d LaunchZone2EndPose = new Pose2d(38,-22,Math.toRadians(269));
-       Action toParking = drive.actionBuilder(LaunchZone2EndPose)
-               .strafeTo(new Vector2d(38,-22))
-               .turn(Math.toRadians(45))
-               .build();
-
-       
-        Pose2d ParkingEndPose = new Pose2d(38,-22,Math.toRadians(314));
-
-        Action toLaunchZoneTraj = toLaunchZone.build();
-        Action toArtifactPath = toArtifact.build();
-
+//        Pose2d ParkingEndPose = new Pose2d(38,-22,Math.toRadians(314));
+//
+//        Action toLaunchZoneTraj = toLaunchZone.build();
+        Action toLaunchZone1=toLaunchZone.build();
         waitForStart();
 
         while (!isStopRequested() && opModeIsActive()) {
@@ -75,31 +74,7 @@ public class RedBottomAuto extends LinearOpMode {
         }
 
         Actions.runBlocking(
-                new SequentialAction(
-                        toLaunchZoneTraj,
-                       launcher.launcherForward(),
-                        toArtifactPath,
-                       intake.intakeIn(),
-                       toLaunchZone2,
-                       launcher.launcherForward(),
-                       toParking
-
-
-
-
-                       // lift.liftUp(),
-                       // toSubmersibleTraj,
-                        //lift.liftDown(),
-                       // claw.openClaw(),
-                      //  toObservation,
-                      //  claw.closeClaw(),
-                      //  lift.liftUp(),
-                       // toSample,
-                       // lift.liftDown(),
-                     //   claw.openClaw(),
-                    //    toHangSpecimen
-
-                )
+             toLaunchZone1
         );
 
         if (isStopRequested()) return;

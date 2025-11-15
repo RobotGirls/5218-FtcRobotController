@@ -25,6 +25,7 @@ public class MeepMeepTesting {
                         .turn(Math.toRadians(-136))
                         .strafeTo(new Vector2d(-30,47))
                         .strafeTo(new Vector2d(-14,47))
+                        .waitSeconds(1.5)
                         .strafeTo(new Vector2d(-40,20))
                         .turn(Math.toRadians(-36))
                         .waitSeconds(1.5)
