@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+//import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -22,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "RedBottomAuto")
+@Autonomous(name = "RedBottomAuto3")
 
 public class RedBottomAuto extends LinearOpMode {
     @Override
@@ -30,16 +31,16 @@ public class RedBottomAuto extends LinearOpMode {
         Launcher launcher = new Launcher(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 
-        Pose2d initialPose = new Pose2d(62, 10, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(62, 10, Math.toRadians(180));
 
        // Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
          MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         TrajectoryActionBuilder toLaunchZone = drive.actionBuilder(initialPose)
-                .turn(Math.toRadians(180))
-                .lineToY(25)
-                .strafeTo(new Vector2d(-22,25))
-                .turn(Math.toRadians(45));
+                .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145));
+
+
+
 
 //      //TrajectoryActionBuilder toArtifact = drive.actionBuilder(new Pose2d(-22,25,Math.toRadians(225)))
 //       //      .turn(Math.toRadians(-136))
@@ -65,19 +66,43 @@ public class RedBottomAuto extends LinearOpMode {
 //        Pose2d ParkingEndPose = new Pose2d(38,-22,Math.toRadians(314));
 //
 //        Action toLaunchZoneTraj = toLaunchZone.build();
-        Action toLaunchZone1=toLaunchZone.build();
-        waitForStart();
+
+//        Action toLaunchZone1=toLaunchZone.endTrajectory().fresh()
+//                .build();
+
+
+
+
+
+
+
+
+
+        Action firstTraj = toLaunchZone.build();
+
+//        Action nextTraj = toLaunchZone.endTrajectory().fresh()
+//                .turn(Math.toRadians(45))
+//                .build();
+
+
+        //if (isStopRequested()) return;
 
         while (!isStopRequested() && opModeIsActive()) {
             telemetry.addData("Robot position: ", drive.updatePoseEstimate());
             telemetry.update();
         }
+        waitForStart();
+        if (isStopRequested()) return;
 
         Actions.runBlocking(
-             toLaunchZone1
+                new SequentialAction(
+                        firstTraj
+                        //nextTraj
+                )
+
         );
 
-        if (isStopRequested()) return;
+        //if (isStopRequested()) return;
     }
 
     public class Launcher {
