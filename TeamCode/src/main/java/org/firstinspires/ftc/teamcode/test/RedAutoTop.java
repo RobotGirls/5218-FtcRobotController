@@ -19,8 +19,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
 
-@Disabled
+
 @Autonomous(name = "BlueObservationAuto")
+
 public class RedAutoTop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
