@@ -17,10 +17,10 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-                myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(60,14,Math.toRadians(180)))
-                        .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(135))
+                myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(56,-20,Math.toRadians(180)))
+                        .strafeToLinearHeading(new Vector2d(-16,-20),Math.toRadians(220))
                         .waitSeconds(1.5)
-                        .strafeToLinearHeading(new Vector2d(26,-20),Math.toRadians(90))
+                        .strafeToLinearHeading(new Vector2d(20,10),Math.toRadians(90))
 
 
 
