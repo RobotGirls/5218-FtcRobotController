@@ -19,102 +19,140 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
 
-@Disabled
-@Autonomous(name = "BlueObservationAuto")
+
+
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+//import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+//import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+//import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+
+@Autonomous(name = "RedTopAutotest")
+
 public class RedAutoTop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Launcher launcher = new Launcher(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 
-        Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(90));
-        Comp5218MecanumDrive drive = new Comp5218MecanumDrive(hardwareMap, initialPose);
-        TrajectoryActionBuilder toSubmersible = drive.actionBuilder(initialPose)
-                //.turn(Math.toRadians(45))
-                .strafeTo(new Vector2d(-20, 29))
-                .waitSeconds(2);
-        Action toSubmersibleTraj = toSubmersible.build();
+        Pose2d initialPose = new Pose2d(-50, 50, Math.toRadians(150));
 
-//        Action toObservation = toSubmersible.fresh()
-//                .waitSeconds(2)
-//                .lineToY(5)
-//                .waitSeconds(1)
-//                .setTangent(Math.toRadians(0))
-//                .lineToX(30)
-//                .waitSeconds(2)
-//                //  .setTangent(0)
-//                .build();
+        // takes the hardware and tuning inputs from mecanum drive
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+
+        TrajectoryActionBuilder toLaunchZone = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-14,20),Math.toRadians(145))
+                .waitSeconds(1.5);
+        TrajectoryActionBuilder toArtifact= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-14,35),Math.toRadians(90))
+                .waitSeconds(1.5);
+
+        TrajectoryActionBuilder toLaunchZone2= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-14,20),Math.toRadians(145))
+                .waitSeconds(1.5);
+
+        Action toPark = toLaunchZone.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(35,-20),Math.toRadians(90))
+                .build();
+
+
+
+//      //TrajectoryActionBuilder toArtifact = drive.actionBuilder(new Pose2d(-22,25,Math.toRadians(225)))
+//       //      .turn(Math.toRadians(-136))
+//      //       .strafeTo(new Vector2d(-30,47))
+//               .strafeTo(new Vector2d(-14,47));
+
+
+
+//       Action toLaunchZone2 = toArtifact.endTrajectory().fresh()
+//               .strafeTo(new Vector2d(-40,20))
+//               .turn(Math.toRadians(-36))
 //
-//        Pose2d observationEndPose = new Pose2d(30, 5, Math.toRadians(0)); // Example
-//        Action toSample = drive.actionBuilder(observationEndPose)
-//                .waitSeconds(2)
-//                .lineToY(10)
-//                .lineToX(40)
+//            .build();
+//
+//
+//
+//       Pose2d LaunchZone2EndPose = new Pose2d(38,-22,Math.toRadians(269));
+//       Action toParking = drive.actionBuilder(LaunchZone2EndPose)
+//               .strafeTo(new Vector2d(38,-22))
+//               .turn(Math.toRadians(45))
+//                    .build();
+
+//        Pose2d ParkingEndPose = new Pose2d(38,-22,Math.toRadians(314));
+//
+//        Action toLaunchZoneTraj = toLaunchZone.build();
+
+//        Action toLaunchZone1=toLaunchZone.endTrajectory().fresh()
 //                .build();
-        Action toObservation = toSubmersible.fresh()
-                .waitSeconds(2)
-                .strafeTo(new Vector2d(35, -5))
-                .lineToY(10)
-                .lineToX(5)
-                .lineToY(-20)
-                .lineToY(10)
-                .waitSeconds(2)
-                .lineToY(-10)
-
-                //  .setTangent(0)
-                .build();
-
-        Pose2d observationEndPose = new Pose2d(5, 10, Math.toRadians(0)); // Example
-        Action toSample = drive.actionBuilder(observationEndPose)
-                .waitSeconds(2)
-                .strafeTo(new Vector2d(-35, 29))
-                .build();
-        Pose2d sampleEndPose = new Pose2d(5, 10, Math.toRadians(0)); // Example
-        Action toHangSpecimen = drive.actionBuilder(sampleEndPose)
-                .waitSeconds(2)
-                .lineToY(5)
-                .waitSeconds(1)
-                .setTangent(Math.toRadians(0))
-                .lineToX(30)
-                .waitSeconds(2)
-                //  .setTangent(0)
-                .build();
 
 
-        Actions.runBlocking(claw.closeClaw());
 
 
-        while (!isStopRequested() && !opModeIsActive()) {
+
+
+
+
+
+        Action firstTraj = toLaunchZone.build();
+        Action secondTraj = toArtifact.build();
+        Action thirdTraj = toLaunchZone2.build();
+
+
+        //if (isStopRequested()) return;
+
+        while (!isStopRequested() && opModeIsActive()) {
             telemetry.addData("Robot position: ", drive.updatePoseEstimate());
+            telemetry.update();
         }
         waitForStart();
         if (isStopRequested()) return;
 
         Actions.runBlocking(
                 new SequentialAction(
-                        lift.liftUp(),
-                        toSubmersibleTraj,
-                        lift.liftDown(),
-                        claw.openClaw(),
-                        toObservation,
-                        claw.closeClaw(),
-                        lift.liftUp(),
-                        toSample,
-                        lift.liftDown(),
-                        claw.openClaw(),
-                        toHangSpecimen
+                        firstTraj,
+                        secondTraj,
+                        thirdTraj,
+                        toPark
+
+
+
 
                 )
+
         );
+
+        //if (isStopRequested()) return;
     }
 
     public class Launcher {
         private DcMotorEx launcher;
+        private ElapsedTime timer;
 
         public Launcher(HardwareMap hardwareMap) {
-            launcher = hardwareMap.get(DcMotorEx.class, "launcherMotor");
-            launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            launcher = hardwareMap.get(DcMotorEx.class, "FlywheelMotor");
+            launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             launcher.setDirection(DcMotorSimple.Direction.FORWARD);
+
+            timer = new ElapsedTime();
         }
 
         public class LauncherForward implements Action {
@@ -126,36 +164,48 @@ public class RedAutoTop extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    launcher.setPower(0.8);
+                    launcher.setPower(-0.6);
                     initialized = true;
-                    sleep(300);
-
+                    timer.reset();
                 }
-
-
-               return true;
-
+                double timerValueShooter = timer.milliseconds();
+                telemetry.addData("Shooter timer", timerValueShooter);
+                telemetry.update();
+                if (timerValueShooter < 2000) {
+                    return true;
+                } else {
+                    launcher.setPower(0);
+                    return false;
+                }
             }
         }
+
         public Action launcherForward() {
             return new LauncherForward();
         }
 
-
         public class LauncherBackwards implements Action {
             private boolean initialized = false;
+            private ElapsedTime timer1;
 
-
-            @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
                 if (!initialized) {
-                    launcher.setPower(-0.8);
-                    initialized = true;
-                }
+                    timer1.reset();
+                    if (timer1.milliseconds() <
+                            2000) {
+                        launcher.setPower(0.8);
 
-               return true;
+                    } else {
+                        launcher.setPower(0);
+                        timer1.reset();
+                        initialized = true;
+                    }
+                }
+                return true;
             }
         }
+
         public Action launcherBackwards() {
             return new LauncherBackwards();
         }
@@ -165,12 +215,14 @@ public class RedAutoTop extends LinearOpMode {
     public class Intake {
         private DcMotorEx intakeMotor;
 
+        private ElapsedTime timer1;
+
 
         public Intake(HardwareMap hardwareMap) {
-            intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-
-            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            intakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
+            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            timer1 = new ElapsedTime();
 
         }
         public class IntakeIn implements Action {
@@ -182,19 +234,24 @@ public class RedAutoTop extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    intakeMotor.setPower(0.8);
+                    intakeMotor.setPower(-0.8);
                     initialized = true;
-                    sleep(300);
-
+                    timer1.reset();
                 }
-
-
-                return true;
+                double timerValue = timer1.milliseconds();
+                telemetry.addData("Intake Timer",timerValue);
+                telemetry.update();
+                if (timerValue < 2000) {
+                    return true;
+                } else {
+                    intakeMotor.setPower(0);
+                    return false;
+                }
 
             }
         }
         public Action intakeIn() {
-            return new Intake.IntakeIn();
+            return new IntakeIn();
         }
 
         public class IntakeOut implements Action {
@@ -203,18 +260,36 @@ public class RedAutoTop extends LinearOpMode {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
                 if (!initialized) {
-                    intakeMotor.setPower(-0.8);
+                    intakeMotor.setPower(0.8);
                     initialized = true;
+                    timer1.reset();
+                }
+                double timerValue = timer1.milliseconds();
+                telemetry.addData("Intake Timer", timerValue);
+                telemetry.update();
+                if (timerValue < 2000) {
+                    return true;
+                } else {
+                    intakeMotor.setPower(0);
+                    return false;
                 }
 
-                return true;
             }
-        }
-        public Action intakeOut() {
-            return new Intake.IntakeOut();
-        }
+            public Action intakeOut() {
+                return new IntakeOut();
+            }
 
 
+        }
     }
+
+
 }
+
+
+
+
+
+
