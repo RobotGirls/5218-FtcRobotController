@@ -43,7 +43,8 @@ public class BlueBottomAuto extends LinearOpMode {
                 .waitSeconds(1.5);
 
         Action toPark = toLaunchZone.endTrajectory().fresh()
-                 .strafeTo(new Vector2d(60,5))
+               .strafeTo(new Vector2d(60,5))
+
                // .turn(Math.toRadians(90))
 
 
@@ -108,6 +109,7 @@ public class BlueBottomAuto extends LinearOpMode {
                                 intake.intakeIn(),
                                 launcher.launcherForward()
                         ),
+
                         toPark
 
 
