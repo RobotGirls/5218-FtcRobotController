@@ -13,11 +13,15 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.test.LimeLight3ASensor;
 
 @TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
 public class LimeLightATTest extends LinearOpMode {
 
     private Limelight3A limelight;
+
+    private LimeLight3ASensor limeLightSensor = new LimeLight3ASensor();
+
     private DcMotorEx flywheel;
     private DcMotorEx feeder;
     private DcMotorEx intake;
@@ -130,7 +134,8 @@ public class LimeLightATTest extends LinearOpMode {
                 } else {
                     feeder.setPower(0);
                 }
-
+            double tagID = limeLightSensor.getFuducials(telemetry,result);
+                telemetry.addData("aprilTagID", tagID);
                 telemetry.addData("TX", tx);
                 telemetry.addData("Distance", distance);
                 telemetry.addData("Target RPM", targetRPM);
