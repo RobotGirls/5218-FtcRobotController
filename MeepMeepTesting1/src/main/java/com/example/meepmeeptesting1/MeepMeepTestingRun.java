@@ -19,8 +19,12 @@ public class MeepMeepTestingRun {
 
                 .strafeToLinearHeading(new Vector2d(-34,-34),Math.toRadians(230))
                 .waitSeconds(1.5)
-                .strafeToLinearHeading(new Vector2d(25,22),Math.toRadians(90))
-
+                .strafeToLinearHeading(new Vector2d(-11,-25),Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-11,-49),Math.toRadians(-90))
+                .waitSeconds(1.5)
+                .strafeToLinearHeading(new Vector2d(-34,-34),Math.toRadians(230))
+                .waitSeconds(1.5)
+                .strafeToLinearHeading(new Vector2d(25,30),Math.toRadians(90))
 
 
 

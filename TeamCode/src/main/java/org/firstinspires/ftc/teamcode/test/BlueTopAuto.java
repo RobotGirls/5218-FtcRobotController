@@ -4,6 +4,27 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
+
+
+
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -25,7 +46,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "BlueTopAuto")
+@Autonomous(name = "BlueTopAutotest")
 
 public class BlueTopAuto extends LinearOpMode {
     @Override
@@ -33,7 +54,7 @@ public class BlueTopAuto extends LinearOpMode {
         Launcher launcher = new Launcher(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 
-        Pose2d initialPose = new Pose2d(-52, -52, Math.toRadians(45));
+        Pose2d initialPose = new Pose2d(-50, 50, Math.toRadians(150));
 
         // takes the hardware and tuning inputs from mecanum drive
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
@@ -41,9 +62,18 @@ public class BlueTopAuto extends LinearOpMode {
         TrajectoryActionBuilder toLaunchZone = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(-34,-34),Math.toRadians(230))
                 .waitSeconds(1.5);
+        TrajectoryActionBuilder toArtifact= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-11,-25),Math.toRadians(-90));
+        TrajectoryActionBuilder toIntake= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-11,-49),Math.toRadians(-90))
+                .waitSeconds(1.5);
+
+        TrajectoryActionBuilder toLaunchZone2= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-34,-34),Math.toRadians(230))
+                .waitSeconds(1.5);
 
         Action toPark = toLaunchZone.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(25,22),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(25,30),Math.toRadians(90))
                 .build();
 
 
@@ -85,6 +115,9 @@ public class BlueTopAuto extends LinearOpMode {
 
 
         Action firstTraj = toLaunchZone.build();
+        Action secondTraj = toArtifact.build();
+        Action thirdTraj = toIntake.build();
+        Action fourthTraj = toLaunchZone2.build();
 
 
         //if (isStopRequested()) return;
@@ -104,7 +137,19 @@ public class BlueTopAuto extends LinearOpMode {
                                 intake.intakeIn(),
                                 launcher.launcherForward()
                         ),
+                        secondTraj,
+                        thirdTraj,
+                        new ParallelAction(
+                                intake.intakeIn()
+                        ),
+                        fourthTraj,
+                        launcher.launcherForward(),
+                        new ParallelAction(
+                                intake.intakeIn(),
+                                launcher.launcherForward()
+                        ),
                         toPark
+
 
 
 
