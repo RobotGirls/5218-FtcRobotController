@@ -132,22 +132,9 @@ public class BlueTopAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         firstTraj,
-                        launcher.launcherForward(),
-                        new ParallelAction(
-                                intake.intakeIn(),
-                                launcher.launcherForward()
-                        ),
                         secondTraj,
                         thirdTraj,
-                        new ParallelAction(
-                                intake.intakeIn()
-                        ),
                         fourthTraj,
-                        launcher.launcherForward(),
-                        new ParallelAction(
-                                intake.intakeIn(),
-                                launcher.launcherForward()
-                        ),
                         toPark
 
 

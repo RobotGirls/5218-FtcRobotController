@@ -46,7 +46,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "RedTopAutotest")
+@Autonomous(name = "RedTopAutotest2.5")
 
 public class RedAutoTop extends LinearOpMode {
     @Override
@@ -54,7 +54,7 @@ public class RedAutoTop extends LinearOpMode {
         Launcher launcher = new Launcher(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 
-        Pose2d initialPose = new Pose2d(-50, 50, Math.toRadians(150));
+        Pose2d initialPose = new Pose2d(-50, 50, Math.toRadians(130));
 
         // takes the hardware and tuning inputs from mecanum drive
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
@@ -63,7 +63,10 @@ public class RedAutoTop extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-14,20),Math.toRadians(145))
                 .waitSeconds(1.5);
         TrajectoryActionBuilder toArtifact= drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-14,35),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-14,35),Math.toRadians(90));
+
+        TrajectoryActionBuilder toIntake= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-14,49),Math.toRadians(-90))
                 .waitSeconds(1.5);
 
         TrajectoryActionBuilder toLaunchZone2= drive.actionBuilder(initialPose)
@@ -114,7 +117,8 @@ public class RedAutoTop extends LinearOpMode {
 
         Action firstTraj = toLaunchZone.build();
         Action secondTraj = toArtifact.build();
-        Action thirdTraj = toLaunchZone2.build();
+        Action thirdTraj = toIntake.build();
+        Action fourthTraj = toLaunchZone2.build();
 
 
         //if (isStopRequested()) return;
@@ -130,8 +134,7 @@ public class RedAutoTop extends LinearOpMode {
                 new SequentialAction(
                         firstTraj,
                         secondTraj,
-                        thirdTraj,
-                        toPark
+                        thirdTraj
 
 
 
