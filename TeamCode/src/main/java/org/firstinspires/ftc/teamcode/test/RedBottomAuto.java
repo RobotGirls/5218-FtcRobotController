@@ -25,7 +25,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "RedBottomAuto")
+@Autonomous(name = "RedBottomAuto2")
 
 public class RedBottomAuto extends LinearOpMode {
     @Override
@@ -41,8 +41,13 @@ public class RedBottomAuto extends LinearOpMode {
         TrajectoryActionBuilder toLaunchZone = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
                 .waitSeconds(1.5);
+        TrajectoryActionBuilder toArtifact= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-14,35),Math.toRadians(90));
+        TrajectoryActionBuilder toLaunchZone2 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
+                .waitSeconds(1.5);
 
-        Action toPark = toLaunchZone.endTrajectory().fresh()
+        Action toPark = toLaunchZone2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(26,-20),Math.toRadians(90))
                 .build();
 
@@ -85,6 +90,8 @@ public class RedBottomAuto extends LinearOpMode {
 
 
         Action firstTraj = toLaunchZone.build();
+        Action secondTraj = toArtifact.build();
+        Action thirdTraj = toLaunchZone2.build();
 
 
         //if (isStopRequested()) return;
@@ -99,11 +106,8 @@ public class RedBottomAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         firstTraj,
-                        launcher.launcherForward(),
-                        new ParallelAction(
-                                intake.intakeIn(),
-                                launcher.launcherForward()
-                        ),
+                        secondTraj,
+                        thirdTraj,
                         toPark
 
 
