@@ -22,6 +22,8 @@ public class LimelightDistance extends LinearOpMode {
 
     DcMotorEx FlywheelMotor;
 
+    private double adjustedFlywheelPower;
+
     DcMotorEx TransportMotor;
 
     private Limelight3ASensor limelightSensor = new Limelight3ASensor();
@@ -46,23 +48,23 @@ public class LimelightDistance extends LinearOpMode {
             double rx = gamepad1.right_stick_x;
 
 
-            boolean autoAlign = gamepad1.left_bumper;
-            double turnPower = 0;
+//            boolean autoAlign = gamepad1.left_bumper;
+//            double turnPower = 0;
+//
+//             if (autoAlign) {
+//                double tx = limelightSensor.getTx();
+//                turnPower = tx * AUTO_ALIGN_KP;
+//            } else {
+//                turnPower = rx;
+//            }
 
-            if (autoAlign) {
-                double tx = limelightSensor.getTx();
-                turnPower = tx * AUTO_ALIGN_KP;
-            } else {
-                turnPower = rx;
-            }
+
 
             // double FlywheelPower = gamepad2.right_stick_y; // example
             // FlywheelMotor.setPower(FlywheelPower);
 
 
-            // Flywheel Motor (right stick)
-            double FlywheelPower = -gamepad2.right_stick_y;
-            FlywheelMotor.setPower(FlywheelPower);
+
 
 
             //transport
@@ -88,11 +90,17 @@ public class LimelightDistance extends LinearOpMode {
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
+//            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+//            double frontLeftPower = (y + x + turnPower) / denominator;
+//            double backLeftPower = (y - x + turnPower) / denominator;
+//            double frontRightPower = (y - x - turnPower) / denominator;
+//            double backRightPower = (y + x - turnPower) / denominator;
+
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + turnPower) / denominator;
-            double backLeftPower = (y - x + turnPower) / denominator;
-            double frontRightPower = (y - x - turnPower) / denominator;
-            double backRightPower = (y + x - turnPower) / denominator;
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
 
 
             leftFront.setPower(frontLeftPower);
@@ -114,14 +122,26 @@ public class LimelightDistance extends LinearOpMode {
             rightBack.setPower(backRightPower);
 
 // (removed brake code)
-
             limelightSensor.limelightProcessing(telemetry);
+
+            adjustedFlywheelPower = limelightSensor.adjustFlywheelSpeed(telemetry);
+
+            // Flywheel Motor (right stick)
+            double flywheelPower = -gamepad2.right_stick_y;
+
+            if (flywheelPower > 0){
+                FlywheelMotor.setPower(adjustedFlywheelPower);
+            } else-if (flywheelPower < 0){
+                FlywheelMotor.setPower( - adjustedFlywheelPower);
+            } else {
+                FlywheelMotor.setPower(0);
+            }
+
+            //FlywheelMotor.setPower(FlywheelPower);
+
 
             telemetry.update();
 
-            limelightSensor.limelightProcessing(telemetry);
-
-            telemetry.update();
         }
 
         limelightSensor.stopLimelightProcessing();
