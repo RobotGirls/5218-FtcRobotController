@@ -131,7 +131,7 @@ public class LimelightDistance extends LinearOpMode {
 
             if (flywheelPower > 0){
                 FlywheelMotor.setPower(adjustedFlywheelPower);
-            } else-if (flywheelPower < 0){
+            } else if (flywheelPower < 0){
                 FlywheelMotor.setPower( - adjustedFlywheelPower);
             } else {
                 FlywheelMotor.setPower(0);
@@ -184,7 +184,7 @@ public class LimelightDistance extends LinearOpMode {
         //flywheel motor
         // need to add this on the bottom too
 
-        FlywheelMotor = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
+        FlywheelMotor = hardwareMap.get(DcMotorEx.class, "FlywheelMotor");
         FlywheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FlywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
