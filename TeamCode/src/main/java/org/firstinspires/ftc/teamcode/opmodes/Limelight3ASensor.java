@@ -5,6 +5,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
@@ -13,8 +14,16 @@ import java.util.List;
 
 public class Limelight3ASensor {
     private Limelight3A limelight;
+    private int alignThreshold = 3;
+    private double lastError = 0;
+    private double derivative;
+    private double integralSum = 0;
 
+    private double Kp = 0.014; // Tx range is 0 to 26 --> at max offset 26, when Kp is 0.02, speed is half power
+    private double Ki = 0;
+    private double Kd = 0;
 
+    LLResult localResult;
     public void initLimelight(HardwareMap hardwareMap, Telemetry telemetry) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         telemetry.setMsTransmissionInterval(11);
@@ -66,7 +75,7 @@ public class Limelight3ASensor {
 
     }
 
-    public double getFuducials(Telemetry telemetry, LLResult result) {
+    public double getFiducials(Telemetry telemetry, LLResult result) {
         // Access fiducial results
         List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
         for (LLResultTypes.FiducialResult fr : fiducialResults) {
@@ -92,6 +101,23 @@ public class Limelight3ASensor {
         }
     }
 
+    public double adjustFlywheelSpeed(Telemetry telemetry) {
+        double error = localResult.getTy();
+        ElapsedTime timer = new ElapsedTime();
+        if (Math.abs(error) > alignThreshold) {
+            error = -1 * localResult.getTy();
+            derivative = (error - lastError) / timer.seconds();
+            integralSum = integralSum + (error * timer.seconds());
+            double power = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+            lastError = error;
+            telemetry.addData("flywheelSpeedError", error);
+            return power;
+        } else {
+            return 0;
+        }
+
+
+    }
 
     public void limelightProcessing(Telemetry telemetry) {
         LLStatus status = limelight.getStatus();
@@ -103,11 +129,13 @@ public class Limelight3ASensor {
                 status.getPipelineIndex(), status.getPipelineType());
 
         LLResult result = limelight.getLatestResult();
+        localResult = result;
         if (result.isValid()) {
             getGeneralInformation(telemetry, result);
             getBarcodeResults(telemetry, result);
             getMiscResults(telemetry, result);
             getColor(telemetry, result);
+            getFiducials(telemetry, result);
 
         } else {
             telemetry.addData("Limelight", "No data available");
