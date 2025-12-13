@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.opmodes.Limelight3ASensor;
 
@@ -16,15 +17,17 @@ public class LimelightDistance extends LinearOpMode {
     private final double BLOCK_NOTHING = 0.25;
     private final double BLOCK_BOTH = 0.05;
 
-    DcMotorEx IntakeMotor;
+    //DcMotorEx IntakeMotor;
+    ElapsedTime timer;
 
     DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
     DcMotorEx FlywheelMotor;
 
     private double adjustedFlywheelPower;
+    private boolean firstTime;
 
-    DcMotorEx TransportMotor;
+    //DcMotorEx TransportMotor;
 
     private Limelight3ASensor limelightSensor = new Limelight3ASensor();
 
@@ -68,15 +71,15 @@ public class LimelightDistance extends LinearOpMode {
 
 
             //transport
-            double TransportPower = 0.0;
+          //  double TransportPower = 0.0;
 
-            if (gamepad2.y) {
-                TransportPower = 1.0; // Forward
-            } else if (gamepad2.a) {
-                TransportPower = -1.0; // Reverse
-            }
+           // if (gamepad2.y) {
+             //   TransportPower = 1.0; // Forward
+          //  } else if (gamepad2.a) {
+            //    TransportPower = -1.0; // Reverse
+         //   }
 
-            TransportMotor.setPower(TransportPower);
+           // TransportMotor.setPower(TransportPower);
 
 
             //double IntakeMotorPower = gamepad2.left_stick_y;
@@ -84,7 +87,7 @@ public class LimelightDistance extends LinearOpMode {
 
             // Intake Motor (left stick)
             double intakePower = -gamepad2.left_stick_y;
-            IntakeMotor.setPower(intakePower);
+            //IntakeMotor.setPower(intakePower);
 
 
             // Denominator is the largest motor power (absolute value) or 1
@@ -96,19 +99,19 @@ public class LimelightDistance extends LinearOpMode {
 //            double frontRightPower = (y - x - turnPower) / denominator;
 //            double backRightPower = (y + x - turnPower) / denominator;
 
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+//            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+//           // double frontLeftPower = (y + x + rx) / denominator;
+//            double backLeftPower = (y - x + rx) / denominator;
+//            double frontRightPower = (y - x - rx) / denominator;
+//            double backRightPower = (y + x - rx) / denominator;
+//
 
+//           // leftFront.setPower(frontLeftPower);
+//            leftBack.setPower(backLeftPower);
+//            rightFront.setPower(frontRightPower);
+//            rightBack.setPower(backRightPower);
 
-            leftFront.setPower(frontLeftPower);
-            leftBack.setPower(backLeftPower);
-            rightFront.setPower(frontRightPower);
-            rightBack.setPower(backRightPower);
-
-//            if (TransportPower > 0) {
+//         //   if (TransportPower > 0) {
 //
 //                leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //                leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -116,28 +119,38 @@ public class LimelightDistance extends LinearOpMode {
 //                rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //            }
 
-            leftFront.setPower(frontLeftPower);
-            leftBack.setPower(backLeftPower);
-            rightFront.setPower(frontRightPower);
-            rightBack.setPower(backRightPower);
+           // leftFront.setPower(frontLeftPower);
+//            leftBack.setPower(backLeftPower);
+//            rightFront.setPower(frontRightPower);
+//            rightBack.setPower(backRightPower);
 
 // (removed brake code)
-            limelightSensor.limelightProcessing(telemetry);
-
-            adjustedFlywheelPower = limelightSensor.adjustFlywheelSpeed(telemetry);
 
             // Flywheel Motor (right stick)
             double flywheelPower = -gamepad2.right_stick_y;
+          //  telemetry.addData("right_stick_y", flywheelPower);
 
             if (flywheelPower > 0){
+                if (firstTime) {
+                    timer.reset();
+                    firstTime = false;
+                }
+                limelightSensor.limelightProcessing(telemetry,timer);
+                adjustedFlywheelPower = limelightSensor.adjustFlywheelSpeed(telemetry);
                 FlywheelMotor.setPower(adjustedFlywheelPower);
             } else if (flywheelPower < 0){
+                if (firstTime) {
+                    timer.reset();
+                    firstTime = false;
+                }
+                limelightSensor.limelightProcessing(telemetry,timer);
+                adjustedFlywheelPower = limelightSensor.adjustFlywheelSpeed(telemetry);
                 FlywheelMotor.setPower( - adjustedFlywheelPower);
             } else {
                 FlywheelMotor.setPower(0);
             }
 
-            //FlywheelMotor.setPower(FlywheelPower);
+            FlywheelMotor.setPower(flywheelPower);
 
 
             telemetry.update();
@@ -147,38 +160,38 @@ public class LimelightDistance extends LinearOpMode {
         limelightSensor.stopLimelightProcessing();
     }
     public void initHardware() {
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftBack = hardwareMap.get(DcMotorEx.class, "backLeft");
-        rightBack = hardwareMap.get(DcMotorEx.class, "backRight");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
-
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // note: you must set this after stop and reset encoder; otherwise, the robot won't move
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//       // leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
+//        leftBack = hardwareMap.get(DcMotorEx.class, "backLeft");
+//        rightBack = hardwareMap.get(DcMotorEx.class, "backRight");
+//        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+//
+//       // leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//       // leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        // note: you must set this after stop and reset encoder; otherwise, the robot won't move
+//       // leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+//       // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         // Intake
         // not complete yet, derived from TeleopDrive
 
-        IntakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
-        IntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+       // IntakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
+      //  IntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      //  IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         //flywheel motor
@@ -191,10 +204,11 @@ public class LimelightDistance extends LinearOpMode {
         //Transport Motor
 
 
-        TransportMotor = hardwareMap.get(DcMotorEx.class, "TransportMotor");
-        TransportMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        TransportMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+       // TransportMotor = hardwareMap.get(DcMotorEx.class, "TransportMotor");
+       // TransportMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+       // TransportMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        timer = new ElapsedTime();
         limelightSensor.initLimelight(hardwareMap, telemetry);
     }
 }
