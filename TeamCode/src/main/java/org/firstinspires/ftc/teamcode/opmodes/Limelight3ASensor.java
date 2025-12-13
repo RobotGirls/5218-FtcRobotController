@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 import java.util.List;
 
@@ -22,9 +23,17 @@ public class Limelight3ASensor {
     private double Kp = 0.014; // Tx range is 0 to 26 --> at max offset 26, when Kp is 0.02, speed is half power
     private double Ki = 0;
     private double Kd = 0;
+    private double currTime = 0;
+    private double prevTime = 0;
+    private Position position;
+    private Pose3D localBotPose;
+
+    Pose3D botpose;
+
 
     LLResult localResult;
     public void initLimelight(HardwareMap hardwareMap, Telemetry telemetry) {
+
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
@@ -37,7 +46,7 @@ public class Limelight3ASensor {
 
     public void getGeneralInformation(Telemetry telemetry, LLResult result) {
         // Access general information
-        Pose3D botpose = result.getBotpose();
+        botpose = result.getBotpose();
         double captureLatency = result.getCaptureLatency();
         double targetingLatency = result.getTargetingLatency();
         double parseLatency = result.getParseLatency();
@@ -102,12 +111,17 @@ public class Limelight3ASensor {
     }
 
     public double adjustFlywheelSpeed(Telemetry telemetry) {
-        double error = localResult.getTy();
-        ElapsedTime timer = new ElapsedTime();
+        double deltaTime;
+        localBotPose = localResult.getBotpose();
+        position = localBotPose.getPosition();
+        double error = position.y;
+
         if (Math.abs(error) > alignThreshold) {
             error = -1 * localResult.getTy();
-            derivative = (error - lastError) / timer.seconds();
-            integralSum = integralSum + (error * timer.seconds());
+            deltaTime = currTime-prevTime;
+            derivative = (error - lastError) / deltaTime;
+            integralSum = integralSum + (error * deltaTime);
+            prevTime = currTime;
             double power = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
             lastError = error;
             telemetry.addData("flywheelSpeedError", error);
@@ -119,7 +133,7 @@ public class Limelight3ASensor {
 
     }
 
-    public void limelightProcessing(Telemetry telemetry) {
+    public void limelightProcessing(Telemetry telemetry, ElapsedTime timer) {
         LLStatus status = limelight.getStatus();
         telemetry.addData("Name", "%s",
                 status.getName());
@@ -129,6 +143,7 @@ public class Limelight3ASensor {
                 status.getPipelineIndex(), status.getPipelineType());
 
         LLResult result = limelight.getLatestResult();
+        currTime = timer.seconds();
         localResult = result;
         if (result.isValid()) {
             getGeneralInformation(telemetry, result);
