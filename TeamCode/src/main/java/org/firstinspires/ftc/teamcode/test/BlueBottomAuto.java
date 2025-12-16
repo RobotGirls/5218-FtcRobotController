@@ -30,7 +30,7 @@ public class BlueBottomAuto extends LinearOpMode {
 
         Launcher launcher = new Launcher(hardwareMap);
         Intake intake = new Intake(hardwareMap);
-        Flap flap = new Flap(hardwareMap);   // ✅ SERVO CREATED
+        Flap flap = new Flap(hardwareMap);
 
         Pose2d initialPose = new Pose2d(60, -20, Math.toRadians(180));
 
@@ -67,23 +67,23 @@ public class BlueBottomAuto extends LinearOpMode {
                 new SequentialAction(
                         firstTraj,
 
-                        flap.closeFlap(),        // ✅ SERVO CLOSES
+                 //       flap.closeFlap(),
 
-                        launcher.launcherForward(),
+                 //       launcher.launcherForward(),
 
-                        new ParallelAction(
-                                intake.intakeIn(),
-                                launcher.launcherForward()
-                        ),
+                //        new ParallelAction(
+//                                intake.intakeIn(),
+//                                launcher.launcherForward();
+                //        ),
 
-                        flap.openFlap(),         // ✅ SERVO OPENS
+                //        flap.openFlap(),
 
                         secondTraj,
                         thirdTraj,
 
                         fourthTraj,
 
-                        flap.closeFlap(),        // ✅ SERVO CLOSES AGAIN
+                 //       flap.closeFlap(),
 
                         toPark
                 )
