@@ -46,9 +46,9 @@ public class NewLinearOpmode extends LinearOpMode {
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+ // rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+//       leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+//     //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         // Intake
@@ -67,11 +67,11 @@ public class NewLinearOpmode extends LinearOpMode {
         FlywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Transport Motor
-        DcMotorEx TransportMotor;
-
-       TransportMotor = hardwareMap.get(DcMotorEx.class, "TransportMotor");
-        TransportMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        TransportMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        DcMotorEx TransportMotor;
+//
+//       TransportMotor = hardwareMap.get(DcMotorEx.class, "TransportMotor");
+//        TransportMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        TransportMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -80,9 +80,9 @@ public class NewLinearOpmode extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive() && !isStopRequested()) {
-            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
+            double y = -gamepad1.right_stick_x; // Remember, Y stick value is reversed
+            double x = gamepad1.right_stick_y * 1.1; // Counteract imperfect strafing
+            double rx = -gamepad1.left_stick_x;
 
             // double FlywheelPower = gamepad2.right_stick_y; // example
             // FlywheelMotor.setPower(FlywheelPower);
@@ -93,16 +93,16 @@ public class NewLinearOpmode extends LinearOpMode {
             FlywheelMotor.setPower(FlywheelPower);
 
 
-            //transport
-            double TransportPower = 0.0;
-
-            if (gamepad2.y) {
-                TransportPower = 1.0; // Forward
-            } else if (gamepad2.a) {
-                TransportPower = -1.0; // Reverse
-            }
-
-            TransportMotor.setPower(TransportPower);
+//            //transport
+//            double TransportPower = 0.0;
+//
+//            if (gamepad2.y) {
+//                TransportPower = 1.0; // Forward
+//            } else if (gamepad2.a) {
+//                TransportPower = -1.0; // Reverse
+//            }
+//
+//            TransportMotor.setPower(TransportPower);
 
 
             //double IntakeMotorPower = gamepad2.left_stick_y;
@@ -121,8 +121,8 @@ public class NewLinearOpmode extends LinearOpMode {
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
+            double backLeftPower = (y - x - rx) / denominator;
+            double frontRightPower = (y - x + rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
 
@@ -131,14 +131,14 @@ public class NewLinearOpmode extends LinearOpMode {
             rightFront.setPower(frontRightPower);
             rightBack.setPower(backRightPower);
 
-            if (TransportPower>0){
-
-                leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            }
-
+//            if (TransportPower>0){
+//
+//                leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//                leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//                rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//                rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            }
+//
 
 
             telemetry.update();
