@@ -106,10 +106,21 @@ public class RedBottomAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         firstTraj,
+                        launcher.launcherForward(),
+                        new ParallelAction(
+                                intake.intakeIn(),
+                                launcher.launcherForward()
+                        ),
                         secondTraj,
-                        thirdTraj,
-                        toPark
 
+                        thirdTraj,
+                        launcher.launcherForward(),
+                        new ParallelAction(
+                                intake.intakeIn(),
+                                launcher.launcherForward()
+                        ),
+
+                        toPark
 
 
 

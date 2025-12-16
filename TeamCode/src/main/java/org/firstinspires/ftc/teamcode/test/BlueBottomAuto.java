@@ -42,7 +42,18 @@ public class BlueBottomAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-16,-35),Math.toRadians(235))
                 .waitSeconds(1.5);
 
-        Action toPark = toLaunchZone.endTrajectory().fresh()
+        TrajectoryActionBuilder toArtifact= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-11,-25),Math.toRadians(-90));
+
+        TrajectoryActionBuilder toIntake= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-11,-49),Math.toRadians(-90))
+                .waitSeconds(1.5);
+
+        TrajectoryActionBuilder toLaunchZone2= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-34,-34),Math.toRadians(230))
+                .waitSeconds(1.5);
+
+        Action toPark = toLaunchZone2.endTrajectory().fresh()
                .strafeTo(new Vector2d(60,5))
 
                // .turn(Math.toRadians(90))
@@ -90,6 +101,11 @@ public class BlueBottomAuto extends LinearOpMode {
 
 
         Action firstTraj = toLaunchZone.build();
+        Action secondTraj = toArtifact.build();
+        Action thridTraj = toIntake.build();
+        Action fourthTraj = toLaunchZone2.build();
+
+
 
 
         //if (isStopRequested()) return;
@@ -104,6 +120,19 @@ public class BlueBottomAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         firstTraj,
+                        launcher.launcherForward(),
+                        new ParallelAction(
+                                intake.intakeIn(),
+                                launcher.launcherForward()
+                        ),
+                        secondTraj,
+
+                        thridTraj,
+                        new ParallelAction(
+                                intake.intakeIn()
+                        ),
+
+                        fourthTraj,
                         launcher.launcherForward(),
                         new ParallelAction(
                                 intake.intakeIn(),
