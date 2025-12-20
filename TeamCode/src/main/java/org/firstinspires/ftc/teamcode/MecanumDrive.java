@@ -63,15 +63,15 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        public double inPerTick = 0.00196629273;
-        public double lateralInPerTick = 0.0014568811794998888 ;//inPerTick;
-       // public double trackWidthTicks = 0.0001492207178;
-        public double trackWidthTicks =  7100.0897641607835;
+        public double inPerTick = 0.0019962958;
+        public double lateralInPerTick =  0.0015357220028360758 ;//inPerTick;
+        // public double trackWidthTicks = 0.0001492207178;
+        public double trackWidthTicks =  6749.107774503825;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.1993479150920505;
-        public double kV = 0.0003067634231726748;
-        public double kA = 0.0001;
+        public double kS =  0.9677494663271329;
+        public double kV =  0.0003160341481593463;
+        public double kA = 0.00005;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -85,9 +85,9 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 1;
-        public double lateralGain = 1;
-        public double headingGain = 1;// shared with turn
+        public double axialGain = 2;
+        public double lateralGain = 2;
+        public double headingGain = 2;// shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -255,7 +255,7 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-       // localizer = new DriveLocalizer(pose);
+        // localizer = new DriveLocalizer(pose);
         localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick, pose);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
@@ -462,14 +462,14 @@ public final class MecanumDrive {
     public PoseVelocity2d updatePoseEstimate() {
         PoseVelocity2d vel = localizer.update();
         poseHistory.add(localizer.getPose());
-        
+
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
 
         estimatedPoseWriter.write(new PoseMessage(localizer.getPose()));
-        
-        
+
+
         return vel;
     }
 

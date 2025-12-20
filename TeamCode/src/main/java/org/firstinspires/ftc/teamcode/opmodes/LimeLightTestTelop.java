@@ -154,7 +154,7 @@ public class LimeLightTestTelop extends LinearOpMode {
     private void driveControl() {
         double y  = -gamepad1.right_stick_y;
         double x  = gamepad1.right_stick_x ;
-        double rx = gamepad1.left_stick_x;
+        double rx = -gamepad1.left_stick_x;
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double fl = (y + x - rx) / denominator;
@@ -172,8 +172,11 @@ public class LimeLightTestTelop extends LinearOpMode {
     private void manualMechanisms() {
 
         // Flywheel manual control (right stick)
-        double flywheelPower = -gamepad2.right_stick_y;
+       double flywheelPower = (gamepad2.a) ? 0.70 : (gamepad2.x) ? -0.70 : 0.0;
         flywheelMotor.setPower(flywheelPower);
+
+
+
 
         // Intake (left stick)
         double intakePower = -gamepad2.left_stick_y;
