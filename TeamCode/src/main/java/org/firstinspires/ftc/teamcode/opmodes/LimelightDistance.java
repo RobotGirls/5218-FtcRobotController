@@ -130,25 +130,26 @@ public class LimelightDistance extends LinearOpMode {
             double flywheelPower = -gamepad2.right_stick_y;
           //  telemetry.addData("right_stick_y", flywheelPower);
 
-            if (flywheelPower > 0){
+           // if (flywheelPower > 0){
 //                if (firstTime) {
 //                    timer.reset();
 //                    firstTime = false;
 //                }
+                flywheelPower = 1; //FIXME this is temporary for testing
                 limelightSensor.limelightProcessing(telemetry,timer);
                 adjustedFlywheelPower = limelightSensor.adjustFlywheelSpeed(telemetry);
                 FlywheelMotor.setPower(adjustedFlywheelPower);
-            } else if (flywheelPower < 0){
-                if (firstTime) {
-                    timer.reset();
-                    firstTime = false;
-                }
-                limelightSensor.limelightProcessing(telemetry,timer);
-                adjustedFlywheelPower = limelightSensor.adjustFlywheelSpeed(telemetry);
-                FlywheelMotor.setPower( - adjustedFlywheelPower);
-            } else {
-                FlywheelMotor.setPower(0);
-            }
+//            } else if (flywheelPower < 0){
+//                if (firstTime) {
+//                    timer.reset();
+//                    firstTime = false;
+//                }
+//                limelightSensor.limelightProcessing(telemetry,timer);
+//                adjustedFlywheelPower = limelightSensor.adjustFlywheelSpeed(telemetry);
+//                FlywheelMotor.setPower( - adjustedFlywheelPower);
+//            } else {
+//                FlywheelMotor.setPower(0);
+//            }
 
             FlywheelMotor.setPower(flywheelPower);
 

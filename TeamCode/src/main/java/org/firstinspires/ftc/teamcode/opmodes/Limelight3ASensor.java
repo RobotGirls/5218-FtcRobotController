@@ -47,7 +47,7 @@ public class Limelight3ASensor {
         // Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
         limelight.start();
         myTelemetry = telemetry;
-        telemetry.addData(">", "Robot Ready.  Press Play.");
+        telemetry.addData(">", "Robot Ready2.  Press Play.");
         // telemetry.update();
     }
 
@@ -160,7 +160,7 @@ public class Limelight3ASensor {
                 status.getTemp(), status.getCpu(),(int)status.getFps());
         myTelemetry.addData("Pipeline", "Index: %d, Type: %s",
                 status.getPipelineIndex(), status.getPipelineType());
-
+        myTelemetry.update();
 
         LLResult result = limelight.getLatestResult();
         currTime = timer.seconds();
