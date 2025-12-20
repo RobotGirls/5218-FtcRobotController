@@ -60,9 +60,9 @@ public class NewLinearOpmode extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            double y = -gamepad1.left_stick_y;
+            double y = -gamepad1.left_stick_x;
             double x = gamepad1.right_stick_x * 1.1;
-            double rx = -gamepad1.right_stick_y;
+            double rx = gamepad1.right_stick_y;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             leftFront.setPower((y - x + rx) / denominator);
