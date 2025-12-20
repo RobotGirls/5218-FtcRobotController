@@ -131,10 +131,10 @@ public class LimelightDistance extends LinearOpMode {
           //  telemetry.addData("right_stick_y", flywheelPower);
 
             if (flywheelPower > 0){
-                if (firstTime) {
-                    timer.reset();
-                    firstTime = false;
-                }
+//                if (firstTime) {
+//                    timer.reset();
+//                    firstTime = false;
+//                }
                 limelightSensor.limelightProcessing(telemetry,timer);
                 adjustedFlywheelPower = limelightSensor.adjustFlywheelSpeed(telemetry);
                 FlywheelMotor.setPower(adjustedFlywheelPower);
@@ -210,6 +210,7 @@ public class LimelightDistance extends LinearOpMode {
 
         timer = new ElapsedTime();
         limelightSensor.initLimelight(hardwareMap, telemetry);
+        telemetry.update();
     }
 }
 

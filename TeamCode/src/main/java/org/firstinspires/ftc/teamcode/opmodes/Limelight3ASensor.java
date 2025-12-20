@@ -46,9 +46,9 @@ public class Limelight3ASensor {
         limelight.pipelineSwitch(0);
         // Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
         limelight.start();
-
+        myTelemetry = telemetry;
         telemetry.addData(">", "Robot Ready.  Press Play.");
-        telemetry.update();
+        // telemetry.update();
     }
 
     public void getGeneralInformation(Telemetry telemetry, LLResult result) {
@@ -57,28 +57,28 @@ public class Limelight3ASensor {
         double captureLatency = result.getCaptureLatency();
         double targetingLatency = result.getTargetingLatency();
         double parseLatency = result.getParseLatency();
-        telemetry.addData("flywheelSpeedError", errorTlm);
-        telemetry.addData("adjustedPower", powerTlm);
-        telemetry.addData("error", errorTlm);
-        telemetry.addData("deltaTime", deltaTimeTlm);
-        telemetry.addData("lastError", lastError);
-        telemetry.addData("LL Latency", captureLatency + targetingLatency);
-        telemetry.addData("Parse Latency", parseLatency);
-        telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
+        myTelemetry.addData("flywheelSpeedError", errorTlm);
+        myTelemetry.addData("adjustedPower", powerTlm);
+        myTelemetry.addData("error", errorTlm);
+        myTelemetry.addData("deltaTime", deltaTimeTlm);
+        myTelemetry.addData("lastError", lastError);
+        myTelemetry.addData("LL Latency", captureLatency + targetingLatency);
+        myTelemetry.addData("Parse Latency", parseLatency);
+        myTelemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
 
-        telemetry.addData("tx", result.getTx());
-        telemetry.addData("txnc", result.getTxNC());
-        telemetry.addData("ty", result.getTy());
-        telemetry.addData("tync", result.getTyNC());
+        myTelemetry.addData("tx", result.getTx());
+        myTelemetry.addData("txnc", result.getTxNC());
+        myTelemetry.addData("ty", result.getTy());
+        myTelemetry.addData("tync", result.getTyNC());
 
-        telemetry.addData("Botpose", botpose.toString());
-        myTelemetry = telemetry;
+        myTelemetry.addData("Botpose", botpose.toString());
+
     }
     public void getBarcodeResults(Telemetry telemetry, LLResult result) {
         // Access barcode results
         List<LLResultTypes.BarcodeResult> barcodeResults = result.getBarcodeResults();
         for (LLResultTypes.BarcodeResult br : barcodeResults) {
-            telemetry.addData("Barcode", "Data: %s", br.getData());
+            myTelemetry.addData("Barcode", "Data: %s", br.getData());
         }
     }
 
@@ -86,13 +86,13 @@ public class Limelight3ASensor {
         // Access classifier results
         List<LLResultTypes.ClassifierResult> classifierResults = result.getClassifierResults();
         for (LLResultTypes.ClassifierResult cr : classifierResults) {
-            telemetry.addData("Classifier", "Class: %s, Confidence: %.2f", cr.getClassName(), cr.getConfidence());
+            myTelemetry.addData("Classifier", "Class: %s, Confidence: %.2f", cr.getClassName(), cr.getConfidence());
         }
 
         // Access detector results
         List<LLResultTypes.DetectorResult> detectorResults = result.getDetectorResults();
         for (LLResultTypes.DetectorResult dr : detectorResults) {
-            telemetry.addData("Detector", "Class: %s, Area: %.2f", dr.getClassName(), dr.getTargetArea());
+            myTelemetry.addData("Detector", "Class: %s, Area: %.2f", dr.getClassName(), dr.getTargetArea());
         }
 
     }
@@ -102,7 +102,7 @@ public class Limelight3ASensor {
         List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
         for (LLResultTypes.FiducialResult fr : fiducialResults) {
             double tagId = fr.getFiducialId();
-//          telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
+//          myTelemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
             return tagId;
         }
         return 0;
@@ -119,7 +119,7 @@ public class Limelight3ASensor {
         // Access color results
         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
         for (LLResultTypes.ColorResult cr : colorResults) {
-            telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
+            myTelemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
         }
     }
 
@@ -154,14 +154,14 @@ public class Limelight3ASensor {
 
     public void limelightProcessing(Telemetry telemetry, ElapsedTime timer) {
         LLStatus status = limelight.getStatus();
-        telemetry.addData("Name", "%s",
+        myTelemetry.addData("Name", "%s",
                 status.getName());
-        telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
+        myTelemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
                 status.getTemp(), status.getCpu(),(int)status.getFps());
-        telemetry.addData("Pipeline", "Index: %d, Type: %s",
+        myTelemetry.addData("Pipeline", "Index: %d, Type: %s",
                 status.getPipelineIndex(), status.getPipelineType());
 
-        myTelemetry =  telemetry;
+
         LLResult result = limelight.getLatestResult();
         currTime = timer.seconds();
         localResult = result;
@@ -173,7 +173,7 @@ public class Limelight3ASensor {
             //getFiducials(telemetry, result);
 
         } else {
-            telemetry.addData("Limelight", "No data available");
+            myTelemetry.addData("Limelight", "No data available");
         }
 
     }
