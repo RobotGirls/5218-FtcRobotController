@@ -160,7 +160,7 @@ public class Limelight3ASensor {
                 status.getTemp(), status.getCpu(),(int)status.getFps());
         myTelemetry.addData("Pipeline", "Index: %d, Type: %s",
                 status.getPipelineIndex(), status.getPipelineType());
-        myTelemetry.update();
+        myTelemetry.update(); // this one printed telem
 
         LLResult result = limelight.getLatestResult();
         currTime = timer.seconds();
