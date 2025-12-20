@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "gobulidaTeleop ")
 public class NewLinearOpmode extends LinearOpMode {
 
-    private final double FLAP_IN = 0.5;
-    private final double FLAP_OUT = 0.05;
+    private final double FLAP_IN = 1;
+    private final double FLAP_OUT = 0.1;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -61,7 +61,7 @@ public class NewLinearOpmode extends LinearOpMode {
         while (opModeIsActive()) {
 
             double y = -gamepad1.left_stick_x;
-            double x = gamepad1.right_stick_x * 1.1;
+            double x = gamepad1.right_stick_x;
             double rx = gamepad1.right_stick_y;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
