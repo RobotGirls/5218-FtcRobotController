@@ -22,7 +22,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 //import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 //import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Autonomous(name = "BlueBottomAuto")
@@ -30,7 +29,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 public class BlueBottomAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Launcher launcher = new Launcher(hardwareMap);
+        Launcher launcher = new Launcher();
         Intake intake = new Intake(hardwareMap);
 
         Pose2d initialPose = new Pose2d(60, -20, Math.toRadians(180));
@@ -102,7 +101,7 @@ public class BlueBottomAuto extends LinearOpMode {
 
         Action firstTraj = toLaunchZone.build();
         Action secondTraj = toArtifact.build();
-        Action thridTraj = toIntake.build();
+        Action thirdTraj = toIntake.build();
         Action fourthTraj = toLaunchZone2.build();
 
 
@@ -110,7 +109,7 @@ public class BlueBottomAuto extends LinearOpMode {
 
         //if (isStopRequested()) return;
 
-        while (!isStopRequested() && opModeIsActive()) {
+        while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Robot position: ", drive.updatePoseEstimate());
             telemetry.update();
         }
@@ -127,7 +126,7 @@ public class BlueBottomAuto extends LinearOpMode {
                         ),
                         secondTraj,
 
-                        thridTraj,
+                        thirdTraj,
                         new ParallelAction(
                                 intake.intakeIn()
                         ),
@@ -155,8 +154,8 @@ public class BlueBottomAuto extends LinearOpMode {
         private DcMotorEx launcher;
         private ElapsedTime timer;
 
-        public Launcher(HardwareMap hardwareMap) {
-            launcher = hardwareMap.get(DcMotorEx.class, "FlywheelMotor");
+        public Launcher() {
+            launcher = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
             launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             launcher.setDirection(DcMotorSimple.Direction.FORWARD);
 
