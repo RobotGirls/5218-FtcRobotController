@@ -10,9 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "gobulidaTeleop ")
 public class NewLinearOpmode extends LinearOpMode {
 
-    private final double FLAP_IN = 0.5;
+    private final double FLAP_IN = 0.3;
     private final double FLAP_OUT = 0.05;
-    @Override
     public void runOpMode() throws InterruptedException {
 
         DcMotorEx leftFront, leftBack, rightBack, rightFront;
@@ -51,9 +50,12 @@ public class NewLinearOpmode extends LinearOpMode {
 
         boolean flywheelOn = false;
         boolean lastAState = false;
-        final double FLYWHEEL_POWER = 0.8;
+       final double FLYWHEEL_POWER = .95;
+        final double FLYWHEEL_POWER_BACK = -.2;
+
 
         Servo flapServo = hardwareMap.get(Servo.class, "flapServo");
+        flapServo.setPosition(FLAP_IN);
 
         waitForStart();
         if (isStopRequested()) return;
@@ -71,17 +73,20 @@ public class NewLinearOpmode extends LinearOpMode {
             rightBack.setPower((y + x - rx) / denominator);
 
             IntakeMotor.setPower(-gamepad2.left_stick_y);
+            FlywheelMotor.setPower(gamepad2.right_stick_y);
 
-            boolean currentAState = gamepad2.a;
-            if (currentAState && !lastAState) {
-                flywheelOn = !flywheelOn;
-            }
 
-            FlywheelMotor.setPower(flywheelOn ? FLYWHEEL_POWER : 0);
-            lastAState = currentAState;
+//            boolean currentAState = gamepad2.a;
+//            if (currentAState && !lastAState) {
+//                flywheelOn = !flywheelOn;
+//            }
 
-            if (gamepad2.x) flapServo.setPosition(FLAP_IN);
-            if (gamepad2.y) flapServo.setPosition(FLAP_OUT);
+
+        //   FlywheelMotor.setPower(flywheelOn ? FLYWHEEL_POWER : 0);
+         //  lastAState = currentAState;
+
+            if (gamepad2.left_bumper) {flapServo.setPosition(FLAP_IN);}
+            if (gamepad2.right_bumper) flapServo.setPosition(FLAP_OUT);
 
             telemetry.addData("Flywheel", flywheelOn ? "ON" : "OFF");
             telemetry.update();
