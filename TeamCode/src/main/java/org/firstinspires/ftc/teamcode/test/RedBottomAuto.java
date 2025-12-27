@@ -35,7 +35,7 @@ public class RedBottomAuto extends LinearOpMode {
         Intake intake = new Intake(hardwareMap);
         //Flap flap = new Flap(hardwareMap);
 
-        Pose2d initialPose = new Pose2d(60, 14, Math.toRadians(180));
+        Pose2d initialPose = new Pose2d(-1476.0456924888167, 1816.191020225923, Math.toRadians(180));
 
         // takes the hardware and tuning inputs from mecanum drive
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
