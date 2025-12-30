@@ -1,86 +1,114 @@
-<<<<<<< Updated upstream:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmodes/AprilTagSpeedMotor.java
 package org.firstinspires.ftc.teamcode.opmodes;
-=======
-
->>>>>>> Stashed changes:TeamCode/src/main/java/AprilTagSpeedMotor.java
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "HuskyLens with Motor", group = "Sensor")
-//@Disabled
+@TeleOp(name = "AprilTagTeleop", group = "Sensor")
 public class AprilTagSpeedMotor extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
+
     private HuskyLens huskyLens;
-    private DcMotor driveMotor;
+    private DcMotor flywheel;
+    private Servo feederServo;
+
+    // ---- SERVO POSITIONS ----
+    private static final double SERVO_REST = 0.2;
+    private static final double SERVO_FIRE = 0.6;
+
+    // ---- CONTROL CONSTANTS ----
+    private static final double kP = 0.01;
+    private static final double SPEED_TOLERANCE = 0.05; // how close is "ready"
+    private static final double MIN_POWER = 0.3;
+    private static final double MAX_POWER = 1.0;
 
     @Override
     public void runOpMode() {
+
         huskyLens = hardwareMap.get(HuskyLens.class, "huskyLens");
-        driveMotor = hardwareMap.get(DcMotor.class, "DcMotor"); // configure this in Robot Config
-        driveMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        driveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        flywheel = hardwareMap.get(DcMotor.class, "FlyWheelMotor");
+        feederServo = hardwareMap.get(Servo.class, "flapServo");
+
+        flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
+        flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        flywheel.setPower(0);
+
+        feederServo.setPosition(SERVO_REST);
 
         Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
         rateLimit.expire();
 
         if (!huskyLens.knock()) {
-            telemetry.addData(">>", "Problem communicating with " + huskyLens.getDeviceName());
+            telemetry.addData("ERROR", "HuskyLens not responding");
         } else {
-            telemetry.addData(">>", "Press start to continue");
+            telemetry.addData("Status", "HuskyLens Ready");
         }
 
-        // Look for AprilTags
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
-
         telemetry.update();
+
         waitForStart();
 
-        // --- Control constants (tune these) ---
-        int targetWidth = 100;   // Pixel width at which robot should stop
-        double kP = 0.01;        // Proportional constant
+        double targetPower = 0;
+        double currentPower = 0;
 
-        while(opModeIsActive()) {
-            if (!rateLimit.hasExpired()) {
-                continue;
-            }
+        while (opModeIsActive()) {
+
+            if (!rateLimit.hasExpired()) continue;
             rateLimit.reset();
 
-            HuskyLens.Block[] blocks = huskyLens.blocks();
-            telemetry.addData("Block count", blocks.length);
+            if (gamepad1.a) { // HOLD TO SHOOT
 
-            if (blocks.length > 0) {
-                // Use first detected tag
-                int tagWidthPx = blocks[0].width;
+                HuskyLens.Block[] blocks = huskyLens.blocks();
 
-                if (tagWidthPx > 0) {
-                    // Error = how far away from stopping point
-                    int error = targetWidth - tagWidthPx;
+                if (blocks.length > 0) {
 
-                    // Motor power proportional to error
-                    double motorPower = kP * error;
+                    int tagWidthPx = blocks[0].width;
 
-                    // Clamp between 0 and 1
-                    motorPower = Math.max(0.0, Math.min(1.0, motorPower));
+                    // Distance → power mapping
+                    int error = 100 - tagWidthPx;
+                    targetPower = kP * error;
 
-                    driveMotor.setPower(motorPower);
+                    targetPower = Math.max(MIN_POWER,
+                            Math.min(MAX_POWER, targetPower));
 
-                    // Telemetry for debugging
-                    telemetry.addData("Tag Width (px)", tagWidthPx);
-                    telemetry.addData("Target Width", targetWidth);
-                    telemetry.addData("Error", error);
-                    telemetry.addData("Motor Power", motorPower);
+                    // Smooth ramping
+                    currentPower += (targetPower - currentPower) * 0.2;
+                    flywheel.setPower(currentPower);
+
+                    // Check if flywheel is "up to speed"
+                    boolean atSpeed =
+                            Math.abs(currentPower - targetPower) < SPEED_TOLERANCE;
+
+                    if (atSpeed) {
+                        feederServo.setPosition(SERVO_FIRE);
+                    } else {
+                        feederServo.setPosition(SERVO_REST);
+                    }
+
+                    telemetry.addData("Tag Width", tagWidthPx);
+                    telemetry.addData("Target Power", targetPower);
+                    telemetry.addData("Current Power", currentPower);
+                    telemetry.addData("Shooter Ready", atSpeed);
+
+                } else {
+                    flywheel.setPower(0);
+                    feederServo.setPosition(SERVO_REST);
                 }
+
             } else {
-                driveMotor.setPower(0); // stop if no tag detected
+                // Button released → reset everything
+                flywheel.setPower(0);
+                currentPower = 0;
+                feederServo.setPosition(SERVO_REST);
             }
 
             telemetry.update();
