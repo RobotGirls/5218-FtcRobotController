@@ -35,7 +35,7 @@ public class RedBottomAuto extends LinearOpMode {
         Intake intake = new Intake(hardwareMap);
         //Flap flap = new Flap(hardwareMap);
 
-        Pose2d initialPose = new Pose2d(-1476.0456924888167, 1816.191020225923, Math.toRadians(180));
+        Pose2d initialPose = new Pose2d(66, 22, Math.toRadians(180));
 
         // takes the hardware and tuning inputs from mecanum drive
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
@@ -86,26 +86,29 @@ public class RedBottomAuto extends LinearOpMode {
 //        Action toLaunchZone1=toLaunchZone.endTrajectory().fresh()
 //                .build();
 
-
-
-
-
-
-
-
-
         Action firstTraj = toLaunchZone.build();
         Action secondTraj = toArtifact.build();
         Action thirdTraj = toIntake.build();
         Action fourthTraj = toLaunchZone2.build();
 
-
-        //if (isStopRequested()) return;
-
-        while (!isStopRequested() && opModeIsActive()) {
-            telemetry.addData("Robot position: ", drive.updatePoseEstimate());
+        while (!isStarted() && !isStopRequested()) {
+            drive.updatePoseEstimate();
+            telemetry.addData("Robot position: ", drive.pose);
             telemetry.update();
         }
+
+        waitForStart();
+        if (isStopRequested()) return;
+
+        // 4. RUN YOUR ACTIONS
+        Actions.runBlocking(
+                new SequentialAction(
+                        firstTraj,
+                        secondTraj,
+                        thirdTraj,
+                        toPark
+                )
+        );
         waitForStart();
         if (isStopRequested()) return;
 
@@ -174,7 +177,7 @@ public class RedBottomAuto extends LinearOpMode {
         private ElapsedTime timer;
 
         public Launcher(HardwareMap hardwareMap) {
-            launcher = hardwareMap.get(DcMotorEx.class, "FlywheelMotor");
+            launcher = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
             launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             launcher.setDirection(DcMotorSimple.Direction.FORWARD);
 
