@@ -44,6 +44,8 @@ public class RedBottomAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
                 .waitSeconds(1.5);
         TrajectoryActionBuilder toArtifact= drive.actionBuilder(initialPose)
+
+
                 .strafeToLinearHeading(new Vector2d(-14,35),Math.toRadians(90));
         TrajectoryActionBuilder toLaunchZone2 = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
