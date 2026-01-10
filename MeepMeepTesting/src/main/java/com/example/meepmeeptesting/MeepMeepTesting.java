@@ -21,18 +21,32 @@ public class MeepMeepTesting {
                     //Red Bottom Auto
                 myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(60,10,Math.toRadians(180)))
 
-                                .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
-                                .waitSeconds(1.5)
+                               // .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
+                        //launch flywheel
+                        .waitSeconds(1.5)
+                                .strafeToLinearHeading(new Vector2d(38,35),Math.toRadians(90))
+                        .waitSeconds(1.5) // while this intake
+                        .strafeToLinearHeading(new Vector2d(38,60),Math.toRadians(90))
+                        .strafeToLinearHeading(new Vector2d(60,10),Math.toRadians(180))
+                        //shoot flywheel
 
-                                 .strafeToLinearHeading(new Vector2d(-14,35),Math.toRadians(90))
-
-                                .strafeToLinearHeading(new Vector2d(-14,50),Math.toRadians(90))
-                                .waitSeconds(1.5)
-                                 .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
-                                    .waitSeconds(1.5)
 
 
-                                        .strafeToLinearHeading(new Vector2d(26,-20),Math.toRadians(90))
+
+
+
+
+
+                        // pickup balls from close paths
+////                                 .strafeToLinearHeading(new Vector2d(-14,35),Math.toRadians(90))
+////
+////                                .strafeToLinearHeading(new Vector2d(-14,50),Math.toRadians(90))
+////                                .waitSeconds(1.5)
+////                                 .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
+////                                    .waitSeconds(1.5)
+//
+//
+//                                        .strafeToLinearHeading(new Vector2d(26,-20),Math.toRadians(90))
 
                        //.turn(Math.toRadians(90))
 //                        .lineToX(30)

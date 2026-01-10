@@ -35,27 +35,28 @@ public class RedBottomAuto extends LinearOpMode {
         Intake intake = new Intake(hardwareMap);
         //Flap flap = new Flap(hardwareMap);
 
-        Pose2d initialPose = new Pose2d(66, 22, Math.toRadians(180));
+        Pose2d initialPose = new Pose2d(60, 10, Math.toRadians(180));
 
         // takes the hardware and tuning inputs from mecanum drive
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         TrajectoryActionBuilder toLaunchZone = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
+                //.strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
                 .waitSeconds(1.5);
         TrajectoryActionBuilder toArtifact= drive.actionBuilder(initialPose)
 
 
-                .strafeToLinearHeading(new Vector2d(-14,35),Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(38,35),Math.toRadians(90))
+                .waitSeconds(1.5);
         TrajectoryActionBuilder toIntake= drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-14,50),Math.toRadians(90))
-                .waitSeconds(1.5);
-        TrajectoryActionBuilder toLaunchZone2 = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
-                .waitSeconds(1.5);
+                .strafeToLinearHeading(new Vector2d(38,60),Math.toRadians(90));
+              //  .waitSeconds(1.5);
+        Action toLaunchZone2 = toIntake.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(60,10),Math.toRadians(180))
+                .waitSeconds(1.5)
 
-        Action toPark = toLaunchZone2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(26,-20),Math.toRadians(90))
+       // Action toPark = toLaunchZone2.endTrajectory().fresh()
+                //.strafeToLinearHeading(new Vector2d(26,-20),Math.toRadians(90))
                 .build();
 
 
@@ -91,7 +92,7 @@ public class RedBottomAuto extends LinearOpMode {
         Action firstTraj = toLaunchZone.build();
         Action secondTraj = toArtifact.build();
         Action thirdTraj = toIntake.build();
-        Action fourthTraj = toLaunchZone2.build();
+      //  Action fourthTraj = toLaunchZone2.build();
 
         while (!isStarted() && !isStopRequested()) {
             drive.updatePoseEstimate();
@@ -107,8 +108,8 @@ public class RedBottomAuto extends LinearOpMode {
                 new SequentialAction(
                         firstTraj,
                         secondTraj,
-                        thirdTraj,
-                        toPark
+                        thirdTraj
+                      // toPark
                 )
         );
         waitForStart();
@@ -124,15 +125,15 @@ public class RedBottomAuto extends LinearOpMode {
 //                        ),
                         secondTraj,
 
-                        thirdTraj,
+                        thirdTraj
 //                        launcher.launcherForward(),
 //                        new ParallelAction(
 //                                intake.intakeIn(),
 //                                launcher.launcherForward()
 //                        ),
-                        fourthTraj,
+                      //  fourthTraj,
 
-                        toPark
+                       // toPark
 
 
 

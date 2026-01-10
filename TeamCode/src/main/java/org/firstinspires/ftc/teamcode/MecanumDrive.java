@@ -61,7 +61,7 @@ public final class MecanumDrive {
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
@@ -69,17 +69,17 @@ public final class MecanumDrive {
 
         public double inPerTick = 0.00195578735257512001422390801873;
         public double lateralInPerTick = 0.0005593380628459398;
-        public double trackWidthTicks = 6376.0341002255345;
+        public double trackWidthTicks = 6949.505398336364;
         // feedforward parameters (in tick units)
-        public double kS = 1.032581480921281;
-        public double kV =   0.0003871080552208074;
+       // public double kS = 1.032581480921281;
+       // public double kV =   0.0003871080552208074;
 
       //  public double inPerTick = 0.00207311174072;
       // public double lateralInPerTick = 0.001293474036491638;
       //  public double trackWidthTicks = 7756.76797805087;
         // feedforward parameters (in tick units)
-      //  public double kS = 1.463122686964565;
-       // public double kV = 0.0003063416813482929;
+        public double kS = 1.937986242756668;
+        public double kV = 0.00030487955168428845;
 
         public double kA = 0.001;
 
@@ -262,13 +262,20 @@ public final class MecanumDrive {
         //leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
+//         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+//        // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//        //leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+////        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         lazyImu = new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
+                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection)
+        );
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
