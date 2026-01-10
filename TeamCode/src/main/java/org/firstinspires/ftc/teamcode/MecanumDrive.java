@@ -54,6 +54,8 @@ import java.util.List;
 
 //@Config
 public final class MecanumDrive {
+    public Object pose;
+
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
@@ -64,12 +66,21 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
+
         public double inPerTick = 0.00195578735257512001422390801873;
         public double lateralInPerTick = 0.0005593380628459398;
         public double trackWidthTicks = 6376.0341002255345;
         // feedforward parameters (in tick units)
         public double kS = 1.032581480921281;
         public double kV =   0.0003871080552208074;
+
+      //  public double inPerTick = 0.00207311174072;
+      // public double lateralInPerTick = 0.001293474036491638;
+      //  public double trackWidthTicks = 7756.76797805087;
+        // feedforward parameters (in tick units)
+      //  public double kS = 1.463122686964565;
+       // public double kV = 0.0003063416813482929;
+
         public double kA = 0.001;
 
         // path profile parameters (in inches)
@@ -140,7 +151,13 @@ public final class MecanumDrive {
             imu = lazyImu.get();
 
             // TODO: reverse encoders if needed
-            //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//             leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//             rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//            rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+//            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+
 
             this.pose = pose;
         }
