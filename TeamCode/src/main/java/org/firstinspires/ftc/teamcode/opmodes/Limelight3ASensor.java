@@ -57,7 +57,7 @@ public class Limelight3ASensor {
         double captureLatency = result.getCaptureLatency();
         double targetingLatency = result.getTargetingLatency();
         double parseLatency = result.getParseLatency();
-        myTelemetry.addData("flywheelSpeedError", errorTlm);
+        myTelemetry.addData("/n/n/nflywheelSpeedError", errorTlm);
         myTelemetry.addData("adjustedPower", powerTlm);
         myTelemetry.addData("error", errorTlm);
         myTelemetry.addData("deltaTime", deltaTimeTlm);
@@ -156,10 +156,10 @@ public class Limelight3ASensor {
         LLStatus status = limelight.getStatus();
         myTelemetry.addData("Name", "%s",
                 status.getName());
-        myTelemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
-                status.getTemp(), status.getCpu(),(int)status.getFps());
-        myTelemetry.addData("Pipeline", "Index: %d, Type: %s",
-                status.getPipelineIndex(), status.getPipelineType());
+        //myTelemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
+               // status.getTemp(), status.getCpu(),(int)status.getFps());
+        //myTelemetry.addData("Pipeline", "Index: %d, Type: %s",
+                //status.getPipelineIndex(), status.getPipelineType());
         myTelemetry.update(); // this one printed telem
 
         LLResult result = limelight.getLatestResult();
@@ -180,6 +180,16 @@ public class Limelight3ASensor {
 
     public void stopLimelightProcessing() {
         limelight.stop();
+    }
+
+    public boolean hasValidTarget() {
+
+
+        return false;
+    }
+
+    public double getTagDistanceCm() {
+        return 0;
     }
 }
 
