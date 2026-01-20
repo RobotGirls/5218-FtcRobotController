@@ -6,6 +6,7 @@ import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
@@ -25,6 +26,10 @@ public class Limelight3ASensor {
 
     private double errorTlm = 0;
 
+    double targetHeading = 0.0 ; //desired angle
+    double currentHeading = 0.0; // current heading of the robot
+    double headingError;
+
     private double Kp = 0.025; // Tx range is 0 to 26 --> at max offset 26, when Kp is 0.02, speed is half power
     //private double Kp = 0.014; // Tx range is 0 to 26 --> at max offset 26, when Kp is 0.02, speed is half power
 
@@ -35,6 +40,8 @@ public class Limelight3ASensor {
     private Position position;
     private Pose3D localBotPose;
     private Telemetry myTelemetry;
+
+    private double wheelPower;
     Pose3D botpose;
 
 
@@ -123,6 +130,13 @@ public class Limelight3ASensor {
         }
     }
 
+    public double getWheelPower(){
+        currentHeading =  getRobotHeading();
+        headingError = targetHeading - currentHeading;
+        wheelPower = headingError * Kp;
+        wheelPower = Range.clip(wheelPower, -0.5, 0.5);
+
+    }
     public double adjustFlywheelSpeed(Telemetry telemetry) {
         double deltaTime;
         localBotPose = localResult.getBotpose();
@@ -152,21 +166,42 @@ public class Limelight3ASensor {
 
     }
 
+    public void getprintTelemetry(LLResult result) {
+        botpose = result.getBotpose();
+        myTelemetry.addData("   ",  " ");
+        myTelemetry.addData("tx", result.getTx());
+        myTelemetry.addData("txnc", result.getTxNC());
+        myTelemetry.addData("ty", result.getTy());
+        myTelemetry.addData("tync", result.getTyNC());
+
+        myTelemetry.addData("Botpose", botpose.toString());
+
+    }
+
+    public double getRobotHeading(){
+        return localBotPose.getOrientation().getYaw();
+    }
+
     public void limelightProcessing(Telemetry telemetry, ElapsedTime timer) {
         LLStatus status = limelight.getStatus();
-        myTelemetry.addData("Name", "%s",
-                status.getName());
+       // myTelemetry.addData("Name", "%s",
+                //status.getName());
         //myTelemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
                // status.getTemp(), status.getCpu(),(int)status.getFps());
         //myTelemetry.addData("Pipeline", "Index: %d, Type: %s",
                 //status.getPipelineIndex(), status.getPipelineType());
-        myTelemetry.update(); // this one printed telem
+       myTelemetry.update(); // this one printed telem
 
         LLResult result = limelight.getLatestResult();
+
+        localBotPose = result.getBotpose();
+
+
         currTime = timer.seconds();
         localResult = result;
         if (result.isValid()) {
-            getGeneralInformation(telemetry, result);
+            getprintTelemetry(result);
+            //getGeneralInformation(telemetry, result);
             //getBarcodeResults(telemetry, result);
             //getMiscResults(telemetry, result);
             //getColor(telemetry, result);
