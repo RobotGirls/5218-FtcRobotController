@@ -98,7 +98,7 @@ public class ElyseILTfarautoblueside extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
 
                 if (!initialized) {
-                    intake.setPower(-0.8);
+                    intake.setPower(-1);
                     timer.reset();
                     initialized = true;
                 }

@@ -93,7 +93,7 @@ public class ElyseILTredsidecloseshooter extends LinearOpMode {
 
                                 new ParallelAction(
                                         secondTraj,
-                                        intakeForSeconds(4.0)
+                                        intakeForSeconds(5.0)
                                 ),
 
                                 thirdTraj,
