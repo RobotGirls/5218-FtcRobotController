@@ -17,9 +17,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 import java.lang.Math;
 
-@Autonomous(name = "ElyseILTBLUESIDEcloseshooter")
-public class ElyseILTbluesidecloseshooter extends LinearOpMode {
-
+@Autonomous(name = "ElyseILTREDSIDEcloseshooter")
+public class ElyseILTredsidecloseshooter extends LinearOpMode {
     private DcMotorEx intake;
     private DcMotorEx flywheel;
     private Servo flap;
@@ -31,47 +30,28 @@ public class ElyseILTbluesidecloseshooter extends LinearOpMode {
         flap = hardwareMap.get(Servo.class, "flapServo");
         intake = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
 
+
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        // (-50, -50, 45°) → (-50, 50, -45°)
-        Pose2d initialPose = new Pose2d(
-                -50,
-                50,
-                Math.toRadians(-45)
-        );
-
+        Pose2d initialPose = new Pose2d(-50, -50, Math.toRadians(45));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        // (-12.7, -12, 270°) → (-12.7, 12, 90°)
         TrajectoryActionBuilder toShoot = drive.actionBuilder(initialPose)
                 .setReversed(true)
-                .splineTo(
-                        new Vector2d(-12.7, 12),
-                        Math.toRadians(90)
-                );
+                .splineTo(new Vector2d(-12.7, -12), Math.toRadians(270));
 
-        // turn(25°) → turn(-25°)
-        // (-12, -58, 270°) → (-12, 58, 90°)
+
         TrajectoryActionBuilder intakeBalls = toShoot.endTrajectory().fresh()
-                .turn(Math.toRadians(-25))
-                .splineTo(
-                        new Vector2d(-12, 58),
-                        Math.toRadians(90)
-                );
+                .turn(Math.toRadians(25))
+                .splineTo(new Vector2d(-12, -58), Math.toRadians(270));
 
-        // (-12.5, -13.2, 45°) → (-12.5, 13.2, -45°)
         TrajectoryActionBuilder backToShoot = intakeBalls.endTrajectory().fresh()
                 .setReversed(true)
-                .splineTo(
-                        new Vector2d(-12.5, 13.2),
-                        Math.toRadians(-45)
-                );
+                .splineTo(new Vector2d(-12.5, -13.2), Math.toRadians(45));
 
-        // turn(90°) → turn(-90°)
-        // lineToX unchanged
         Action outOfZone = backToShoot.endTrajectory().fresh()
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(90))
                 .lineToX(2)
                 .build();
 
@@ -156,7 +136,7 @@ public class ElyseILTbluesidecloseshooter extends LinearOpMode {
 
             final double FLAP_OUT = 0.65;
             final double FLAP_IN = 0.35;
-            final double TOGGLE_TIME = 0.25;
+            final double TOGGLE_TIME = 0.25; // seconds
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -180,4 +160,5 @@ public class ElyseILTbluesidecloseshooter extends LinearOpMode {
             }
         };
     }
+
 }
