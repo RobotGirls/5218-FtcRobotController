@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 import java.lang.Math;
 
-@Autonomous(name = "ElyseILTBLUESIDEcloseshooter")
-public class ElyseILTbluesidecloseshooter extends LinearOpMode {
+@Autonomous(name = "ElyseILTREDSIDEcloseshooter")
+public class ElyseILTredsidecloseshooter extends LinearOpMode {
 
     private DcMotorEx intake;
     private DcMotorEx flywheel;
