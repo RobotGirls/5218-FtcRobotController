@@ -3,299 +3,161 @@ package org.firstinspires.ftc.teamcode.test;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-//import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.*;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-//import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "BlueBottomAuto")
+import java.lang.Math;
 
+@Autonomous(name = "BlueBottomAuto")
 public class BlueBottomAuto extends LinearOpMode {
+    private DcMotorEx intake;
+    private DcMotorEx flywheel;
+    private Servo flap;
+
     @Override
-    public void runOpMode() throws InterruptedException {
-        Launcher launcher = new Launcher();
-        Intake intake = new Intake(hardwareMap);
+    public void runOpMode() {
+
+        flywheel = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
+        flap = hardwareMap.get(Servo.class, "flapServo");
+        intake = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
+
+
+        flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
 
         Pose2d initialPose = new Pose2d(60, -20, Math.toRadians(180));
-
-        // takes the hardware and tuning inputs from mecanum drive
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        TrajectoryActionBuilder toLaunchZone = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-16,-16),Math.toRadians(230))
-                .waitSeconds(1.5);
+        TrajectoryActionBuilder toShoot = drive.actionBuilder(initialPose)
+                .setReversed(true)
+                .splineTo(new Vector2d(-8, -8), Math.toRadians(45));
 
-        TrajectoryActionBuilder toArtifact= drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-11,-25),Math.toRadians(-90));
+        TrajectoryActionBuilder intakeBalls = toShoot.endTrajectory().fresh()
+                .turn(Math.toRadians(25))
+                .splineTo(new Vector2d(-12, -52), Math.toRadians(-90));
 
-        TrajectoryActionBuilder toIntake= drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-11,-49),Math.toRadians(-90))
-                .waitSeconds(1.5);
+        TrajectoryActionBuilder backToShoot = intakeBalls.endTrajectory().fresh()
+                .setReversed(true)
+                .splineTo(new Vector2d(-8, -8), Math.toRadians(45));
 
-        TrajectoryActionBuilder toLaunchZone2= drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-34,-34),Math.toRadians(230))
-                .waitSeconds(1.5);
-
-        Action toPark = toLaunchZone2.endTrajectory().fresh()
-                .strafeTo(new Vector2d(45,20))
-
-                // .turn(Math.toRadians(90))
-
-
-                //  .strafeToLinearHeading(new Vector2d(40,20),Math.toRadians(90))
+        Action outOfZone = backToShoot.endTrajectory().fresh()
+                .turn(Math.toRadians(90))
+                .lineToX(2)
                 .build();
 
+        Action firstTraj = toShoot.build();
+        Action secondTraj = intakeBalls.build();
+        Action thirdTraj = backToShoot.build();
 
-
-//      //TrajectoryActionBuilder toArtifact = drive.actionBuilder(new Pose2d(-22,25,Math.toRadians(225)))
-//       //      .turn(Math.toRadians(-136))
-//      //       .strafeTo(new Vector2d(-30,47))
-//               .strafeTo(new Vector2d(-14,47));
-
-
-
-//       Action toLaunchZone2 = toArtifact.endTrajectory().fresh()
-//               .strafeTo(new Vector2d(-40,20))
-//               .turn(Math.toRadians(-36))
-//
-//            .build();
-//
-//
-//
-//       Pose2d LaunchZone2EndPose = new Pose2d(38,-22,Math.toRadians(269));
-//       Action toParking = drive.actionBuilder(LaunchZone2EndPose)
-//               .strafeTo(new Vector2d(38,-22))
-//               .turn(Math.toRadians(45))
-//                    .build();
-
-//        Pose2d ParkingEndPose = new Pose2d(38,-22,Math.toRadians(314));
-//
-//        Action toLaunchZoneTraj = toLaunchZone.build();
-
-//        Action toLaunchZone1=toLaunchZone.endTrajectory().fresh()
-//                .build();
-
-
-
-
-
-
-
-
-
-        Action firstTraj = toLaunchZone.build();
-        Action secondTraj = toArtifact.build();
-        Action thirdTraj = toIntake.build();
-        Action fourthTraj = toLaunchZone2.build();
-
-
-
-
-        //if (isStopRequested()) return;
-
-        while (!isStopRequested() && !opModeIsActive()) {
-            telemetry.addData("Robot position: ", drive.updatePoseEstimate());
-            telemetry.update();
-        }
         waitForStart();
         if (isStopRequested()) return;
 
         Actions.runBlocking(
-                new SequentialAction(
-                        firstTraj,
-                        launcher.launcherForward(),
                         new ParallelAction(
-                                intake.intakeIn(),
-                                launcher.launcherForward()
-                        ),
-                        secondTraj,
 
-                        thirdTraj,
-                        new ParallelAction(
-                                intake.intakeIn()
-                        ),
+                                flywheelOn(),
 
-                        fourthTraj,
-                        launcher.launcherForward(),
-                        new ParallelAction(
-                                intake.intakeIn(),
-                                launcher.launcherForward()
-                        ),
+                                new SequentialAction(
+                                        firstTraj,
+                                        flapThreeTimes(),
 
-                        toPark
+                                        new ParallelAction(
+                                                secondTraj,
+                                                intakeForSeconds(4.0)
+                                        ),
 
+                                        thirdTraj,
+                                        flapThreeTimes(),
 
-
-
-                )
-
-        );
-
-        //if (isStopRequested()) return;
+                                        outOfZone,
+                                        flywheelOff()
+                                )
+                        )
+                );
     }
 
-    public class Launcher {
-        private DcMotorEx launcher;
-        private ElapsedTime timer;
+    private Action intakeForSeconds(double seconds) {
+        return new Action() {
 
-        public Launcher() {
-            launcher = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
-            launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            launcher.setDirection(DcMotorSimple.Direction.FORWARD);
+            ElapsedTime timer = new ElapsedTime();
+            boolean initialized = false;
 
-            timer = new ElapsedTime();
-        }
-
-        public class LauncherForward implements Action {
-            // move the motor in the direction that launches the ball
-            private boolean initialized = false;
-
-            // actions are formatted via telemetry packets as below
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                // powers on motor, if it is not on
+
                 if (!initialized) {
-                    launcher.setPower(-0.6);
-                    initialized = true;
+                    intake.setPower(-0.8);
                     timer.reset();
+                    initialized = true;
                 }
-                double timerValueShooter = timer.milliseconds();
-                telemetry.addData("Shooter timer", timerValueShooter);
-                telemetry.update();
-                if (timerValueShooter < 4000) {
+
+                if (timer.seconds() >= seconds) {
+                    intake.setPower(0);
                     return true;
-                } else {
-                    launcher.setPower(0);
-                    return false;
                 }
+
+                return false;
             }
-        }
-
-        public Action launcherForward() {
-            return new LauncherForward();
-        }
-
-        public class LauncherBackwards implements Action {
-            private boolean initialized = false;
-            private ElapsedTime timer1;
-
-            public boolean run(@NonNull TelemetryPacket packet) {
-                // powers on motor, if it is not on
-                if (!initialized) {
-                    timer1.reset();
-                    if (timer1.milliseconds() < 2000) {
-                        launcher.setPower(0.8);
-
-                    } else {
-                        launcher.setPower(0);
-                        timer1.reset();
-                        initialized = true;
-                    }
-                }
-                return true;
-            }
-        }
-
-        public Action launcherBackwards() {
-            return new LauncherBackwards();
-        }
-
+        };
     }
 
-    public class Intake {
-        private DcMotorEx intakeMotor;
+    private Action flywheelOn() {
+        return packet -> {
+            flywheel.setPower(-0.6);
+            return false;
+        };
+    }
 
-        private ElapsedTime timer1;
+    private Action flywheelOff() {
+        return packet -> {
+            flywheel.setPower(0);
+            return true;
+        };
+    }
 
+    private Action flapThreeTimes() {
+        return new Action() {
 
-        public Intake(HardwareMap hardwareMap) {
-            intakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
-            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-            timer1 = new ElapsedTime();
+            int hitCount = 0;
+            boolean flapOut = false;
 
-        }
-        public class IntakeIn implements Action {
-            // move the motor in the direction that moves the ball into the robot;
-            private boolean initialized = false;
+            ElapsedTime timer = new ElapsedTime();
+            double lastToggleTime = 0;
 
-            // actions are formatted via telemetry packets as below
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                // powers on motor, if it is not on
-                if (!initialized) {
-                    intakeMotor.setPower(-0.8);
-                    initialized = true;
-                    timer1.reset();
-                }
-                double timerValue = timer1.milliseconds();
-                telemetry.addData("Intake Timer",timerValue);
-                telemetry.update();
-                if (timerValue < 4000) {
-                    return true;
-                } else {
-                    intakeMotor.setPower(0);
-                    return false;
-                }
-
-            }
-        }
-        public Action intakeIn() {
-            return new IntakeIn();
-        }
-
-        public class IntakeOut implements Action {
-            private boolean initialized = false;
-
+            final double FLAP_OUT = 0.65;
+            final double FLAP_IN = 0.35;
+            final double TOGGLE_TIME = 0.25; // seconds
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                // powers on motor, if it is not on
-                if (!initialized) {
-                    intakeMotor.setPower(0.8);
-                    initialized = true;
-                    timer1.reset();
-                }
-                double timerValue = timer1.milliseconds();
-                telemetry.addData("Intake Timer", timerValue);
-                telemetry.update();
-                if (timerValue < 4000) {
-                    return true;
-                } else {
-                    intakeMotor.setPower(0);
-                    return false;
+
+                double now = timer.seconds();
+
+                if (lastToggleTime == 0) {
+                    flap.setPosition(FLAP_IN);
+                    lastToggleTime = now;
                 }
 
-            }
-            public Action intakeOut() {
-                return new IntakeOut();
-            }
+                if (now - lastToggleTime >= TOGGLE_TIME) {
+                    flapOut = !flapOut;
+                    flap.setPosition(flapOut ? FLAP_OUT : FLAP_IN);
+                    lastToggleTime = now;
 
+                    if (!flapOut) hitCount++;
+                }
 
-        }
+                return hitCount >= 3;
+            }
+        };
     }
-
 
 }
-
-
-
-
-
-
