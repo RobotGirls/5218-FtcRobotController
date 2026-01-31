@@ -68,21 +68,22 @@ public final class MecanumDrive {
 
         // drive model parameters
 
-        public double inPerTick = 0.00195578735257512001422390801873;
-        public double lateralInPerTick = 0.0005593380628459398;
-        public double trackWidthTicks = 6376.0341002255345;
+        public double inPerTick = 0.001293661060802;
+        public double lateralInPerTick = 0.0008849701064519379;
+        public double trackWidthTicks = 8283.798733857164;
         // feedforward parameters (in tick units)
-        public double kS = 1.032581480921281;
-        public double kV =   0.0003871080552208074;
+        public double kS = 1.3973823727244552;
+        public double kV = 0.00029888572846679956;
+        public double kA = 0.0;
 
-      //  public double inPerTick = 0.00207311174072;
+
+        //  public double inPerTick = 0.00207311174072;
       // public double lateralInPerTick = 0.001293474036491638;
       //  public double trackWidthTicks = 7756.76797805087;
         // feedforward parameters (in tick units)
       //  public double kS = 1.463122686964565;
        // public double kV = 0.0003063416813482929;
 
-        public double kA = 0.001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -95,16 +96,16 @@ public final class MecanumDrive {
 
         // path controller gains
         public double axialGain = 1.0;
-        public double lateralGain = 1.0;
-        public double headingGain = 1.0; // shared with turn
+        public double lateralGain = 0.5;
+        public double headingGain = 2.5; // shared with turn
 
 //        public double headingGain = 1; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
         public double headingVelGain = 0.0; // shared with turn
-        public double parYTicks = -1794.7850318;
-        public double parXTicks = -1339.769108;
+        public double parYTicks = 1717.736334481793; //-1794.7850318;
+        public double parXTicks = -1753.8360882482148; //-1339.769108;
 
     }
 
