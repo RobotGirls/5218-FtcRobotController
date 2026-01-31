@@ -17,8 +17,8 @@ public class NewLinearOpmode extends LinearOpMode {
     private static final double FLAP_IN = 0.35;
     private static final double FLAP_OUT = .05;
 
-    private static final double FLYWHEEL_HIGH_POWER = 0.8;
-    private static final double FLYWHEEL_LOW_POWER  = 0.4;
+    private static final double FLYWHEEL_HIGH_POWER = 0.6;
+    private static final double FLYWHEEL_LOW_POWER  = 0.48;
 
     private static final double FLAP_PULSE_TIME = 0.25;
 
@@ -71,9 +71,9 @@ public class NewLinearOpmode extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            double y  = -gamepad1.left_stick_y;
-            double x  =  gamepad1.left_stick_x;
-            double rx =  gamepad1.right_stick_x;
+            double y  = -gamepad1.right_stick_y;
+            double x  =  gamepad1.right_stick_x;
+            double rx = -gamepad1.left_stick_x;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
 
