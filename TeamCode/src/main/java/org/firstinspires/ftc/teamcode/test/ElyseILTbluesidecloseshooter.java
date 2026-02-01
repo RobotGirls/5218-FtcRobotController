@@ -39,16 +39,16 @@ public class ElyseILTbluesidecloseshooter extends LinearOpMode {
 
         TrajectoryActionBuilder toShoot = drive.actionBuilder(initialPose)
                 .setReversed(true)
-                .splineTo(new Vector2d(-12.7, -12), Math.toRadians(270));
+                .strafeToLinearHeading(new Vector2d(-12.7, -12), Math.toRadians(270));
 
 
         TrajectoryActionBuilder intakeBalls = toShoot.endTrajectory().fresh()
                 .turn(Math.toRadians(25))
-                .splineTo(new Vector2d(-12, -58), Math.toRadians(270));
+                .strafeToLinearHeading(new Vector2d(-12, -58), Math.toRadians(270));
 
         TrajectoryActionBuilder backToShoot = intakeBalls.endTrajectory().fresh()
                 .setReversed(true)
-                .splineTo(new Vector2d(-12.5, -13.2), Math.toRadians(45));
+                .strafeToLinearHeading(new Vector2d(-12.5, -13.2), Math.toRadians(45));
 
         Action outOfZone = backToShoot.endTrajectory().fresh()
                 .turn(Math.toRadians(90))

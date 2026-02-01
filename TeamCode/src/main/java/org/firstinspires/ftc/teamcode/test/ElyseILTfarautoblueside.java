@@ -39,18 +39,18 @@ public class ElyseILTfarautoblueside extends LinearOpMode {
 
         TrajectoryActionBuilder toShoot = drive.actionBuilder(initialPose)
                 .setReversed(true)
-                .splineTo(new Vector2d(38, 13), Math.toRadians(315))
-                .splineTo(new Vector2d(35, -58), Math.toRadians(270));
+                .strafeToLinearHeading(new Vector2d(38, 13), Math.toRadians(315))
+                .strafeToLinearHeading(new Vector2d(35, -58), Math.toRadians(270));
 
 
         TrajectoryActionBuilder intakeBalls = toShoot.endTrajectory().fresh()
                 .turn(Math.toRadians(25))
-                .splineTo(new Vector2d(38, -6), Math.toRadians(270));
+                .strafeToLinearHeading(new Vector2d(38, -6), Math.toRadians(270));
 
 
         TrajectoryActionBuilder backToShoot = intakeBalls.endTrajectory().fresh()
                 .setReversed(true)
-                .splineTo(new Vector2d(54, -6), Math.toRadians(315));
+                .strafeToLinearHeading(new Vector2d(54, -6), Math.toRadians(315));
 
         Action outOfZone = backToShoot.endTrajectory().fresh()
                 .turn(Math.toRadians(90))

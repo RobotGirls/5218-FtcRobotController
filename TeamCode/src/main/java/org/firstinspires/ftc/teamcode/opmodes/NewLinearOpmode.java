@@ -18,7 +18,7 @@ public class NewLinearOpmode extends LinearOpMode {
     private static final double FLAP_OUT = .05;
 
     private static final double FLYWHEEL_HIGH_POWER = 0.6;
-    private static final double FLYWHEEL_LOW_POWER  = 0.48;
+    private static final double FLYWHEEL_LOW_POWER  = 0.46;
 
     private static final double FLAP_PULSE_TIME = 0.25;
 

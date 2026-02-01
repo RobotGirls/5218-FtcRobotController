@@ -17,9 +17,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 import java.lang.Math;
 
-@Autonomous(name = "ElyseILTREDSIDEcloseshooter")
-public class ElyseILTredsidecloseshooter extends LinearOpMode {
-
+@Autonomous(name = "NOMECHElyseAutoREDSIDEFarILT")
+public class ILTredsidefarNOMECH extends LinearOpMode {
     private DcMotorEx intake;
     private DcMotorEx flywheel;
     private Servo flap;
@@ -34,33 +33,23 @@ public class ElyseILTredsidecloseshooter extends LinearOpMode {
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        // (-50, -50, 45°) → (-50, 50, -45°)
-        Pose2d initialPose = new Pose2d(-50, 50, Math.toRadians(-45)
-        );
-
+        // (x, -y, -heading)
+        Pose2d initialPose = new Pose2d(53, -14, Math.toRadians(-315));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        // (-12.7, -12, 270°) → (-12.7, 12, 90°)
         TrajectoryActionBuilder toShoot = drive.actionBuilder(initialPose)
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(-12.7, 12), Math.toRadians(90)
-                );
+                .strafeToLinearHeading(new Vector2d(53, -10), Math.toRadians(-315))
 
-        // turn(25°) → turn(-25°)
-        // (-12, -58, 270°) → (-12, 58, 90°)
+                .strafeToLinearHeading(new Vector2d(38, -13), Math.toRadians(-315))
+                .strafeToLinearHeading(new Vector2d(35, 58), Math.toRadians(-270));
+
         TrajectoryActionBuilder intakeBalls = toShoot.endTrajectory().fresh()
-                .turn(Math.toRadians(-25))
-                .strafeToLinearHeading(new Vector2d(-12, 58), Math.toRadians(90)
-                );
+                .turn(Math.toRadians(-25));
 
-        // (-12.5, -13.2, 45°) → (-12.5, 13.2, -45°)
         TrajectoryActionBuilder backToShoot = intakeBalls.endTrajectory().fresh()
-                .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(-12.5, 13.2), Math.toRadians(-45)
-                );
+                .setReversed(true);
 
-        // turn(90°) → turn(-90°)
-        // lineToX unchanged
         Action outOfZone = backToShoot.endTrajectory().fresh()
                 .turn(Math.toRadians(-90))
                 .lineToX(2)
@@ -75,21 +64,16 @@ public class ElyseILTredsidecloseshooter extends LinearOpMode {
 
         Actions.runBlocking(
                 new ParallelAction(
-
                         flywheelOn(),
-
                         new SequentialAction(
                                 firstTraj,
                                 flapThreeTimes(),
-
                                 new ParallelAction(
                                         secondTraj,
-                                        intakeForSeconds(5.0)
+                                        intakeForSeconds(4.0)
                                 ),
-
                                 thirdTraj,
                                 flapThreeTimes(),
-
                                 outOfZone,
                                 flywheelOff()
                         )
@@ -105,9 +89,8 @@ public class ElyseILTredsidecloseshooter extends LinearOpMode {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-
                 if (!initialized) {
-                    intake.setPower(-0.8);
+                    intake.setPower(-1);
                     timer.reset();
                     initialized = true;
                 }
@@ -116,7 +99,6 @@ public class ElyseILTredsidecloseshooter extends LinearOpMode {
                     intake.setPower(0);
                     return true;
                 }
-
                 return false;
             }
         };
