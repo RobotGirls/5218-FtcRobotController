@@ -38,7 +38,7 @@ public class BlueBottomAuto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         TrajectoryActionBuilder toLaunchZone = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-16,-35),Math.toRadians(235))
+                .strafeToLinearHeading(new Vector2d(-16,-16),Math.toRadians(230))
                 .waitSeconds(1.5);
 
         TrajectoryActionBuilder toArtifact= drive.actionBuilder(initialPose)
@@ -53,7 +53,7 @@ public class BlueBottomAuto extends LinearOpMode {
                 .waitSeconds(1.5);
 
         Action toPark = toLaunchZone2.endTrajectory().fresh()
-                .strafeTo(new Vector2d(60,5))
+                .strafeTo(new Vector2d(45,20))
 
                 // .turn(Math.toRadians(90))
 
