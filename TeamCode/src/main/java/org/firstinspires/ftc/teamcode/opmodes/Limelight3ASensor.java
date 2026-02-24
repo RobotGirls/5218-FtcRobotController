@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import java.util.List;
 
 public class Limelight3ASensor {
+    private double myTx;
+    private boolean isValid;
     private Limelight3A limelight;
     private int alignThreshold = 3;
     private double lastError = 0;
@@ -138,6 +140,10 @@ public class Limelight3ASensor {
         return wheelPower;
 
     }
+    //FIXME continue from here next time
+    public double getStrafePower(){
+
+    }
     public double adjustFlywheelSpeed(Telemetry telemetry) {
         double deltaTime;
         localBotPose = localResult.getBotpose();
@@ -213,14 +219,22 @@ public class Limelight3ASensor {
         }
 
     }
-
-    public void LimelightProcessing(Telemetry telemetry){
+    // isLimeValid returns true if it has detected an april tag, otherwise it will return false
+    public boolean isLimeValid(){return isValid;}
+    //getLimeTx returns the horizontal offset values(tx)
+    // between the april tag and the limelight
+    public double getLimeTx(){return myTx;}
+    public void limelightProcessing(Telemetry telemetry){
         LLResult result = limelight.getLatestResult();
+        //the result is valid if the limelight sees an april tag
         if (result.isValid()) {
-            telemetry.addData("tx", result.getTx());//if robot can identify april tag it is valid
+            myTx = result.getTx();
+            telemetry.addData("tx", myTx );//if robot can identify april tag it is valid
+            isValid = true;
 
         }else {
             telemetry.addData("Limelight", "No data avalible!");
+            isValid = false;
         }
     }
     public void stopLimelightProcessing() {

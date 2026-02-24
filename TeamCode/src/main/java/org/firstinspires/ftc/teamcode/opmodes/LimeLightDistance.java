@@ -27,7 +27,7 @@ public class LimeLightDistance extends LinearOpMode {
 
     DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
-    DcMotorEx FlywheelMotor;
+ //   DcMotorEx FlywheelMotor;
 
     private double adjustedFlywheelPower;
     private boolean firstTime;
@@ -86,9 +86,9 @@ public class LimeLightDistance extends LinearOpMode {
     }
     public void initHardware() {
 
-        FlywheelMotor = hardwareMap.get(DcMotorEx.class, "FlywheelMotor");
-        FlywheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FlywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        FlywheelMotor = hardwareMap.get(DcMotorEx.class, "FlywheelMotor");
+//        FlywheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        FlywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         timer = new ElapsedTime();
         limelightSensor.initLimelight(hardwareMap, telemetry);
