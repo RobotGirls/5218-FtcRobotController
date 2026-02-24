@@ -136,6 +136,7 @@ public class Limelight3ASensor {
         wheelPower = headingError * Kp;
         wheelPower = Range.clip(wheelPower, -0.5, 0.5);
         return wheelPower;
+
     }
     public double adjustFlywheelSpeed(Telemetry telemetry) {
         double deltaTime;
@@ -182,7 +183,7 @@ public class Limelight3ASensor {
         return localBotPose.getOrientation().getYaw();
     }
 
-    public void limelightProcessing(Telemetry telemetry, ElapsedTime timer) {
+    public void limelightProcessingDetailed(Telemetry telemetry, ElapsedTime timer) {
         LLStatus status = limelight.getStatus();
        // myTelemetry.addData("Name", "%s",
                 //status.getName());
@@ -213,6 +214,15 @@ public class Limelight3ASensor {
 
     }
 
+    public void LimelightProcessing(Telemetry telemetry){
+        LLResult result = limelight.getLatestResult();
+        if (result.isValid()) {
+            telemetry.addData("tx", result.getTx());//if robot can identify april tag it is valid
+
+        }else {
+            telemetry.addData("Limelight", "No data avalible!");
+        }
+    }
     public void stopLimelightProcessing() {
         limelight.stop();
     }
