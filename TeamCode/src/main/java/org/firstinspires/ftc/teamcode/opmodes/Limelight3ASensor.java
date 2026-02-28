@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import java.util.List;
 
 public class Limelight3ASensor {
+    private final int ALIGN_THRESHOLD = 3;
     private double myTx;
     private boolean isValid;
     private Limelight3A limelight;
@@ -27,6 +28,8 @@ public class Limelight3ASensor {
     private double powerTlm = 0;
 
     private double errorTlm = 0;
+
+
 
     double targetHeading = 0.0 ; //desired angle
     double currentHeading = 0.0; // current heading of the robot
@@ -42,6 +45,8 @@ public class Limelight3ASensor {
     private Position position;
     private Pose3D localBotPose;
     private Telemetry myTelemetry;
+
+
 
     private double wheelPower;
     Pose3D botpose;
@@ -141,7 +146,19 @@ public class Limelight3ASensor {
 
     }
     //FIXME continue from here next time
-    public double getStrafePower(){
+    public double getStrafePower() {
+        double power;
+        double error;
+        ElapsedTime timer = new ElapsedTime();
+        error = this.getLimeTx();
+        if (Math.abs(error) > ALIGN_THRESHOLD ) {
+            error = -1 * this.getLimeTx();
+            derivative = (error - lastError) / timer.seconds();
+            integralSum = integralSum +(error * timer.seconds());
+            power = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+        } else {
+            power = 0;
+        }
 
     }
     public double adjustFlywheelSpeed(Telemetry telemetry) {
