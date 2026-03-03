@@ -1,0 +1,156 @@
+package org.firstinspires.ftc.teamcode.test;
+
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.*;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+
+import java.lang.Math;
+
+@Autonomous(name = "NOMECHElyseAutoREDSIDEFarILT")
+public class ILTredsidefarNOMECH extends LinearOpMode {
+    private DcMotorEx intake;
+    private DcMotorEx flywheel;
+    private Servo flap;
+
+    @Override
+    public void runOpMode() {
+
+        flywheel = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
+        flap = hardwareMap.get(Servo.class, "flapServo");
+        intake = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
+
+        flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        // (x, -y, -heading)
+        Pose2d initialPose = new Pose2d(53, -14, Math.toRadians(-315));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+
+        TrajectoryActionBuilder toShoot = drive.actionBuilder(initialPose)
+                .setReversed(true)
+                .strafeToLinearHeading(new Vector2d(53, -10), Math.toRadians(-315))
+
+                .strafeToLinearHeading(new Vector2d(38, -13), Math.toRadians(-315))
+                .strafeToLinearHeading(new Vector2d(35, 58), Math.toRadians(-270));
+
+        TrajectoryActionBuilder intakeBalls = toShoot.endTrajectory().fresh()
+                .turn(Math.toRadians(-25));
+
+        TrajectoryActionBuilder backToShoot = intakeBalls.endTrajectory().fresh()
+                .setReversed(true);
+
+        Action outOfZone = backToShoot.endTrajectory().fresh()
+                .turn(Math.toRadians(-90))
+                .lineToX(2)
+                .build();
+
+        Action firstTraj = toShoot.build();
+        Action secondTraj = intakeBalls.build();
+        Action thirdTraj = backToShoot.build();
+
+        waitForStart();
+        if (isStopRequested()) return;
+
+        Actions.runBlocking(
+                new ParallelAction(
+                        flywheelOn(),
+                        new SequentialAction(
+                                firstTraj,
+                                flapThreeTimes(),
+                                new ParallelAction(
+                                        secondTraj,
+                                        intakeForSeconds(4.0)
+                                ),
+                                thirdTraj,
+                                flapThreeTimes(),
+                                outOfZone,
+                                flywheelOff()
+                        )
+                )
+        );
+    }
+
+    private Action intakeForSeconds(double seconds) {
+        return new Action() {
+
+            ElapsedTime timer = new ElapsedTime();
+            boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    intake.setPower(-1);
+                    timer.reset();
+                    initialized = true;
+                }
+
+                if (timer.seconds() >= seconds) {
+                    intake.setPower(0);
+                    return true;
+                }
+                return false;
+            }
+        };
+    }
+
+    private Action flywheelOn() {
+        return packet -> {
+            flywheel.setPower(-0.6);
+            return false;
+        };
+    }
+
+    private Action flywheelOff() {
+        return packet -> {
+            flywheel.setPower(0);
+            return true;
+        };
+    }
+
+    private Action flapThreeTimes() {
+        return new Action() {
+
+            int hitCount = 0;
+            boolean flapOut = false;
+
+            ElapsedTime timer = new ElapsedTime();
+            double lastToggleTime = 0;
+
+            final double FLAP_OUT = 0.65;
+            final double FLAP_IN = 0.35;
+            final double TOGGLE_TIME = 0.25;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                double now = timer.seconds();
+
+                if (lastToggleTime == 0) {
+                    flap.setPosition(FLAP_IN);
+                    lastToggleTime = now;
+                }
+
+                if (now - lastToggleTime >= TOGGLE_TIME) {
+                    flapOut = !flapOut;
+                    flap.setPosition(flapOut ? FLAP_OUT : FLAP_IN);
+                    lastToggleTime = now;
+
+                    if (!flapOut) hitCount++;
+                }
+
+                return hitCount >= 3;
+            }
+        };
+    }
+}

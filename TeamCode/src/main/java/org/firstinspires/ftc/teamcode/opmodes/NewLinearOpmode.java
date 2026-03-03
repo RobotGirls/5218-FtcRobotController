@@ -5,145 +5,127 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "NewLinOpmode ")
-
+@TeleOp(name = "gobulidaTeleop")
 public class NewLinearOpmode extends LinearOpMode {
 
+    private static final double HOOD_DOWN = 1.0;
+    private static final double HOOD_UP = 0.0;
 
-    private final double BLOCK_NOTHING = 0.25;
-    private final double BLOCK_BOTH = 0.05;
+    private static final double FLAP_IN = 0.35;
+    private static final double FLAP_OUT = .05;
 
+    private static final double FLYWHEEL_HIGH_POWER = 0.6;
+    private static final double FLYWHEEL_LOW_POWER  = 0.46;
+
+    private static final double FLAP_PULSE_TIME = 0.25;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-
-        boolean intakeOn = false;
-        boolean outtakeOn = false;
-
-        DcMotorEx leftFront, leftBack, rightBack, rightFront;
-
-
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftBack = hardwareMap.get(DcMotorEx.class, "backLeft");
-        rightBack = hardwareMap.get(DcMotorEx.class, "backRight");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        DcMotorEx leftFront  = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        DcMotorEx leftBack   = hardwareMap.get(DcMotorEx.class, "backLeft");
+        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        DcMotorEx rightBack  = hardwareMap.get(DcMotorEx.class, "backRight");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // note: you must set this after stop and reset encoder; otherwise, the robot won't move
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
- // rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-//       leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-//     //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        DcMotorEx flywheelMotor = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
+        flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Intake
-        // not complete yet, derived from TeleopDrive
-        DcMotorEx IntakeMotor;
-        IntakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
-        IntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        IntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        Servo flapServo = hardwareMap.get(Servo.class, "flapServo");
+        Servo hoodServo = hardwareMap.get(Servo.class, "hoodServo");
 
+        boolean flywheelHigh = false;
+        boolean flywheelLow = false;
+        boolean lastAState = false;
+        boolean lastBState = false;
 
-    //flywheel motor
-        // need to add this on the bottom too
-        DcMotorEx FlywheelMotor;
-        FlywheelMotor = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
-        FlywheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FlywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        boolean lastRBState = false;
+        boolean flapActive = false;
 
-        //Transport Motor
-//        DcMotorEx TransportMotor;
-//
-//       TransportMotor = hardwareMap.get(DcMotorEx.class, "TransportMotor");
-//        TransportMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        TransportMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        ElapsedTime flapTimer = new ElapsedTime();
 
-
+        flapServo.setPosition(FLAP_IN);
+        hoodServo.setPosition(HOOD_DOWN);
 
         waitForStart();
-
         if (isStopRequested()) return;
 
-        while (opModeIsActive() && !isStopRequested()) {
-            double y = -gamepad1.right_stick_x; // Remember, Y stick value is reversed
-            double x = gamepad1.right_stick_y * 1.1; // Counteract imperfect strafing
+        while (opModeIsActive()) {
+
+            double y  = -gamepad1.right_stick_y;
+            double x  =  gamepad1.right_stick_x;
             double rx = -gamepad1.left_stick_x;
 
-            // double FlywheelPower = gamepad2.right_stick_y; // example
-            // FlywheelMotor.setPower(FlywheelPower);
-
-
-            // Flywheel Motor (right stick)
-            double FlywheelPower = -gamepad2.right_stick_y;
-            FlywheelMotor.setPower(FlywheelPower);
-
-
-//            //transport
-//            double TransportPower = 0.0;
-//
-//            if (gamepad2.y) {
-//                TransportPower = 1.0; // Forward
-//            } else if (gamepad2.a) {
-//                TransportPower = -1.0; // Reverse
-//            }
-//
-//            TransportMotor.setPower(TransportPower);
-
-
-            //double IntakeMotorPower = gamepad2.left_stick_y;
-           // IntakeMotor.setPower(IntakeMotorPower);
-
-            // Intake Motor (left stick)
-            double intakePower = -gamepad2.left_stick_y;
-            IntakeMotor.setPower(intakePower);
-
-
-
-
-
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio,
-            // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x - rx) / denominator;
-            double frontRightPower = (y - x + rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
 
+            leftFront.setPower((y + x + rx) / denominator);
+            leftBack.setPower((y - x + rx) / denominator);
+            rightFront.setPower((y - x - rx) / denominator);
+            rightBack.setPower((y + x - rx) / denominator);
 
-            leftFront.setPower(frontLeftPower);
-            leftBack.setPower(backLeftPower);
-            rightFront.setPower(frontRightPower);
-            rightBack.setPower(backRightPower);
+            intakeMotor.setPower(-gamepad2.left_stick_y);
 
-//            if (TransportPower>0){
-//
-//                leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//                leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//                rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//                rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            }
-//
+            boolean currentA = gamepad2.a;
+            if (currentA && !lastAState) {
+                flywheelHigh = !flywheelHigh;
+                if (flywheelHigh) flywheelLow = false;
+            }
+            lastAState = currentA;
 
+            boolean currentB = gamepad2.b;
+            if (currentB && !lastBState) {
+                flywheelLow = !flywheelLow;
+                if (flywheelLow) flywheelHigh = false;
+            }
+            lastBState = currentB;
 
+            if (flywheelHigh) {
+                flywheelMotor.setPower(FLYWHEEL_HIGH_POWER);
+            } else if (flywheelLow) {
+                flywheelMotor.setPower(FLYWHEEL_LOW_POWER);
+            } else {
+                flywheelMotor.setPower(0);
+            }
+
+            boolean currentRB = gamepad2.right_bumper;
+            if (currentRB && !lastRBState && !flapActive) {
+                flapActive = true;
+                flapTimer.reset();
+                flapServo.setPosition(FLAP_OUT);
+            }
+            lastRBState = currentRB;
+
+            if (flapActive && flapTimer.seconds() >= FLAP_PULSE_TIME) {
+                flapServo.setPosition(FLAP_IN);
+                flapActive = false;
+            }
+
+            if (gamepad2.x) hoodServo.setPosition(HOOD_UP);
+            if (gamepad2.y) hoodServo.setPosition(HOOD_DOWN);
+
+            telemetry.addData("Flywheel",
+                    flywheelHigh ? "HIGH" :
+                            flywheelLow  ? "LOW"  : "OFF");
             telemetry.update();
         }
     }
 }
-
-

@@ -27,7 +27,7 @@ public class BlueAutoLM1ObsZone extends LinearOpMode {
         Lift lift = new Lift(hardwareMap);
         Claw claw = new Claw(hardwareMap);
 
-        Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(56, 15, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         TrajectoryActionBuilder toSubmersible = drive.actionBuilder(initialPose)
                 //.turn(Math.toRadians(45))
