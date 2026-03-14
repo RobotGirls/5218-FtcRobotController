@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -32,8 +33,9 @@ public class RedBottomAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Launcher launcher = new Launcher(hardwareMap);
         Intake intake = new Intake(hardwareMap);
+        //Flap flap = new Flap(hardwareMap);
 
-        Pose2d initialPose = new Pose2d(60, 14, Math.toRadians(180));
+        Pose2d initialPose = new Pose2d(66, 22, Math.toRadians(180));
 
         // takes the hardware and tuning inputs from mecanum drive
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
@@ -42,7 +44,12 @@ public class RedBottomAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
                 .waitSeconds(1.5);
         TrajectoryActionBuilder toArtifact= drive.actionBuilder(initialPose)
+
+
                 .strafeToLinearHeading(new Vector2d(-14,35),Math.toRadians(90));
+        TrajectoryActionBuilder toIntake= drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-14,50),Math.toRadians(90))
+                .waitSeconds(1.5);
         TrajectoryActionBuilder toLaunchZone2 = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(-22,25),Math.toRadians(145))
                 .waitSeconds(1.5);
@@ -81,35 +88,51 @@ public class RedBottomAuto extends LinearOpMode {
 //        Action toLaunchZone1=toLaunchZone.endTrajectory().fresh()
 //                .build();
 
-
-
-
-
-
-
-
-
         Action firstTraj = toLaunchZone.build();
         Action secondTraj = toArtifact.build();
-        Action thirdTraj = toLaunchZone2.build();
+        Action thirdTraj = toIntake.build();
+        Action fourthTraj = toLaunchZone2.build();
 
-
-        //if (isStopRequested()) return;
-
-        while (!isStopRequested() && opModeIsActive()) {
-            telemetry.addData("Robot position: ", drive.updatePoseEstimate());
+        while (!isStarted() && !isStopRequested()) {
+            drive.updatePoseEstimate();
+            telemetry.addData("Robot position: ", drive.pose);
             telemetry.update();
         }
+
         waitForStart();
         if (isStopRequested()) return;
 
+        // 4. RUN YOUR ACTIONS
         Actions.runBlocking(
                 new SequentialAction(
                         firstTraj,
                         secondTraj,
                         thirdTraj,
                         toPark
+                )
+        );
+        waitForStart();
+        if (isStopRequested()) return;
 
+        Actions.runBlocking(
+                new SequentialAction(
+                        firstTraj,
+//                        launcher.launcherForward(),
+//                        new ParallelAction(
+//                                intake.intakeIn(),
+//                                launcher.launcherForward()
+//                        ),
+                        secondTraj,
+
+                        thirdTraj,
+//                        launcher.launcherForward(),
+//                        new ParallelAction(
+//                                intake.intakeIn(),
+//                                launcher.launcherForward()
+//                        ),
+                        fourthTraj,
+
+                        toPark
 
 
 
@@ -119,13 +142,44 @@ public class RedBottomAuto extends LinearOpMode {
 
         //if (isStopRequested()) return;
     }
+//    public class Flap {
+//        private Servo flap;
+//
+//        public Flap(HardwareMap hardwareMap) {
+//            flap = hardwareMap.get(Servo.class, "Flap");
+//        }
+//
+//        public class CloseFlap implements Action {
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket packet) {
+//                flap.setPosition(0.55);
+//                return false;
+//            }
+//        }
+//
+//        public Action closeFlap() {
+//            return new CloseFlap();
+//        }
+//
+//        public class OpenFlap implements Action {
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket packet) {
+//                flap.setPosition(1.0);
+//                return false;
+//            }
+//        }
+//
+//        public Action openFlap() {
+//            return new OpenFlap();
+//        }
+//    }
 
     public class Launcher {
         private DcMotorEx launcher;
         private ElapsedTime timer;
 
         public Launcher(HardwareMap hardwareMap) {
-            launcher = hardwareMap.get(DcMotorEx.class, "FlywheelMotor");
+            launcher = hardwareMap.get(DcMotorEx.class, "FlyWheelMotor");
             launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             launcher.setDirection(DcMotorSimple.Direction.FORWARD);
 

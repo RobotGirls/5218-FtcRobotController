@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 import java.lang.Math;
 
-@Autonomous(name = "BlueBottomAuto")
-public class BlueBottomAuto extends LinearOpMode {
+@Autonomous(name = "ElyseAutoBLUESIDEFarILT")
+public class ElyseILTfarautoblueside extends LinearOpMode {
     private DcMotorEx intake;
     private DcMotorEx flywheel;
     private Servo flap;
@@ -34,20 +34,23 @@ public class BlueBottomAuto extends LinearOpMode {
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        Pose2d initialPose = new Pose2d(60, -20, Math.toRadians(180));
+        Pose2d initialPose = new Pose2d(53, 14, Math.toRadians(315));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         TrajectoryActionBuilder toShoot = drive.actionBuilder(initialPose)
                 .setReversed(true)
-                .splineTo(new Vector2d(-8, -8), Math.toRadians(45));
+                .strafeToLinearHeading(new Vector2d(38, 13), Math.toRadians(315))
+                .strafeToLinearHeading(new Vector2d(35, -58), Math.toRadians(270));
+
 
         TrajectoryActionBuilder intakeBalls = toShoot.endTrajectory().fresh()
                 .turn(Math.toRadians(25))
-                .splineTo(new Vector2d(-12, -52), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(38, -6), Math.toRadians(270));
+
 
         TrajectoryActionBuilder backToShoot = intakeBalls.endTrajectory().fresh()
                 .setReversed(true)
-                .splineTo(new Vector2d(-8, -8), Math.toRadians(45));
+                .strafeToLinearHeading(new Vector2d(54, -6), Math.toRadians(315));
 
         Action outOfZone = backToShoot.endTrajectory().fresh()
                 .turn(Math.toRadians(90))
@@ -62,27 +65,27 @@ public class BlueBottomAuto extends LinearOpMode {
         if (isStopRequested()) return;
 
         Actions.runBlocking(
-                        new ParallelAction(
+                new ParallelAction(
 
-                                flywheelOn(),
+                        flywheelOn(),
 
-                                new SequentialAction(
-                                        firstTraj,
-                                        flapThreeTimes(),
+                        new SequentialAction(
+                                firstTraj,
+                                flapThreeTimes(),
 
-                                        new ParallelAction(
-                                                secondTraj,
-                                                intakeForSeconds(4.0)
-                                        ),
+                                new ParallelAction(
+                                        secondTraj,
+                                        intakeForSeconds(4.0)
+                                ),
 
-                                        thirdTraj,
-                                        flapThreeTimes(),
+                                thirdTraj,
+                                flapThreeTimes(),
 
-                                        outOfZone,
-                                        flywheelOff()
-                                )
+                                outOfZone,
+                                flywheelOff()
                         )
-                );
+                )
+        );
     }
 
     private Action intakeForSeconds(double seconds) {
@@ -95,7 +98,7 @@ public class BlueBottomAuto extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
 
                 if (!initialized) {
-                    intake.setPower(-0.8);
+                    intake.setPower(-1);
                     timer.reset();
                     initialized = true;
                 }

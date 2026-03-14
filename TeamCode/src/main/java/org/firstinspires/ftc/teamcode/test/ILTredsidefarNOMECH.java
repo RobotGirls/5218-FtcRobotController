@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 import java.lang.Math;
 
-@Autonomous(name = "BlueBottomAuto")
-public class BlueBottomAuto extends LinearOpMode {
+@Autonomous(name = "NOMECHElyseAutoREDSIDEFarILT")
+public class ILTredsidefarNOMECH extends LinearOpMode {
     private DcMotorEx intake;
     private DcMotorEx flywheel;
     private Servo flap;
@@ -30,27 +30,28 @@ public class BlueBottomAuto extends LinearOpMode {
         flap = hardwareMap.get(Servo.class, "flapServo");
         intake = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
 
-
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        Pose2d initialPose = new Pose2d(60, -20, Math.toRadians(180));
+        // (x, -y, -heading)
+        Pose2d initialPose = new Pose2d(53, -14, Math.toRadians(-315));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         TrajectoryActionBuilder toShoot = drive.actionBuilder(initialPose)
                 .setReversed(true)
-                .splineTo(new Vector2d(-8, -8), Math.toRadians(45));
+                .strafeToLinearHeading(new Vector2d(53, -10), Math.toRadians(-315))
+
+                .strafeToLinearHeading(new Vector2d(38, -13), Math.toRadians(-315))
+                .strafeToLinearHeading(new Vector2d(35, 58), Math.toRadians(-270));
 
         TrajectoryActionBuilder intakeBalls = toShoot.endTrajectory().fresh()
-                .turn(Math.toRadians(25))
-                .splineTo(new Vector2d(-12, -52), Math.toRadians(-90));
+                .turn(Math.toRadians(-25));
 
         TrajectoryActionBuilder backToShoot = intakeBalls.endTrajectory().fresh()
-                .setReversed(true)
-                .splineTo(new Vector2d(-8, -8), Math.toRadians(45));
+                .setReversed(true);
 
         Action outOfZone = backToShoot.endTrajectory().fresh()
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .lineToX(2)
                 .build();
 
@@ -62,27 +63,22 @@ public class BlueBottomAuto extends LinearOpMode {
         if (isStopRequested()) return;
 
         Actions.runBlocking(
-                        new ParallelAction(
-
-                                flywheelOn(),
-
-                                new SequentialAction(
-                                        firstTraj,
-                                        flapThreeTimes(),
-
-                                        new ParallelAction(
-                                                secondTraj,
-                                                intakeForSeconds(4.0)
-                                        ),
-
-                                        thirdTraj,
-                                        flapThreeTimes(),
-
-                                        outOfZone,
-                                        flywheelOff()
-                                )
+                new ParallelAction(
+                        flywheelOn(),
+                        new SequentialAction(
+                                firstTraj,
+                                flapThreeTimes(),
+                                new ParallelAction(
+                                        secondTraj,
+                                        intakeForSeconds(4.0)
+                                ),
+                                thirdTraj,
+                                flapThreeTimes(),
+                                outOfZone,
+                                flywheelOff()
                         )
-                );
+                )
+        );
     }
 
     private Action intakeForSeconds(double seconds) {
@@ -93,9 +89,8 @@ public class BlueBottomAuto extends LinearOpMode {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-
                 if (!initialized) {
-                    intake.setPower(-0.8);
+                    intake.setPower(-1);
                     timer.reset();
                     initialized = true;
                 }
@@ -104,7 +99,6 @@ public class BlueBottomAuto extends LinearOpMode {
                     intake.setPower(0);
                     return true;
                 }
-
                 return false;
             }
         };
@@ -135,7 +129,7 @@ public class BlueBottomAuto extends LinearOpMode {
 
             final double FLAP_OUT = 0.65;
             final double FLAP_IN = 0.35;
-            final double TOGGLE_TIME = 0.25; // seconds
+            final double TOGGLE_TIME = 0.25;
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -159,5 +153,4 @@ public class BlueBottomAuto extends LinearOpMode {
             }
         };
     }
-
 }
