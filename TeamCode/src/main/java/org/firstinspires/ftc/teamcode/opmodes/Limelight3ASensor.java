@@ -233,7 +233,7 @@ public class Limelight3ASensor {
             //getFiducials(telemetry, result);
 
         } else {
-            myTelemetry.addData("Limelight", "No data available");
+            myTelemetry.addData("Limelight", "No data available :D");
         }
 
     }
