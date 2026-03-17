@@ -125,7 +125,7 @@ public class LimeLightDistance extends LinearOpMode {
 
     public void alignToTag(){
 
-        rx = limelightSensor.getStrafePower();
+        rx = limelightSensor.getStrafePower(telemetry);
 
 
     }

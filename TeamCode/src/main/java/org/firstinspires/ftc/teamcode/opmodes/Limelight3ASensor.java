@@ -146,7 +146,7 @@ public class Limelight3ASensor {
 
     }
     //FIXME continue from here next time
-    public double getStrafePower() {
+    public double getStrafePower(Telemetry telemetry) {
         double power;
         double error;
         ElapsedTime timer = new ElapsedTime();
@@ -158,8 +158,9 @@ public class Limelight3ASensor {
             power = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
         } else {
             power = 0;
-
         }
+        telemetry.addData("Strafe Power", power);
+        telemetry.update();
         return power;
     }
     public double adjustFlywheelSpeed(Telemetry telemetry) {
