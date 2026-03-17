@@ -158,8 +158,9 @@ public class Limelight3ASensor {
             power = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
         } else {
             power = 0;
-        }
 
+        }
+        return power;
     }
     public double adjustFlywheelSpeed(Telemetry telemetry) {
         double deltaTime;
