@@ -161,7 +161,7 @@ public class Limelight3ASensor {
         }
         telemetry.addData("Strafe Power", power);
         telemetry.update();
-        return power;
+        return -power;
     }
     public double adjustFlywheelSpeed(Telemetry telemetry) {
         double deltaTime;
