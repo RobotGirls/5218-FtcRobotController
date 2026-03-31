@@ -11,12 +11,15 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.util.List;
 
 public class Limelight3ASensor {
     private final int ALIGN_THRESHOLD = 3;
     private double myTx;
+
+    private double myYaw;
     private boolean isValid;
     private Limelight3A limelight;
     private int alignThreshold = 3;
@@ -44,6 +47,7 @@ public class Limelight3ASensor {
     private double prevTime = 0;
     private Position position;
     private Pose3D localBotPose;
+    private YawPitchRollAngles orientation;
     private Telemetry myTelemetry;
 
 
@@ -159,7 +163,24 @@ public class Limelight3ASensor {
         } else {
             power = 0;
         }
-        telemetry.addData("Strafe Power", power);
+        telemetry.addData("Strafe Power", -power);
+        telemetry.update();
+        return -power;
+    }
+    public double getTurnPower(Telemetry telemetry) {
+        double power;
+        double error;
+        ElapsedTime timer = new ElapsedTime();
+        error = this.getLimeYaw();
+        if (Math.abs(error) > ALIGN_THRESHOLD ) {
+            error = -1 * this.getLimeYaw();
+            derivative = (error - lastError) / timer.seconds();
+            integralSum = integralSum +(error * timer.seconds());
+            power = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+        } else {
+            power = 0;
+        }
+        telemetry.addData("Turn Power", -power);
         telemetry.update();
         return -power;
     }
@@ -243,13 +264,23 @@ public class Limelight3ASensor {
     //getLimeTx returns the horizontal offset values(tx)
     // between the april tag and the limelight
     public double getLimeTx(){return myTx;}
+
+    public double getLimeYaw(){return myYaw;}
     public void limelightProcessing(Telemetry telemetry){
         LLResult result = limelight.getLatestResult();
         //the result is valid if the limelight sees an april tag
         if (result.isValid()) {
-            myTx = result.getTx();
-            telemetry.addData("tx", myTx );//if robot can identify april tag it is valid
+          //  myTx = result.getTx();
+         //   telemetry.addData("tx", myTx );//if robot can identify april tag it is valid
+
+            localBotPose = result.getBotpose();
+            orientation = localBotPose.getOrientation();
+            myYaw = orientation.getYaw();
+            telemetry.addData("orientation",orientation.toString());
+            telemetry.addData("Botpose", localBotPose.toString());
+            telemetry.addData("yaw", myYaw );
             isValid = true;
+
 
         }else {
             telemetry.addData("Limelight", "No data avalible!");

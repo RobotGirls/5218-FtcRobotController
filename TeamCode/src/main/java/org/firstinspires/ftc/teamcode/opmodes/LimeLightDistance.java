@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.opmodes.Limelight3ASensor;
 
-@TeleOp(name = "LimelightDistance")
+@TeleOp(name = "LimelightDistance_Turn")
 
 public class LimeLightDistance extends LinearOpMode {
 
@@ -61,9 +61,10 @@ public class LimeLightDistance extends LinearOpMode {
             if (useAutoAlign) {
 
                 limelightSensor.limelightProcessing(telemetry);
-                alignToTagStrafe();
+                //if you want to strafe to the april tag, uncomment the following line
+                //alignToTagStrafe();
+                turnToAprilTag();
 
-                //not done yet
 
             }
 
@@ -139,7 +140,22 @@ public class LimeLightDistance extends LinearOpMode {
         rightFront.setPower(rightFrontPower);
         rightBack.setPower(rightBackPower);
     }
+    public void turnToAprilTag(){
+
+        rx = limelightSensor.getTurnPower(telemetry);
+
+        leftFrontPower = (y + x + rx) ;
+        leftBackPower = (y - x + rx) ;
+        rightFrontPower = (y - x - rx) ;
+        rightBackPower = (y + x - rx) ;
+
+        leftFront.setPower(leftFrontPower);
+        leftBack.setPower(leftBackPower);
+        rightFront.setPower(rightFrontPower);
+        rightBack.setPower(rightBackPower);
+    }
 }
+
 
 
 
