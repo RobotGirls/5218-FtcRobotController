@@ -31,7 +31,7 @@ public class LimeLightTestTelop extends LinearOpMode {
 
     // --- Control Constants ---
     private static final double FLYWHEEL_KP = 0.02;
-    private static final double FLYWHEEL_MIN_POWER = 0.2;
+    private static final double FLYWHEEL_MIN_POWER = 0;
     private static final double FLYWHEEL_MAX_POWER = 1.0;
     private static final double TARGET_AREA = 5.0;
 
@@ -160,7 +160,7 @@ public class LimeLightTestTelop extends LinearOpMode {
     private void driveControl() {
         double y  = -gamepad1.right_stick_y;
         double x  = gamepad1.right_stick_x ;
-        double rx = -gamepad1.left_stick_x;
+        double rx = -gamepad1.left_stick_y;
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double fl = (y + x - rx) / denominator;
