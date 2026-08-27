@@ -56,7 +56,7 @@ public class LimeLightDistance extends LinearOpMode {
 
             if (useAutoAlign) {
 
-                limelightSensor.limelightProcessing(telemetry, timer);
+                limelightSensor.limelightProcessing(telemetry);
                 alignToTag();
                 //not done yet
 

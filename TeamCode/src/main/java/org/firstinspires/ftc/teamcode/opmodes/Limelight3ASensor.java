@@ -151,14 +151,15 @@ public class Limelight3ASensor {
         double error;
         ElapsedTime timer = new ElapsedTime();
         error = this.getLimeTx();
-        if (Math.abs(error) > ALIGN_THRESHOLD ) {
+        if (Math.abs(error) > ALIGN_THRESHOLD) {
             error = -1 * this.getLimeTx();
             derivative = (error - lastError) / timer.seconds();
-            integralSum = integralSum +(error * timer.seconds());
+            integralSum = integralSum + (error * timer.seconds());
             power = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
         } else {
             power = 0;
         }
+        return 0;
 
     }
     public double adjustFlywheelSpeed(Telemetry telemetry) {

@@ -19,4 +19,10 @@ public class GamepadHandler {
     public double getDriveY() {
         return 0;
     }
+    public double getDriveX() {
+        return 0;
+    }
+    public double getTurnX() {
+        return 0;
+    }
 }
