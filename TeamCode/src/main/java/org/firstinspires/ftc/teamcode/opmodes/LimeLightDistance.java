@@ -110,7 +110,7 @@ public class LimeLightDistance extends LinearOpMode {
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // FIXME cindy need to figue out if this is run without or run with encoder
+
         // note: you must set this after stop and reset encoder; otherwise, the robot won't move
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
