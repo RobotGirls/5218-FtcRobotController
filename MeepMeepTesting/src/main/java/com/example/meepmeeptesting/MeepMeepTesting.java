@@ -29,22 +29,64 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-5, 56, 0))
-                .strafeToLinearHeading(new Vector2d(35,64),Math.toRadians(0))
+        //Long Blue side code without strafing (tank drive)
+        myBot.runAction(
+                myBot.getDrive().actionBuilder(
+                                new Pose2d(-60, 10, Math.toRadians(0))
+                        )
+
+                        // (-60, 10) -> (-39, 10)
+                        .lineToX(-39)
+                        .waitSeconds(1)
+
+                        // (-39, 10) -> (-30, 10)
+                        .lineToX(-30)
+                        .waitSeconds(6)
+
+                        // (-30, 10) -> (55, 17)
+                        // Turn toward the point
+                        .turn(Math.toRadians(4.7))
+                        .lineToX(55)
+                        .turn(Math.toRadians(-4.7))
+
+                        // (55, 17) -> (40, 15)
+                        .turn(Math.toRadians(-172.4))
+                        .lineToX(40)
+                        .turn(Math.toRadians(-7.6))
+                        .waitSeconds(1)
+                        .build();
 
 
-                //.splineTo(new Vector2d())
+
+                        // (-39, 10) -> (-54, 50)
+
+
+
+        //Long Blue side code with strafing (meccanum drive)
+//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-60, 10, 0))
+//                .strafeToLinearHeading(new Vector2d(-39,10),Math.toRadians(0))
+//                                .waitSeconds(1)
+//                .strafeToLinearHeading(new Vector2d(-30,10),Math.toRadians(0))
+//                .waitSeconds(6)
+//                .strafeToLinearHeading(new Vector2d(55,17),Math.toRadians(0))
+//                .strafeToLinearHeading(new Vector2d(40,15),Math.toRadians(180))
+//                .waitSeconds(1)
+//                .strafeToLinearHeading(new Vector2d(55,17),Math.toRadians(45))
+//                .strafeToLinearHeading(new Vector2d(60,17),Math.toRadians(45))
+//                .waitSeconds(2)
+//                .strafeToLinearHeading(new Vector2d(-39,10),Math.toRadians(0))
+//                .waitSeconds(1.5)
+//                .strafeToLinearHeading(new Vector2d(-54,50),Math.toRadians(125))
+//                .strafeToLinearHeading(new Vector2d(-60,60),Math.toRadians(180))
+//                .strafeToLinearHeading(new Vector2d(35,50),Math.toRadians(0))
+//                .strafeToLinearHeading(new Vector2d(35,60),Math.toRadians(0))
+//        Julias Parking code(blue side)
+//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-5, 56, 0))
+//                .strafeToLinearHeading(new Vector2d(35,64),Math.toRadians(0))
 
 
 
 
-//                .lineToY(-8)
-//                .turn(Math.toRadians(90))
-//                .lineToX(0)
-//                .turn(Math.toRadians(90))
-//                .lineToY(0)
-//                .turn(Math.toRadians(90))
-                .build());
 
         if (fieldImage != null) {
             meepMeep.setBackground(fieldImage);
