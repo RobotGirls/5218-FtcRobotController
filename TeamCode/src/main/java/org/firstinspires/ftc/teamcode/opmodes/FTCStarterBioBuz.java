@@ -116,16 +116,17 @@ public class FTCStarterBioBuz extends OpMode {
         /*
          * set Feeders to an initial value to initialize the servo controller
          */
-        leftIntakeServo.setPower(4);
-        rightIntakeServo.setPower(4);
-        windmillServo.setPower(4);
+        leftIntakeServo.setPower(1);
+        rightIntakeServo.setPower(1);
+        windmillServo.setPower(1);
 
         /*
          * Much like our drivetrain motors, we set the right intake servo to reverse so that both
          * servos work to pull elements into the intake.
          */
-        rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
-        windmillServo.setDirection(DcMotorSimple.Direction.REVERSE);
+       // rightIntakeServo.setDirection(CRServo.Direction.REVERSE);
+        leftIntakeServo.setDirection(CRServo.Direction.REVERSE);
+        //windmillServo.setDirection(CRServo.Direction.REVERSE);
 
         /*
          * Tell the driver that initialization is complete.
@@ -160,7 +161,13 @@ public class FTCStarterBioBuz extends OpMode {
         if (gamepad1.start && gamepad1.b) {
             driveMode = false;
         }
-//        *
+
+        if (gamepad2.b) {
+            intakePower = 1;
+        } else {
+            intakePower = 0;
+        }
+//       *
 //         * Here we call a function called arcadeDrive. The arcadeDrive function takes the input from
 //         * the joysticks, and applies power to the left and right drive motor to move the robot
 //         * as requested by the driver. "arcade" refers to the control style we're using here.
@@ -169,7 +176,7 @@ public class FTCStarterBioBuz extends OpMode {
 //         * both motors work to rotate the robot. Combinations of these inputs can be used to create
 //         * more complex maneuvers.
 //         *
-//      
+//
 //         */ start of gobilda code, end of rishas
         arcadeDrive(-gamepad1.left_stick_y, gamepad1.right_stick_x);
 
@@ -185,7 +192,7 @@ public class FTCStarterBioBuz extends OpMode {
          * allow us to avoid setting the same motors/servos power more than once per loop. That can
          * create erratic behavior.
          */
-        intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
+
 
         /*
          * The launch() function handles setting motor velocity, and running the windmill servo
@@ -203,6 +210,7 @@ public class FTCStarterBioBuz extends OpMode {
         intake.setPower(intakePower);
         leftIntakeServo.setPower(intakePower);
         rightIntakeServo.setPower(intakePower);
+        windmillServo.setPower(intakePower);
 
         /*
          * Show motor powers on the Driver Station via telemetry. end of gobilda code
@@ -239,7 +247,7 @@ public class FTCStarterBioBuz extends OpMode {
          * holding down the right gamepad. If they are, then we want to start spinning up the launcher.
          * Otherwise, we start spinning the launcher down.
          */
-        if (gamepad1.right_bumper) {
+        if (gamepad2.y) {
             launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
         } else {
             launcher.setVelocity(0);
@@ -252,7 +260,7 @@ public class FTCStarterBioBuz extends OpMode {
          * add some power to the intake power. This can sometimes help dislodge stuck elements from
          * inside the hopper.
          */
-        if (gamepad1.right_bumper && launcher.getVelocity() > LAUNCHER_MIN_VELOCITY) {
+        if (gamepad2.a && launcher.getVelocity() > LAUNCHER_MIN_VELOCITY) {
             windmillServo.setPower(1);
             intakePower += 0.5;
         } else {
