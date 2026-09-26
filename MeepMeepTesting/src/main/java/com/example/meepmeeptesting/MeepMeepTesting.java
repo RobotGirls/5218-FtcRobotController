@@ -54,7 +54,33 @@ public class MeepMeepTesting {
                         .lineToX(40)
                         .turn(Math.toRadians(-7.6))
                         .waitSeconds(1)
-                        .build();
+
+                        //collect flower pollen
+                        .turn(Math.toRadians(190))
+                        .lineToX(60)
+                        .waitSeconds(2)
+
+                        //shoot the pollen collected
+                        .turn(Math.toRadians(-180))
+                        .waitSeconds(1.5)
+
+//                      //collect the dropped nectar(3) and pollen(1)
+//                        .lineToX(30)
+//                        .waitSeconds(6)
+
+                         //shoot pollen into upturned box
+//                        .turn(Math.toRadians(-10))
+//                        .lineToX(-52)
+//                        .turn(Math.toRadians(180))
+//                        .waitSeconds(2)
+
+                        //park
+                        .turn(Math.toRadians(-90))
+                        .lineToY(56)
+//                        .turn(Math.toRadians(-32))
+                        .build()
+        );
+
 
 
 
