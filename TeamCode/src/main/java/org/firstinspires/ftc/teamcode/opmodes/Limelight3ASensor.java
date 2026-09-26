@@ -146,7 +146,7 @@ public class Limelight3ASensor {
 
     }
     //FIXME continue from here next time
-    public double getStrafePower() {
+    public double getStrafePower(Telemetry telemetry) {
         double power;
         double error;
         ElapsedTime timer = new ElapsedTime();
@@ -159,7 +159,9 @@ public class Limelight3ASensor {
         } else {
             power = 0;
         }
-
+        telemetry.addData("Strafe Power", power);
+        telemetry.update();
+        return -power;
     }
     public double adjustFlywheelSpeed(Telemetry telemetry) {
         double deltaTime;
@@ -232,7 +234,7 @@ public class Limelight3ASensor {
             //getFiducials(telemetry, result);
 
         } else {
-            myTelemetry.addData("Limelight", "No data available");
+            myTelemetry.addData("Limelight", "No data available :D");
         }
 
     }

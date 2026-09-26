@@ -24,6 +24,10 @@ public class LimeLightDistance extends LinearOpMode {
     double rx;
     //DcMotorEx IntakeMotor;
     ElapsedTime timer;
+    double leftFrontPower;
+    double leftBackPower;
+    double rightFrontPower;
+    double rightBackPower;
 
     DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
@@ -56,16 +60,14 @@ public class LimeLightDistance extends LinearOpMode {
 
             if (useAutoAlign) {
 
-                limelightSensor.limelightProcessing(telemetry, timer);
-                alignToTag();
+                limelightSensor.limelightProcessing(telemetry);
+                alignToTagStrafe();
+
                 //not done yet
 
             }
 
-            double frontLeftPower = (y + x + rx) ;
-            double backLeftPower = (y - x + rx) ;
-            double frontRightPower = (y - x - rx) ;
-            double backRightPower = (y + x - rx) ;
+
 
             telemetry.update();
 
@@ -108,7 +110,7 @@ public class LimeLightDistance extends LinearOpMode {
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // FIXME cindy need to figue out if this is run without or run with encoder
+
         // note: you must set this after stop and reset encoder; otherwise, the robot won't move
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -123,11 +125,19 @@ public class LimeLightDistance extends LinearOpMode {
     }
 
 
-    public void alignToTag(){
+    public void alignToTagStrafe(){
 
-        rx = limelightSensor.getWheelPower();
+        x = limelightSensor.getStrafePower(telemetry);
 
+        leftFrontPower = (y + x + rx) ;
+        leftBackPower = (y - x + rx) ;
+        rightFrontPower = (y - x - rx) ;
+        rightBackPower = (y + x - rx) ;
 
+        leftFront.setPower(leftFrontPower);
+        leftBack.setPower(leftBackPower);
+        rightFront.setPower(rightFrontPower);
+        rightBack.setPower(rightBackPower);
     }
 }
 
