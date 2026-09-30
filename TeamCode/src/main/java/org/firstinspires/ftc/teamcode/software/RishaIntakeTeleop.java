@@ -18,6 +18,7 @@ public class RishaIntakeTeleop extends LinearOpMode {
     public void runOpMode() {
         //instantiating Intake (calling the Intake() constructor in the Intake class
         // creating an instance or object of Intake
+        HardwareMap hardwareMap = null;
         intake = new DoubleWheelIntake(hardwareMap);
 
 
