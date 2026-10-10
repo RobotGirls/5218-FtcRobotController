@@ -92,6 +92,7 @@ public class FTCStarterBioBuz extends OpMode {
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
+
         /*
          * Setting zeroPowerBehavior to BRAKE enables a "brake mode". This causes the motor to
          * slow down much faster when it is coasting. This creates a much more controllable
@@ -108,6 +109,8 @@ public class FTCStarterBioBuz extends OpMode {
          * into the port right beside the motor itself. And that the motors polarity is consistent
          * through any wiring.
          */
+       
+
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(40, 0, 0, 12.5));
