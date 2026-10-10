@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "MecanumTeleopBiobuzz")
 public class MecanumTeleop extends LinearOpMode {
 
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -39,6 +41,10 @@ public class MecanumTeleop extends LinearOpMode {
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         waitForStart();
 
@@ -60,7 +66,7 @@ public class MecanumTeleop extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-
+            intakeMotor.setPower(-gamepad2.left_stick_y);
 
 
             leftFront.setPower(frontLeftPower);
