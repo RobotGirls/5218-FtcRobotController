@@ -29,57 +29,57 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        //Long Blue side code without strafing (tank drive)
-        myBot.runAction(
-                myBot.getDrive().actionBuilder(
-                                new Pose2d(-60, 10, Math.toRadians(0))
-                        )
-
-                        // (-60, 10) -> (-39, 10)
-                        .lineToX(-39)
-                        .waitSeconds(1)
-
-                        // (-39, 10) -> (-30, 10)
-                        .lineToX(-30)
-                        .waitSeconds(6)
-
-                        // (-30, 10) -> (55, 17)
-                        // Turn toward the point
-                        .turn(Math.toRadians(4.7))
-                        .lineToX(55)
-                        .turn(Math.toRadians(-4.7))
-
-                        // (55, 17) -> (40, 15)
-                        .turn(Math.toRadians(-172.4))
-                        .lineToX(40)
-                        .turn(Math.toRadians(-7.6))
-                        .waitSeconds(1)
-
-                        //collect flower pollen
-                        .turn(Math.toRadians(190))
-                        .lineToX(60)
-                        .waitSeconds(2)
-
-                        //shoot the pollen collected
-                        .turn(Math.toRadians(-180))
-                        .waitSeconds(1.5)
-
-//                      //collect the dropped nectar(3) and pollen(1)
-//                        .lineToX(30)
+//        //Long Blue side code without strafing (tank drive)
+//        myBot.runAction(
+//                myBot.getDrive().actionBuilder(
+//                                new Pose2d(-60, 10, Math.toRadians(0))
+//                        )
+//
+//                        // (-60, 10) -> (-39, 10)
+//                        .lineToX(-39)
+//                        .waitSeconds(1)
+//
+//                        // (-39, 10) -> (-30, 10)
+//                        .lineToX(-30)
 //                        .waitSeconds(6)
-
-                         //shoot pollen into upturned box
-//                        .turn(Math.toRadians(-10))
-//                        .lineToX(-52)
-//                        .turn(Math.toRadians(180))
+//
+//                        // (-30, 10) -> (55, 17)
+//                        // Turn toward the point
+//                        .turn(Math.toRadians(4.7))
+//                        .lineToX(55)
+//                        .turn(Math.toRadians(-4.7))
+//
+//                        // (55, 17) -> (40, 15)
+//                        .turn(Math.toRadians(-172.4))
+//                        .lineToX(40)
+//                        .turn(Math.toRadians(-7.6))
+//                        .waitSeconds(1)
+//
+//                        //collect flower pollen
+//                        .turn(Math.toRadians(190))
+//                        .lineToX(60)
 //                        .waitSeconds(2)
-
-                        //park
-                        .turn(Math.toRadians(-90))
-                        .lineToY(56)
-//                        .turn(Math.toRadians(-32))
-                        .build()
-        );
+//
+//                        //shoot the pollen collected
+//                        .turn(Math.toRadians(-180))
+//                        .waitSeconds(1.5)
+//
+////                      //collect the dropped nectar(3) and pollen(1)
+////                        .lineToX(30)
+////                        .waitSeconds(6)
+//
+//                         //shoot pollen into upturned box
+////                        .turn(Math.toRadians(-10))
+////                        .lineToX(-52)
+////                        .turn(Math.toRadians(180))
+////                        .waitSeconds(2)
+//
+//                        //park
+//                        .turn(Math.toRadians(-90))
+//                        .lineToY(56)
+////                        .turn(Math.toRadians(-32))
+//                        .build()
+//        );
 
 
 
@@ -106,10 +106,17 @@ public class MeepMeepTesting {
 //                .strafeToLinearHeading(new Vector2d(-60,60),Math.toRadians(180))
 //                .strafeToLinearHeading(new Vector2d(35,50),Math.toRadians(0))
 //                .strafeToLinearHeading(new Vector2d(35,60),Math.toRadians(0))
-//        Julias Parking code(blue side)
-//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-5, 56, 0))
-//                .strafeToLinearHeading(new Vector2d(35,64),Math.toRadians(0))
+//      (blue side) near flower
+//       myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-5, 62, 0))
+//            .strafeToLinearHeading(new Vector2d(35,62),Math.toRadians(0))
+//                       .build()
+//        );
 
+//      (red side) near flower
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-5, -62, 0))
+                .strafeToLinearHeading(new Vector2d(35,-62),Math.toRadians(0))
+                .build()
+        );
 
 
 
