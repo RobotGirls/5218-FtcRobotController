@@ -61,6 +61,7 @@ public class FTCStarterBioBuz extends OpMode {
 
     // Create a variable to set to the intake.
     double intakePower;
+
     boolean driveMode;
 
     /*
@@ -91,6 +92,8 @@ public class FTCStarterBioBuz extends OpMode {
          */
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        intake.setDirection(DcMotor.Direction.REVERSE);
+        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         /*
@@ -126,8 +129,8 @@ public class FTCStarterBioBuz extends OpMode {
          * Much like our drivetrain motors, we set the right intake servo to reverse so that both
          * servos work to pull elements into the intake.
          */
-       // rightIntakeServo.setDirection(CRServo.Direction.REVERSE);
-        leftIntakeServo.setDirection(CRServo.Direction.REVERSE);
+        rightIntakeServo.setDirection(CRServo.Direction.FORWARD);
+        leftIntakeServo.setDirection(CRServo.Direction.FORWARD);
         //windmillServo.setDirection(CRServo.Direction.REVERSE);
 
         /*
@@ -212,7 +215,7 @@ public class FTCStarterBioBuz extends OpMode {
         intake.setPower(intakePower);
         leftIntakeServo.setPower(intakePower);
         rightIntakeServo.setPower(intakePower);
-        windmillServo.setPower(intakePower);
+      //  windmillServo.setPower(intakePower);
 
         /*
          * Show motor powers on the Driver Station via telemetry. end of gobilda code
@@ -251,8 +254,10 @@ public class FTCStarterBioBuz extends OpMode {
          */
         if (gamepad2.y) {
             launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
+
         } else {
             launcher.setVelocity(0);
+
         }
 
         /*
@@ -264,7 +269,6 @@ public class FTCStarterBioBuz extends OpMode {
          */
         if (gamepad2.a && launcher.getVelocity() > LAUNCHER_MIN_VELOCITY) {
             windmillServo.setPower(1);
-            intakePower += 0.5;
         } else {
             windmillServo.setPower(0);
         }
