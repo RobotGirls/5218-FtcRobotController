@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -16,8 +17,8 @@ import java.util.Objects;
 @Config
 public final class PinpointLocalizer implements Localizer {
     public static class Params {
-        public double parYTicks = 1680.542369841078; // y position of the parallel encoder (in tick units)
-        public double perpXTicks = -1589.0395380923635; // x position of the perpendicular encoder (in tick units)
+        public double parYTicks = 1842.936800351993; // y position of the parallel encoder (in tick units)
+        public double perpXTicks = -1466.294195178792; // x position of the perpendicular encoder (in tick units)
     }
 
     public static Params PARAMS = new Params();
@@ -40,6 +41,8 @@ public final class PinpointLocalizer implements Localizer {
         // TODO: reverse encoder directions if needed
         initialParDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
         initialPerpDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
+
+
 
         driver.setEncoderDirections(initialParDirection, initialPerpDirection);
 
