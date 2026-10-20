@@ -107,9 +107,12 @@ public class MeepMeepTesting {
 //                .strafeToLinearHeading(new Vector2d(35,50),Math.toRadians(0))
 //                .strafeToLinearHeading(new Vector2d(35,60),Math.toRadians(0))
 //     (blue side) near flower
-       myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-5, 60, 0))
-               .lineToX(30)
+       myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(10, -60, 0))
+               .lineToX(-30)
+//               .turn(Math.toRadians(-90))
+//               .lineToY(-60)
                .build()
+
 
        );
 //

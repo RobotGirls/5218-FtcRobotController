@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.TankDrive;
 
 
 import java.lang.Math;
-@Autonomous(name = "BlueFlowerAutoPark")
-public class BlueFlowerAuto extends LinearOpMode{
+@Autonomous(name = "BLUE Corner Auto Park")
+public class blueCornerAuto extends LinearOpMode{
 //    private DcMotorEx intake;
 //    private DcMotorEx flywheel;
 //    private Servo flap;
@@ -25,11 +25,11 @@ public class BlueFlowerAuto extends LinearOpMode{
     @Override
     public void runOpMode() {
 
-        Pose2d initialPose = new Pose2d(-5, 60, Math.toRadians(0));
+        Pose2d initialPose = new Pose2d(66, 60, Math.toRadians(0));
         TankDrive drive = new TankDrive(hardwareMap, initialPose);
 
         TrajectoryActionBuilder toPark = drive.actionBuilder(initialPose)
-                .lineToX(30);
+                .lineToX(40);
 
 
         Action outOfZone = toPark.endTrajectory().fresh()
@@ -46,15 +46,16 @@ public class BlueFlowerAuto extends LinearOpMode{
 
 
 
-                        new SequentialAction(
-                                firstTraj,
+                new SequentialAction(
+                        firstTraj,
 
 
 
-                                outOfZone
+                        outOfZone
 
-                        )
-                );
+                )
+        );
 
     }
 }
+//tested&works
