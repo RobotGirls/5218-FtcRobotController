@@ -129,9 +129,9 @@ public class FTCStarterBioBuz extends OpMode {
          * Much like our drivetrain motors, we set the right intake servo to reverse so that both
          * servos work to pull elements into the intake.
          */
-        rightIntakeServo.setDirection(CRServo.Direction.FORWARD);
+        rightIntakeServo.setDirection(CRServo.Direction.REVERSE);
         leftIntakeServo.setDirection(CRServo.Direction.FORWARD);
-        //windmillServo.setDirection(CRServo.Direction.REVERSE);
+        windmillServo.setDirection(CRServo.Direction.FORWARD);
 
         /*
          * Tell the driver that initialization is complete.
@@ -183,7 +183,7 @@ public class FTCStarterBioBuz extends OpMode {
 //         *
 //
 //         */ start of gobilda code, end of rishas
-        arcadeDrive(-gamepad1.left_stick_y, gamepad1.right_stick_x);
+        arcadeDrive(-gamepad1.right_stick_y, -gamepad1.left_stick_x);
 
         /*
          * Set the intake power variable to equal the right trigger, minus the left trigger.
