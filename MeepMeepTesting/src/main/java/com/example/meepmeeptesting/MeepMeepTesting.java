@@ -64,22 +64,33 @@ public class MeepMeepTesting {
 //                        .turn(Math.toRadians(-180))
 //                        .waitSeconds(1.5)
 //
-////                      //collect the dropped nectar(3) and pollen(1)
-////                        .lineToX(30)
-////                        .waitSeconds(6)
+//                      //collect the dropped nectar(3) and pollen(1)
+//                        .lineToX(30)
+//                        .waitSeconds(6)
 //
 //                         //shoot pollen into upturned box
-////                        .turn(Math.toRadians(-10))
-////                        .lineToX(-52)
-////                        .turn(Math.toRadians(180))
-////                        .waitSeconds(2)
+//                        .turn(Math.toRadians(-10))
+//                        .lineToX(-52)
+//                        .turn(Math.toRadians(180))
+//                        .waitSeconds(2)
 //
 //                        //park
 //                        .turn(Math.toRadians(-90))
 //                        .lineToY(56)
-////                        .turn(Math.toRadians(-32))
+//                        .turn(Math.toRadians(-32))
 //                        .build()
 //        );
+// Long Blue side code without strafing (tank drive)
+        myBot.runAction(
+                myBot.getDrive().actionBuilder(
+                                new Pose2d(-60, 40, Math.toRadians(0)))
+
+                        // (-60, 10) -> (-39, 10)
+                        .lineToX(-39)
+
+
+                        .build()
+        );
 
 
 
@@ -107,11 +118,13 @@ public class MeepMeepTesting {
 //                .strafeToLinearHeading(new Vector2d(35,50),Math.toRadians(0))
 //                .strafeToLinearHeading(new Vector2d(35,60),Math.toRadians(0))
 //     (blue side) near flower
-       myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(10, -60, 0))
-               .lineToX(-30)
-//               .turn(Math.toRadians(-90))
-//               .lineToY(-60)
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-62, 35, 0))
+               .lineToX(-34)
+                .turn(Math.toRadians(90))
+               .lineToY(15)
+                .turn(Math.toRadians(90))
                .build()
+
 
 
        );
