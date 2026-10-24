@@ -26,80 +26,15 @@ public class MeepMeepTesting {
         }
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .build();
-
-//        //Long Blue side code without strafing (tank drive)
-//        myBot.runAction(
-//                myBot.getDrive().actionBuilder(
-//                                new Pose2d(-60, 10, Math.toRadians(0))
-//                        )
-//
-//                        // (-60, 10) -> (-39, 10)
-//                        .lineToX(-39)
-//                        .waitSeconds(1)
-//
-//                        // (-39, 10) -> (-30, 10)
-//                        .lineToX(-30)
-//                        .waitSeconds(6)
-//
-//                        // (-30, 10) -> (55, 17)
-//                        // Turn toward the point
-//                        .turn(Math.toRadians(4.7))
-//                        .lineToX(55)
-//                        .turn(Math.toRadians(-4.7))
-//
-//                        // (55, 17) -> (40, 15)
-//                        .turn(Math.toRadians(-172.4))
-//                        .lineToX(40)
-//                        .turn(Math.toRadians(-7.6))
-//                        .waitSeconds(1)
-//
-//                        //collect flower pollen
-//                        .turn(Math.toRadians(190))
-//                        .lineToX(60)
-//                        .waitSeconds(2)
-//
-//                        //shoot the pollen collected
-//                        .turn(Math.toRadians(-180))
-//                        .waitSeconds(1.5)
-//
-//                      //collect the dropped nectar(3) and pollen(1)
-//                        .lineToX(30)
-//                        .waitSeconds(6)
-//
-//                         //shoot pollen into upturned box
-//                        .turn(Math.toRadians(-10))
-//                        .lineToX(-52)
-//                        .turn(Math.toRadians(180))
-//                        .waitSeconds(2)
-//
-//                        //park
-//                        .turn(Math.toRadians(-90))
-//                        .lineToY(56)
-//                        .turn(Math.toRadians(-32))
-//                        .build()
-//        );
-// Long Blue side code without strafing (tank drive)
-        myBot.runAction(
-                myBot.getDrive().actionBuilder(
-                                new Pose2d(-60, 40, Math.toRadians(0)))
-
-                        // (-60, 10) -> (-39, 10)
-                        .lineToX(-39)
-
-
-                        .build()
-        );
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15).build();
 
 
 
 
-                        // (-39, 10) -> (-54, 50)
 
 
 
-        //Long Blue side code with strafing (meccanum drive)
+//        Long Blue side code with strafing (meccanum drive)
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-60, 10, 0))
 //                .strafeToLinearHeading(new Vector2d(-39,10),Math.toRadians(0))
 //                                .waitSeconds(1)
@@ -117,17 +52,26 @@ public class MeepMeepTesting {
 //                .strafeToLinearHeading(new Vector2d(-60,60),Math.toRadians(180))
 //                .strafeToLinearHeading(new Vector2d(35,50),Math.toRadians(0))
 //                .strafeToLinearHeading(new Vector2d(35,60),Math.toRadians(0))
+//                .build());
+//        Long Blue side code with strafing (meccanum drive)
+//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-61, 10, 0))
+//                .waitSeconds(2)
+//                .strafeToLinearHeading(new Vector2d(-30,10),Math.toRadians(0))
+//                .waitSeconds(3)
+//                .strafeToLinearHeading(new Vector2d(55,17),Math.toRadians(5))
+//                .strafeToLinearHeading(new Vector2d(60,17),Math.toRadians(45))
+//                .waitSeconds(3)
+//                .strafeToLinearHeading(new Vector2d(35,10),Math.toRadians(0))
+//                .strafeToLinearHeading(new Vector2d(40,56),Math.toRadians(0))
+//                .build());
 //     (blue side) near flower
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-62, 35, 0))
-               .lineToX(-34)
-                .turn(Math.toRadians(90))
-               .lineToY(15)
-                .turn(Math.toRadians(90))
-               .build()
-
-
-
-       );
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-10, 60, 0))
+               .lineToX(30)
+               .build());
+//
+//
+//
+//       );
 //
 
 
