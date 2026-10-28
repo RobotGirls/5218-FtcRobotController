@@ -27,7 +27,7 @@ public class blueFlowerAuto extends LinearOpMode {
         Launcher launcher = new Launcher(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 
-        Pose2d initialPose = new Pose2d(-10,60,0);
+        Pose2d initialPose = new Pose2d(-61,10,0);
         TankDrive drive = new TankDrive(hardwareMap, initialPose);
 
         TrajectoryActionBuilder toPark = drive.actionBuilder(initialPose)

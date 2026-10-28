@@ -37,7 +37,7 @@ public class MeepMeepTesting {
 //        Long Blue side code with strafing (meccanum drive)
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-60, 10, 0))
 //                .strafeToLinearHeading(new Vector2d(-39,10),Math.toRadians(0))
-//                                .waitSeconds(1)
+//                .waitSeconds(1)
 //                .strafeToLinearHeading(new Vector2d(-30,10),Math.toRadians(0))
 //                .waitSeconds(6)
 //                .strafeToLinearHeading(new Vector2d(55,17),Math.toRadians(0))
@@ -54,21 +54,28 @@ public class MeepMeepTesting {
 //                .strafeToLinearHeading(new Vector2d(35,60),Math.toRadians(0))
 //                .build());
 //        Long Blue side code with strafing (meccanum drive)
-//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-61, 10, 0))
-//                .waitSeconds(2)
-//                .strafeToLinearHeading(new Vector2d(-30,10),Math.toRadians(0))
-//                .waitSeconds(3)
-//                .strafeToLinearHeading(new Vector2d(55,17),Math.toRadians(5))
-//                .strafeToLinearHeading(new Vector2d(60,17),Math.toRadians(45))
-//                .waitSeconds(3)
-//                .strafeToLinearHeading(new Vector2d(35,10),Math.toRadians(0))
-//                .strafeToLinearHeading(new Vector2d(40,56),Math.toRadians(0))
-//                .build());
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-61, 10, 0))
+                .waitSeconds(2)
+                .strafeToLinearHeading(new Vector2d(-30,10),Math.toRadians(0))
+                .waitSeconds(3)
+                .strafeToLinearHeading(new Vector2d(55,17),Math.toRadians(5))
+                .strafeToLinearHeading(new Vector2d(60,17),Math.toRadians(45))
+                .waitSeconds(3)
+                .strafeToLinearHeading(new Vector2d(35,10),Math.toRadians(0))
+                .waitSeconds(3)
+                .strafeToLinearHeading(new Vector2d(40,56),Math.toRadians(0))
+                .build());
 //     (blue side) near flower
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-10, 60, 0))
-               .lineToX(30)
-               .build());
-//
+//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-10, 60, 0))
+//               .lineToX(30)
+//               .build());
+
+//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-61, 10, 0))
+//                        .lineToX(-30)
+//                        .waitSeconds(2)
+//                        .lineToX(35)
+//                        .build());
+
 //
 //
 //       );
