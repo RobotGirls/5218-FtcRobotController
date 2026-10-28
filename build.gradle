@@ -26,6 +26,7 @@ allprojects {
         mavenCentral()
         google()
     }
+    layout.buildDirectory = file("C:/tmp/5218-build/${project.name}")
 }
 
 repositories {
