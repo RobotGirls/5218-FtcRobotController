@@ -5,6 +5,11 @@ java {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
 }
+
+tasks.withType(JavaCompile).configureEach {
+    options.headerOutputDirectory.set(null as File)
+}
+
 repositories {
     maven { url = 'https://maven.brott.dev/' }
 }

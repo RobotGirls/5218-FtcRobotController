@@ -27,10 +27,10 @@ public class redFlowerAuto extends LinearOpMode{
         TankDrive drive = new TankDrive(hardwareMap, initialPose);
 
         TrajectoryActionBuilder toPark = drive.actionBuilder(initialPose)
-                .lineToX(-30);
-
+                .lineToX(38);
 
         Action outOfZone = toPark.endTrajectory().fresh()
+
                 .waitSeconds(1)
                 .build();
 
