@@ -11,6 +11,8 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Comp5218MecanumDrive;
@@ -26,6 +28,7 @@ import org.firstinspires.ftc.teamcode.purepursuit.Route;
 import org.firstinspires.ftc.teamcode.purepursuit.ViewerFrame;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +53,8 @@ public final class PurePursuitDrive {
         void setPose(Pose2d pose);
 
         void setDrivePowers(PoseVelocity2d powers);
+
+        List<DcMotorEx> driveMotors();
     }
 
     public final Hardware hardware;
@@ -98,6 +103,13 @@ public final class PurePursuitDrive {
             public void setDrivePowers(PoseVelocity2d powers) {
                 drive.setDrivePowers(powers);
             }
+
+            @Override
+            public List<DcMotorEx> driveMotors() {
+                List<DcMotorEx> motors = new ArrayList<>(drive.leftMotors);
+                motors.addAll(drive.rightMotors);
+                return motors;
+            }
         }, false);
     }
 
@@ -122,6 +134,11 @@ public final class PurePursuitDrive {
             public void setDrivePowers(PoseVelocity2d powers) {
                 drive.setDrivePowers(powers);
             }
+
+            @Override
+            public List<DcMotorEx> driveMotors() {
+                return Arrays.asList(drive.leftFront, drive.leftBack, drive.rightBack, drive.rightFront);
+            }
         }, true);
     }
 
@@ -145,6 +162,11 @@ public final class PurePursuitDrive {
             @Override
             public void setDrivePowers(PoseVelocity2d powers) {
                 drive.setDrivePowers(powers);
+            }
+
+            @Override
+            public List<DcMotorEx> driveMotors() {
+                return Arrays.asList(drive.leftFront, drive.leftBack, drive.rightBack, drive.rightFront);
             }
         }, true);
     }
@@ -174,6 +196,15 @@ public final class PurePursuitDrive {
 
     public void stop() {
         hardware.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
+    }
+
+    /** Coasting lets the wheels roll freely so the robot can be pushed by hand; otherwise brake. */
+    public void setCoasting(boolean coasting) {
+        DcMotor.ZeroPowerBehavior behavior = coasting
+                ? DcMotor.ZeroPowerBehavior.FLOAT : DcMotor.ZeroPowerBehavior.BRAKE;
+        for (DcMotorEx motor : hardware.driveMotors()) {
+            motor.setZeroPowerBehavior(behavior);
+        }
     }
 
     /** Drive a pure pursuit path. Ends when the robot reaches the end (or the path's timeout). */
