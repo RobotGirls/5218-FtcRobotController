@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "BLUE Corner Auto")
-public class redCornerAuto extends LinearOpMode{
+@Autonomous(name = "RED mechanum Corner Auto")
+public class redMechCornerAuto extends LinearOpMode{
 
     @Override
     public void runOpMode(){

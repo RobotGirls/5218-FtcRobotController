@@ -13,30 +13,29 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "BLUE Corner Auto")
-public class blueCornerAuto extends LinearOpMode{
+@Autonomous(name = "RED mechanum Flower Auto")
+public class redMechFlowerAuto extends LinearOpMode{
 
     @Override
     public void runOpMode(){
         Launcher launcher = new Launcher(hardwareMap);
         Intake intake = new Intake(hardwareMap);
-        Pose2d initialPose = new Pose2d(56,60,0);
+        Pose2d initialPose = new Pose2d(0,60,0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         TrajectoryActionBuilder toShoot = drive.actionBuilder(initialPose)
                 .waitSeconds(2)
-                .strafeToLinearHeading(new Vector2d(-52,56),Math.toRadians(0))
-                .turn(Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-52,15),Math.toRadians(0))
                 .waitSeconds(3);
 
         TrajectoryActionBuilder toPickUp = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-20,56),Math.toRadians(0))
+                .strafeTo(new Vector2d(-20,56))
                 .turn(Math.toRadians(90))
                 .waitSeconds(3);
 
 
         TrajectoryActionBuilder toShoot2 = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(35,10),Math.toRadians(0));
+                .strafeToLinearHeading(new Vector2d(35,60),Math.toRadians(0));
 
 
         Action outOfZone = toShoot2.endTrajectory().fresh()
