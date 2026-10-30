@@ -1,61 +1,72 @@
 package org.firstinspires.ftc.teamcode.biobuzzautos;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.roadrunner.*;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-//import com.qualcomm.robotcore.hardware.DcMotor;
-//import com.qualcomm.robotcore.hardware.DcMotorEx;
-//import com.qualcomm.robotcore.hardware.DcMotorSimple;
-//import com.qualcomm.robotcore.hardware.Servo;
-//import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.TankDrive;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-
-import java.lang.Math;
-@Autonomous(name = "BLUE Corner Auto Park")
+@Autonomous(name = "BLUE Corner Auto")
 public class blueCornerAuto extends LinearOpMode{
-//    private DcMotorEx intake;
-//    private DcMotorEx flywheel;
-//    private Servo flap;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode(){
+        Launcher launcher = new Launcher(hardwareMap);
+        Intake intake = new Intake(hardwareMap);
+        Pose2d initialPose = new Pose2d(56,60,0);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        Pose2d initialPose = new Pose2d(66, 60, Math.toRadians(0));
-        TankDrive drive = new TankDrive(hardwareMap, initialPose);
+        TrajectoryActionBuilder toShoot = drive.actionBuilder(initialPose)
+                .waitSeconds(2)
+                .strafeToLinearHeading(new Vector2d(-52,56),Math.toRadians(0))
+                .turn(Math.toRadians(-90))
+                .waitSeconds(3);
 
-        TrajectoryActionBuilder toPark = drive.actionBuilder(initialPose)
-                .lineToX(40);
+        TrajectoryActionBuilder toPickUp = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-20,56),Math.toRadians(0))
+                .turn(Math.toRadians(90))
+                .waitSeconds(3);
 
 
-        Action outOfZone = toPark.endTrajectory().fresh()
-                .waitSeconds(1)
+        TrajectoryActionBuilder toShoot2 = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(35,10),Math.toRadians(0));
+
+
+        Action outOfZone = toShoot2.endTrajectory().fresh()
                 .build();
 
-        Action firstTraj = toPark.build();
+
+        Action firstTraj = toShoot.build();
+        Action secondTraj = toPickUp.build();
+        Action thirdTraj = toShoot2.build();
 
 
         waitForStart();
         if (isStopRequested()) return;
 
         Actions.runBlocking(
-
-
-
                 new SequentialAction(
                         firstTraj,
-
-
+                        launcher.launcherForward(),
+                        new ParallelAction(
+                                secondTraj,
+                                intake.intakeIn()
+                        ),
+                        thirdTraj,
+                        launcher.launcherForward(),
 
                         outOfZone
-
                 )
         );
-
     }
 }
-//tested&works
+
+
+//yet to be tested
