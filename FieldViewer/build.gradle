@@ -1,0 +1,32 @@
+// Desktop app that draws pure pursuit on the BioBuzz field, either simulated or live from the
+// robot. Run it with:  ./gradlew :FieldViewer:run   (or the main() in FieldViewer.java)
+plugins {
+    id 'application'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.brott.dev/' }
+}
+
+dependencies {
+    implementation project(':PurePursuit')
+}
+
+// share the season's field image with MeepMeepTesting instead of keeping two copies
+sourceSets {
+    main {
+        resources {
+            srcDir '../MeepMeepTesting/src/main/resources'
+        }
+    }
+}
+
+application {
+    mainClass = 'org.team5218.fieldviewer.FieldViewer'
+}

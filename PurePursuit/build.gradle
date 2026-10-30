@@ -1,0 +1,21 @@
+// Pure pursuit path following shared between the robot (TeamCode) and the desktop FieldViewer.
+// Plain Java on purpose: nothing in here may import Android or FTC SDK classes.
+plugins {
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.brott.dev/' }
+}
+
+dependencies {
+    api 'com.acmerobotics.roadrunner:core:1.0.1'
+
+    testImplementation 'junit:junit:4.13.2'
+}

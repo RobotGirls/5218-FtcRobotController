@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data: blob:; style-src 'self'; script-src 'self'; connect-src 'self'">
+  <title>FieldViewer</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app/main.js"></script>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><span></span></div>
+      <div>
+        <h1>FieldViewer</h1>
+        <p>Team 5218 · Pure Pursuit</p>
+      </div>
+    </div>
+
+    <div class="segmented" id="mode" role="tablist" aria-label="Mode">
+      <button role="tab" data-mode="sim" class="active">Simulate</button>
+      <button role="tab" data-mode="live">Live</button>
+    </div>
+
+    <div class="topbar-right">
+      <span class="season">BioBuzz 2026–27</span>
+      <span class="pill" id="live-pill"><i></i><span>Robot offline</span></span>
+      <button class="icon-btn small" id="help-btn" title="Keyboard shortcuts (?)">?</button>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <label class="field-label" for="search">Routes</label>
+      <input id="search" class="input" type="search" placeholder="Search routes" autocomplete="off">
+      <div class="segmented small" id="drive" aria-label="Drivetrain">
+        <button data-drive="tank" class="active">Tank</button>
+        <button data-drive="mecanum">Mecanum</button>
+      </div>
+    </div>
+    <nav class="route-list" id="route-list"></nav>
+    <div class="sidebar-foot">
+      <button class="btn sketch-btn" id="new-sketch">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/></svg>
+        Sketch a path
+      </button>
+      <button class="btn ghost-btn" id="open-recording">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h6l2 2h8v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>
+        Open recording…
+      </button>
+      <input type="file" id="recording-file" accept=".json,application/json" hidden>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <div class="canvas-wrap" id="canvas-wrap">
+      <canvas id="field"></canvas>
+
+      <div class="toolbar" id="toolbar">
+        <button class="tool" id="tb-zoom-in" title="Zoom in (+)">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.3-4.3M11 8v6M8 11h6"/></svg>
+        </button>
+        <button class="tool" id="tb-zoom-out" title="Zoom out (−)">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.3-4.3M8 11h6"/></svg>
+        </button>
+        <button class="tool" id="tb-fit" title="Fit field (0 or double-click)">
+          <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+        <span class="tool-zoom mono" id="tb-zoom">100%</span>
+        <span class="tool-sep"></span>
+        <button class="tool" id="tb-rotate" title="Rotate view 90° (O)">
+          <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/></svg>
+        </button>
+        <button class="tool" id="tb-follow" title="Follow the robot (F)">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        </button>
+        <button class="tool" id="tb-measure" title="Measure distance and angle (M)">
+          <svg viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg>
+        </button>
+        <button class="tool" id="tb-snap" title="Snap points to the grid, walls and other points (S). Hold Option/Alt to place freely.">
+          <svg viewBox="0 0 24 24"><path d="M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4z"/><path d="M6 8h4M14 8h4"/></svg>
+        </button>
+        <span class="tool-sep"></span>
+        <button class="tool" id="tb-shot" title="Save a picture of the field">
+          <svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        </button>
+      </div>
+
+      <div class="coord mono" id="coord" hidden></div>
+      <div class="overlay-badge" id="live-badge" hidden><i></i>LIVE</div>
+      <div class="hint" id="hint" hidden></div>
+      <div class="toast" id="toast"></div>
+      <div class="banner" id="backend-banner" hidden><span class="spin"></span>Simulator stopped, reconnecting…</div>
+    </div>
+
+    <div class="graphs" id="graphs"><canvas id="chart"></canvas></div>
+
+    <div class="timeline" id="timeline">
+      <button class="icon-btn primary" id="play" title="Play / pause (Space)">
+        <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+      </button>
+      <button class="icon-btn" id="restart" title="Restart (R)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4h4"/></svg>
+      </button>
+      <div class="scrubber">
+        <div class="segments" id="segments"></div>
+        <input type="range" id="scrub" min="0" max="1000" value="0" step="1" aria-label="Timeline">
+      </div>
+      <div class="time mono" id="time">0.00 s</div>
+      <div class="segmented small" id="speed" aria-label="Playback speed">
+        <button data-speed="0.25">¼×</button>
+        <button data-speed="0.5">½×</button>
+        <button data-speed="1" class="active">1×</button>
+        <button data-speed="2">2×</button>
+        <button data-speed="4">4×</button>
+      </div>
+      <button class="icon-btn" id="graphs-toggle" title="Show / hide graphs (G)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M5 16l4-6 4 3 6-8"/></svg>
+      </button>
+    </div>
+  </main>
+
+  <aside class="inspector">
+    <section class="card" id="route-card">
+      <div class="card-head">
+        <span class="chip" id="route-alliance">TEST</span>
+        <h2 id="route-name">—</h2>
+      </div>
+      <p class="muted" id="route-desc"></p>
+      <ol class="steps" id="steps"></ol>
+      <div class="row" id="route-actions">
+        <button class="btn small-btn" id="edit-sketch" title="Copy this route's points into a sketch you can change">Edit as sketch</button>
+        <button class="btn small-btn" id="save-recording">Save recording…</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Robot</h3>
+      <div class="stats">
+        <div><span>X</span><b class="mono" id="stat-x">—</b></div>
+        <div><span>Y</span><b class="mono" id="stat-y">—</b></div>
+        <div><span>Heading</span><b class="mono" id="stat-h">—</b></div>
+      </div>
+      <div class="bars">
+        <div class="bar"><span>Forward</span><div class="track"><i id="bar-fwd"></i></div><b class="mono" id="val-fwd">0.00</b></div>
+        <div class="bar"><span>Strafe</span><div class="track"><i id="bar-left"></i></div><b class="mono" id="val-left">0.00</b></div>
+        <div class="bar"><span>Turn</span><div class="track"><i id="bar-turn"></i></div><b class="mono" id="val-turn">0.00</b></div>
+      </div>
+      <p class="status mono" id="status">—</p>
+    </section>
+
+    <section class="card" id="result-card">
+      <h3>Result</h3>
+      <div class="results">
+        <div><span>Time</span><b class="mono" id="res-time">—</b></div>
+        <div><span>Max off path</span><b class="mono" id="res-off">—</b></div>
+        <div><span>Center contact</span><b class="mono" id="res-contact">—</b></div>
+        <div><span>Timeouts</span><b class="mono" id="res-timeouts">—</b></div>
+      </div>
+      <div class="row">
+        <button class="btn small-btn" id="pin" title="Keep this run's trail on the field to compare (P)">Pin run</button>
+        <button class="btn small-btn" id="unpin" hidden>Clear pin</button>
+      </div>
+    </section>
+
+    <section class="card editor" id="sketch-card" hidden>
+      <div class="card-head">
+        <span class="chip SKETCH">EDIT</span>
+        <input class="input name-input" id="sk-name" placeholder="Route name" maxlength="40" spellcheck="false">
+      </div>
+      <p class="muted small">Click the field to add points. Drag to move, click a <b>+</b> to insert, right-click to delete.
+        Arrow keys nudge the selected point.</p>
+
+      <div class="wp-head"><span>Waypoints</span><span class="mono" id="sk-count"></span></div>
+      <div class="wp-list" id="sk-list"></div>
+
+      <div class="wp-detail" id="sk-point" hidden>
+        <div class="wp-detail-head"><b id="sk-point-title">Point</b><span class="muted small" id="sk-point-sub"></span></div>
+        <label class="override">
+          <span class="toggle"><input type="checkbox" id="sk-pt-speed-on"><span></span></span>
+          <span class="override-name">Own speed</span>
+          <input type="range" id="sk-pt-speed" min="0.1" max="1" step="0.05">
+          <b class="mono" id="sk-pt-speed-val"></b>
+        </label>
+        <label class="override">
+          <span class="toggle"><input type="checkbox" id="sk-pt-look-on"><span></span></span>
+          <span class="override-name">Own lookahead</span>
+          <input type="range" id="sk-pt-look" min="4" max="30" step="1">
+          <b class="mono" id="sk-pt-look-val"></b>
+        </label>
+        <div class="row">
+          <button class="btn small-btn" id="sk-up" title="Move earlier in the path">↑ Up</button>
+          <button class="btn small-btn" id="sk-down" title="Move later in the path">↓ Down</button>
+          <button class="btn small-btn" id="sk-insert" title="Add a point after this one">Insert</button>
+          <button class="btn small-btn danger" id="sk-delete" title="Delete (Delete key)">Delete</button>
+        </div>
+      </div>
+
+      <details class="sub" open>
+        <summary>Path settings</summary>
+        <label class="toggle"><input type="checkbox" id="sk-reversed"><span></span>Drive backwards</label>
+        <label class="slider">Speed <b class="mono" id="sk-speed-val">0.60</b>
+          <input type="range" id="sk-speed" min="0.2" max="1" step="0.05" value="0.6"></label>
+        <label class="slider">Lookahead <b class="mono" id="sk-look-val">16 in</b>
+          <input type="range" id="sk-look" min="6" max="30" step="1" value="16"></label>
+        <div class="heading-row">
+          <label class="toggle"><input type="checkbox" id="sk-start-on"><span></span>Start heading</label>
+          <input class="input mono heading-input" type="number" id="sk-start" step="5"><span class="unit">°</span>
+        </div>
+        <div class="heading-row">
+          <label class="toggle"><input type="checkbox" id="sk-end-on"><span></span>Turn to at end</label>
+          <input class="input mono heading-input" type="number" id="sk-end" step="5" value="0"><span class="unit">°</span>
+        </div>
+        <div class="heading-row" title="Mecanum only: keep facing one way and strafe along the path">
+          <label class="toggle"><input type="checkbox" id="sk-fixed-on"><span></span>Strafe, facing</label>
+          <input class="input mono heading-input" type="number" id="sk-fixed" step="5" value="0"><span class="unit">°</span>
+        </div>
+      </details>
+
+      <div class="row">
+        <button class="btn" id="sk-undo" title="Undo (Ctrl/⌘ Z)">Undo</button>
+        <button class="btn" id="sk-redo" title="Redo (Ctrl/⌘ Shift Z)">Redo</button>
+        <button class="btn" id="sk-clear">Clear</button>
+      </div>
+      <button class="btn primary" id="sk-copy">Copy Java</button>
+      <pre class="code mono" id="sk-java"></pre>
+    </section>
+
+    <section class="card" id="live-card" hidden>
+      <h3>Robot connection</h3>
+      <p class="muted small">Join the robot's wifi, connect, then run any <b>PP</b> OpMode.</p>
+      <input class="input mono" id="host" list="hosts" value="192.168.43.1" spellcheck="false">
+      <datalist id="hosts">
+        <option value="192.168.43.1">Control Hub</option>
+        <option value="192.168.49.1">Phone Robot Controller</option>
+        <option value="127.0.0.1">This computer</option>
+      </datalist>
+      <div class="row">
+        <button class="btn primary" id="connect">Connect</button>
+        <button class="btn" id="clear-trail">Clear trail</button>
+      </div>
+      <button class="btn record-btn" id="record"><i></i><span>Record run</span></button>
+      <p class="status mono" id="live-status">Not connected</p>
+    </section>
+
+    <details class="card" id="tuning-card">
+      <summary><h3>Tuning</h3><span class="badge" id="tuning-badge" hidden></span></summary>
+      <p class="muted small">Change these and the simulation reruns. Follower values go on the robot with "Copy as Java".</p>
+      <div class="tuning" id="tuning"></div>
+      <div class="row">
+        <button class="btn small-btn primary" id="tune-copy">Copy as Java</button>
+        <button class="btn small-btn" id="tune-reset">Reset</button>
+      </div>
+    </details>
+
+    <details class="card" open>
+      <summary><h3>Layers</h3></summary>
+      <div class="layers">
+        <label class="toggle"><input type="checkbox" data-layer="lookahead" checked><span></span>Lookahead</label>
+        <label class="toggle"><input type="checkbox" data-layer="trail" checked><span></span>Trail</label>
+        <label class="toggle"><input type="checkbox" data-layer="route" checked><span></span>Planned route</label>
+        <label class="toggle"><input type="checkbox" data-layer="keepOut" checked><span></span>Keep-out</label>
+        <label class="toggle"><input type="checkbox" data-layer="grid" checked><span></span>Grid</label>
+      </div>
+    </details>
+  </aside>
+</div>
+
+<div class="modal" id="help" hidden>
+  <div class="modal-card" role="dialog" aria-labelledby="help-title">
+    <div class="modal-head">
+      <h2 id="help-title">Keyboard shortcuts</h2>
+      <button class="icon-btn small" id="help-close" title="Close (Esc)">✕</button>
+    </div>
+    <div class="shortcuts">
+      <section>
+        <h3>Playback</h3>
+        <dl>
+          <dt><kbd>Space</kbd></dt><dd>Play / pause</dd>
+          <dt><kbd>R</kbd></dt><dd>Restart</dd>
+          <dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Step one loop (Shift: ten)</dd>
+          <dt><kbd>G</kbd></dt><dd>Show / hide graphs</dd>
+          <dt><kbd>P</kbd></dt><dd>Pin this run to compare</dd>
+        </dl>
+      </section>
+      <section>
+        <h3>View</h3>
+        <dl>
+          <dt>Scroll</dt><dd>Zoom at the cursor</dd>
+          <dt>Drag</dt><dd>Pan (Shift-drag while sketching)</dd>
+          <dt><kbd>+</kbd> <kbd>−</kbd> <kbd>0</kbd></dt><dd>Zoom in / out / fit</dd>
+          <dt><kbd>O</kbd></dt><dd>Rotate the field 90°</dd>
+          <dt><kbd>F</kbd></dt><dd>Follow the robot</dd>
+          <dt><kbd>M</kbd></dt><dd>Measure tool</dd>
+          <dt><kbd>S</kbd></dt><dd>Snapping on / off</dd>
+        </dl>
+      </section>
+      <section>
+        <h3>Sketch</h3>
+        <dl>
+          <dt>Click</dt><dd>Add a point</dd>
+          <dt>Drag</dt><dd>Move a point</dd>
+          <dt>Right-click</dt><dd>Delete a point</dd>
+          <dt>Click a +</dt><dd>Insert a point</dd>
+          <dt><kbd>⌥/Alt</kbd> + drag</dt><dd>Place without snapping</dd>
+          <dt><kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd></dt><dd>Nudge the selected point (Shift: 6 in)</dd>
+          <dt><kbd>⌫</kbd></dt><dd>Delete the selected point</dd>
+          <dt><kbd>⌘/Ctrl Z</kbd></dt><dd>Undo (add Shift to redo)</dd>
+        </dl>
+      </section>
+      <section>
+        <h3>Anywhere</h3>
+        <dl>
+          <dt><kbd>?</kbd></dt><dd>This list</dd>
+          <dt><kbd>Esc</kbd></dt><dd>Close / stop measuring</dd>
+        </dl>
+      </section>
+    </div>
+  </div>
+</div>
+</body>
+</html>

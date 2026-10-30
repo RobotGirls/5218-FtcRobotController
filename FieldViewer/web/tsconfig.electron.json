@@ -1,0 +1,17 @@
+{
+  // the Electron main process (starts the Java backend and opens the window)
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "rootDir": "src/electron",
+    "outDir": "dist/electron"
+  },
+  "include": ["src/electron"]
+}

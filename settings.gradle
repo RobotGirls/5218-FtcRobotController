@@ -9,3 +9,5 @@ pluginManagement {
 include ':FtcRobotController'
 include ':TeamCode'
 include ':MeepMeepTesting'
+include ':PurePursuit'
+include ':FieldViewer'

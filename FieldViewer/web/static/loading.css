@@ -1,0 +1,15 @@
+html, body { height: 100%; margin: 0; background: #07090c; color: #e6edf3;
+  font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-app-region: drag; }
+main { height: 100%; display: grid; place-content: center; justify-items: center; gap: 14px; text-align: center; }
+h1 { margin: 0; font-size: 22px; font-weight: 650; }
+p { margin: 0; color: #8b98a8; }
+.logo { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center;
+  background: radial-gradient(circle at 30% 30%, #67e8f9, #0e7490 70%); box-shadow: 0 0 40px rgba(34, 211, 238, 0.45); }
+.logo span { width: 18px; height: 18px; border: 3px solid #ecfeff; border-radius: 5px; transform: rotate(45deg); }
+.spinner { width: 26px; height: 26px; border-radius: 50%; border: 3px solid rgba(34, 211, 238, 0.15);
+  border-top-color: #22d3ee; animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+pre { -webkit-app-region: no-drag; user-select: text; max-width: 760px; max-height: 50vh; overflow: auto; text-align: left;
+  padding: 14px; border-radius: 10px; background: #0d1117; border: 1px solid rgba(251, 113, 133, 0.4); color: #fda4af;
+  font: 12px/1.5 "SF Mono", ui-monospace, Menlo, monospace; white-space: pre-wrap; }
+[hidden] { display: none; }
