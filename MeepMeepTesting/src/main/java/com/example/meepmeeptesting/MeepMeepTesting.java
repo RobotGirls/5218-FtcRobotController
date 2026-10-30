@@ -55,19 +55,19 @@ public class MeepMeepTesting {
 //                .strafeToLinearHeading(new Vector2d(35,60),Math.toRadians(0))
 //                .build());
 //        Long Blue side code with strafing (meccanum drive)
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(56, 60, 0))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-60, -60, 0))
 
+                //To shoot
                 .waitSeconds(2)
-                .strafeToLinearHeading(new Vector2d(-52,56),Math.toRadians(0))
-                .turn(Math.toRadians(-90))
-               // .waitSeconds(3)
-                .strafeTo(new Vector2d(-52,15))
+                .strafeToLinearHeading(new Vector2d(38,-52),Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(38,-15),Math.toRadians(180))
+                .waitSeconds(3)
+                //to get balls from flower
+                .strafeTo(new Vector2d(20,-55))
                 .turn(Math.toRadians(90))
                 .waitSeconds(3)
-                .strafeToLinearHeading(new Vector2d(-20,56), Math.toRadians(0))
-                .turn(Math.toRadians(90))
-                .waitSeconds(3)
-                .strafeToLinearHeading(new Vector2d(38,60),Math.toRadians(0))
+                //to park
+                .strafeToLinearHeading(new Vector2d(-34,-56), Math.toRadians(0))
 
 
                 // .waitSeconds(3)
