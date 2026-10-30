@@ -21,6 +21,14 @@ public final class TestRoutes {
                     .build())
             .build();
 
+    public static final Route STRAIGHT_24 = Route.builder(
+                    "TEST Straight 24in", Alliance.NONE, new Pose2d(-12, -48, 0))
+            .description("One tile straight forward, then stop. The simplest auto to try first.")
+            .follow(PurePursuitPath.builder().name("forward 24")
+                    .to(12, -48)
+                    .build())
+            .build();
+
     public static final Route OUT_AND_BACK = Route.builder(
                     "TEST Out and Back", Alliance.NONE, new Pose2d(-48, -40, Math.toRadians(90)))
             .description("Drive up the left side and back up to the start. Repeat to check drift.")

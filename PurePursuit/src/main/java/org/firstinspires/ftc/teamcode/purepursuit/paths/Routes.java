@@ -18,6 +18,7 @@ public final class Routes {
             BioBuzzRoutes.RED_FLOWER_PARK,
             BioBuzzRoutes.RED_GARDEN_PARK,
             BioBuzzRoutes.RED_CORNER_PARK,
+            TestRoutes.STRAIGHT_24,
             TestRoutes.STRAIGHT,
             TestRoutes.OUT_AND_BACK,
             TestRoutes.FIELD_LOOP,
