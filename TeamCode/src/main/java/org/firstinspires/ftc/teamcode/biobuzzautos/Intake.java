@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-class Intake {
+public class Intake {
     private final DcMotorEx intakeMotor;
     private final ElapsedTime timer1;
 

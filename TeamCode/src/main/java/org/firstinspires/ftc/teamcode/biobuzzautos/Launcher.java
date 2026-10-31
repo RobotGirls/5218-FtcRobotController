@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-class Launcher {
+public class Launcher {
     private final DcMotorEx launcher;
     private final ElapsedTime timer;
 
