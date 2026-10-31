@@ -9,30 +9,31 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanism.Turret;
+import org.firstinspires.ftc.teamcode.mechanism.mechanismTest.LimelightSensor;
+import org.firstinspires.ftc.teamcode.mechanism.mechanismTest.RobotHardware;
 
-@TeleOp(name = "TurretTestBiobuzz")
+
+@TeleOp(name = "TurretTestBiobuzzB")
 public class TurretTest extends LinearOpMode {
+
     private Turret turret;
-    private Limelight3A limelight;
 
-    double derivative;
-    double integralSum;
+    private static final boolean IS_RED = true;
 
-    double lastError;
-
-    double kp = 0.014;
-
-    double ki;
-
-    double kd;
 
     double turretPower;
+    RobotHardware robot;
+    LimelightSensor limelightSensor;
+
 
     @Override
     public void runOpMode(){
-        // instantiated the turret
-        turret = new Turret(hardwareMap);
-        limelight = hardwareMap.get(Limelight3A.class, "turret");
+
+         robot = new RobotHardware(hardwareMap);
+         limelightSensor = new LimelightSensor(hardwareMap, telemetry, IS_RED);
+         // instantiated the turret
+         turret = new Turret(hardwareMap);
+
 
 
         telemetry.addData("Status", "Intialized..press play");
@@ -43,7 +44,7 @@ public class TurretTest extends LinearOpMode {
         while (opModeIsActive()) {
             // use the left stick x-axis on gamepad 2 to drive manual rotation
 
-            turretPower = PIDaiming();
+           // turretPower = PIDaiming();
 
 
             turret.setPower(turretPower);
@@ -60,23 +61,25 @@ public class TurretTest extends LinearOpMode {
             telemetry.addData("Encoder Position Ticks", turret.getCurrentPosition());
         } // end of while loop
     } // end of run opmode
-    public double PIDaiming(){
-        LLResult result = limelight.getLatestResult();
-        double error = result.getTx();
-        ElapsedTime timer =new ElapsedTime();
-        if (Math.abs(error) > 3){
-            telemetry.addData("Error", error);
-            telemetry.addData("Tx", result.getTx());
-            telemetry.addData("Motor Power", turretPower);
-            error = -1 * result.getTx();
-            derivative = (error - lastError) / timer.seconds();
-            integralSum = integralSum +(error * timer.seconds());
-            lastError = error;
-            return (kp * error) + (ki * integralSum) + (kd * derivative);
 
-        } else {
-            return 0;
-        }
+
+//    public double PIDaiming(){
+//        LLResult result = limelight.getLatestResult();
+//        double error = result.getTx();
+//        ElapsedTime timer =new ElapsedTime();
+//        if (Math.abs(error) > 3){
+//            telemetry.addData("Error", error);
+//            telemetry.addData("Tx", result.getTx());
+//            telemetry.addData("Motor Power", turretPower);
+//            error = -1 * result.getTx();
+//            derivative = (error - lastError) / timer.seconds();
+//            integralSum = integralSum +(error * timer.seconds());
+//            lastError = error;
+//            return (kp * error) + (ki * integralSum) + (kd * derivative);
+//
+//        } else {
+//            return 0;
+//        }
 
     }
 } // end of TurretTest class
