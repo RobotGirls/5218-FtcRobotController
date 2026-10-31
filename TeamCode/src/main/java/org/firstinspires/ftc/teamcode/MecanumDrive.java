@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -55,8 +57,9 @@ import java.util.List;
 
 //@Config
 public final class MecanumDrive {
-    public Object pose;
 
+    public Object pose;
+    private static final boolean USE_PINPOINT = false;
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
@@ -260,11 +263,10 @@ public final class MecanumDrive {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // TODO: reverse motor directions if needed
-        //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        //    leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         // leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        //leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
@@ -277,7 +279,12 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        if (USE_PINPOINT) {
+            localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        } else {
+            localizer = new DriveLocalizer(pose);
+        }
+        // localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
 
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
