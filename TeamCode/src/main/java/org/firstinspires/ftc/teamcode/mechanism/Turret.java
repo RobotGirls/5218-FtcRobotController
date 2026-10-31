@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Turret {
-    private DcMotor turretMotor;
+    public DcMotor turretMotor;
 
     // constructor
     public Turret(HardwareMap hardwareMap) {
