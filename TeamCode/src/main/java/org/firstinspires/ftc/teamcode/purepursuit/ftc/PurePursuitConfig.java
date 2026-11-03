@@ -19,7 +19,7 @@ public final class PurePursuitConfig {
     }
 
     /** Which drive class (and therefore which Road Runner localizer) the pure pursuit OpModes use. */
-    public static DriveType DRIVE_TYPE = DriveType.TANK;
+    public static DriveType DRIVE_TYPE = DriveType.MECANUM;
 
     /** Follower tuning shared by every path. */
     public static PurePursuitFollower.Params FOLLOWER = new PurePursuitFollower.Params();

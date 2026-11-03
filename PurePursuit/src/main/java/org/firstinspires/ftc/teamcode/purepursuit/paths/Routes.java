@@ -25,7 +25,9 @@ public final class Routes {
             TestRoutes.U_TURN,
             TestRoutes.S_CURVE,
             TestRoutes.TURN_IN_PLACE,
-            TestRoutes.STRAFE_SQUARE
+            TestRoutes.STRAFE_SQUARE,
+            BioBuzzRoutes.BLUE_GARDEN_PARK_COPY
+
     ));
 
     /** Looks a route up by name, or returns null. */
