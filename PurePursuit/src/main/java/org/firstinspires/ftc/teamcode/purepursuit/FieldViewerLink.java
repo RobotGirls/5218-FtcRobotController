@@ -49,6 +49,12 @@ public final class FieldViewerLink {
         return viewer != null && System.currentTimeMillis() - lastHelloMs < VIEWER_TIMEOUT_MS;
     }
 
+    /** Address of the laptop that said hello most recently, or null if none ever has. */
+    public String getViewerAddress() {
+        SocketAddress address = viewer;
+        return address == null ? null : address.toString();
+    }
+
     /** Why the link isn't working, or null if it's fine. */
     public String getError() {
         return error;
