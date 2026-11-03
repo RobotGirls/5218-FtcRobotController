@@ -10,6 +10,6 @@ import org.firstinspires.ftc.teamcode.purepursuit.paths.TestRoutes;
 public class PPStraight24 extends PurePursuitAutoBase {
     @Override
     protected Route route() {
-        return TestRoutes.STRAIGHT_24;
+        return TestRoutes.MY_ROUTE;
     }
 }
