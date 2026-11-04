@@ -55,7 +55,7 @@ public class MeepMeepTesting {
 //                .strafeToLinearHeading(new Vector2d(35,60),Math.toRadians(0))
 //                .build());
 //        Long Blue side code with strafing (meccanum drive)
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -60, 0))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-10, 60, 0))
 
 
                 //To shoot

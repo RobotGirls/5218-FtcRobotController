@@ -19,6 +19,7 @@ public class blueMechShortAuto extends LinearOpMode{
     @Override
     public void runOpMode(){
         Launcher launcher = new Launcher(hardwareMap);
+        bottomLauncher bottomLauncher = new bottomLauncher(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         Pose2d initialPose = new Pose2d(-10,60,0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
@@ -55,12 +56,14 @@ public class blueMechShortAuto extends LinearOpMode{
                 new SequentialAction(
                         firstTraj,
                         launcher.launcherForward(),
+                        bottomLauncher.launcherForward(),
                         new ParallelAction(
                                 secondTraj,
                                 intake.intakeIn()
                         ),
                         thirdTraj,
                         launcher.launcherForward(),
+                        bottomLauncher.launcherForward(),
 
                         outOfZone
                 )

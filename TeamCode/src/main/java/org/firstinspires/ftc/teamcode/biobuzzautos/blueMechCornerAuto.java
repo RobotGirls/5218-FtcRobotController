@@ -20,6 +20,7 @@ public class blueMechCornerAuto extends LinearOpMode{
     public void runOpMode(){
         Launcher launcher = new Launcher(hardwareMap);
         Intake intake = new Intake(hardwareMap);
+        bottomLauncher bottomLauncher = new bottomLauncher(hardwareMap);
         Pose2d initialPose = new Pose2d(56,60,0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
@@ -55,12 +56,14 @@ public class blueMechCornerAuto extends LinearOpMode{
                 new SequentialAction(
                         firstTraj,
                         launcher.launcherForward(),
+                        bottomLauncher.launcherForward(),
                         new ParallelAction(
                                 secondTraj,
                                 intake.intakeIn()
                         ),
                         thirdTraj,
                         launcher.launcherForward(),
+                        bottomLauncher.launcherForward(),
 
                         outOfZone
                 )

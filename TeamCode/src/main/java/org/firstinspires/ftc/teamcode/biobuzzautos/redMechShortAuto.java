@@ -18,8 +18,12 @@ public class redMechShortAuto extends LinearOpMode{
 
     @Override
     public void runOpMode(){
+        Launcher launcher = new Launcher(hardwareMap);
+        bottomLauncher bottomLauncher  = new bottomLauncher(hardwareMap);
+        Intake intake = new Intake(hardwareMap);
+
         //org.firstinspires.ftc.teamcode.biobuzzautos.Launcher launcher = new org.firstinspires.ftc.teamcode.biobuzzautos.Launcher(hardwareMap);
-        org.firstinspires.ftc.teamcode.biobuzzautos.Intake intake = new org.firstinspires.ftc.teamcode.biobuzzautos.Intake(hardwareMap);
+        //org.firstinspires.ftc.teamcode.biobuzzautos.Intake intake = new org.firstinspires.ftc.teamcode.biobuzzautos.Intake(hardwareMap);
         Pose2d initialPose = new Pose2d(56,-34,0);
         Pose2d shootPose   = new Pose2d(38, -16, 0);
         Pose2d pickupPose  = new Pose2d(-55, -20, 0);
@@ -55,13 +59,16 @@ public class redMechShortAuto extends LinearOpMode{
         Actions.runBlocking(
                 new SequentialAction(
                         firstTraj,
-//                        launcher.launcherForward(),
+                        launcher.launcherForward(),
+                        bottomLauncher.launcherForward(),
                         new ParallelAction(
                                 secondTraj,
                                 intake.intakeIn()
                         ),
                         thirdTraj,
-//                        launcher.launcherForward(),
+                        launcher.launcherForward(),
+                        bottomLauncher.launcherForward(),
+
 //
                        outOfZone
                 )
