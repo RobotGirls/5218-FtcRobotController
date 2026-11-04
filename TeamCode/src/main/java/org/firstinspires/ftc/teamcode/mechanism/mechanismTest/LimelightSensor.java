@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.mechanism.mechanismTest;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.mechanism.Turret;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -123,7 +123,7 @@ public class LimelightSensor {
         return validShooting;
     }
 
-    public void PIDAiming(DcMotor turretMotor){
+    public void PIDAiming(Turret turret){
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
             double error = result.getTx();
@@ -141,7 +141,7 @@ public class LimelightSensor {
                 if (motorPower > 1.0) motorPower = 1.0;
                 if (motorPower < -1.0) motorPower = -1.0;
 
-                turretMotor.setPower(motorPower);
+                turret.setPower(motorPower);
 
                 lastError = error;
                 lastTime = currentTime;
@@ -150,11 +150,11 @@ public class LimelightSensor {
                 myTelemetry.addData("Error (tx)", error);
                 myTelemetry.addData("Motor Power", motorPower);
             } else {
-                turretMotor.setPower(0);
+                turret.setPower(0);
                 myTelemetry.addData("Limelight Target", "Aligned (error <= 3 deg)");
             }
         } else {
-            turretMotor.setPower(0);
+            turret.setPower(0);
             resetPID();
             myTelemetry.addData("Limelight Target", "No target detected");
         }

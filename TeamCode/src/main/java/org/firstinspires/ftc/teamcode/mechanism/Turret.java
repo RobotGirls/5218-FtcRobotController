@@ -1,37 +1,58 @@
 package org.firstinspires.ftc.teamcode.mechanism;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 public class Turret {
-    public DcMotor turretMotor;
+    public Servo turretServo;
+
+    // servo travel limits (0.0 to 1.0); shrink these if the turret hits the robot
+    private static final double MIN_POS = 0.0;
+    private static final double MAX_POS = 1.0;
+    private static final double CENTER = 0.5;
+
+    // how fast the turret moves at full power, in servo units per second (tune this)
+    private static final double MAX_SPEED = 0.5;
+
+    private double targetPos = CENTER;
+    private final ElapsedTime timer = new ElapsedTime();
+    private double lastTime = 0;
 
     // constructor
     public Turret(HardwareMap hardwareMap) {
-        turretMotor = hardwareMap.get(DcMotor.class, "turret");
+        turretServo = hardwareMap.get(Servo.class, "turret");
 
-        // FIXME check with team if they want the turret to be break
-        // set the motor behavoir when theres no power; break prevents the turret from turing
-        turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // flip this if the turret turns the wrong way
+        // turretServo.setDirection(Servo.Direction.REVERSE);
 
-        // reset and use encoders for telmetry tracking
-        resetEncoder();
+        // start at the center position
+        setPosition(CENTER);
+    } // end of turret constructor
 
-    } // end of turret constructer
-
-    public void resetEncoder() {
-        // resets encoder value to 0 and stops motor
-        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // lets the motor run after stop and reset
-        turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    } // end of reset encoder
-
-    public void setPower(double turretPower){
-        turretMotor.setPower(turretPower);
+    // sends the servo to a position between MIN_POS and MAX_POS
+    public void setPosition(double position) {
+        targetPos = Range.clip(position, MIN_POS, MAX_POS);
+        turretServo.setPosition(targetPos);
     }
 
-    public int getCurrentPosition(){
-        return turretMotor.getCurrentPosition();
+    // power is -1 to 1; call once per loop
+    // turns the power into a speed by moving the target position a little each loop
+    public void setPower(double power) {
+        double now = timer.seconds();
+        double dt = Math.min(now - lastTime, 0.1); // cap dt so a slow loop can't cause a jump
+        lastTime = now;
+        setPosition(targetPos + power * MAX_SPEED * dt);
+    }
+
+    // last commanded position, not a measured one (servos have no encoder)
+    public double getPosition() {
+        return targetPos;
+    }
+
+    // true when the turret has hit either end of its range
+    public boolean atLimit() {
+        return targetPos <= MIN_POS || targetPos >= MAX_POS;
     }
 } // end of Turret class

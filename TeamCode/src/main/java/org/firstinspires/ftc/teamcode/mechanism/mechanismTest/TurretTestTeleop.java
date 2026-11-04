@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechanism.Turret;
 
-@TeleOp(name = "TurretTestBiobuzzB")
+@TeleOp(name = "TurretTestBiobuzz")
 public class TurretTestTeleop extends LinearOpMode {
 
     private Turret turret;
@@ -35,7 +35,7 @@ public class TurretTestTeleop extends LinearOpMode {
 
             // Hold 'A' on gamepad2 or gamepad1 to auto-align turret using Limelight
             if (gamepad2.a || gamepad1.a) {
-                limelightSensor.PIDAiming(turret.turretMotor);
+                limelightSensor.PIDAiming(turret);
                 telemetry.addData("Turret Mode", "Limelight Auto-Aligning (Button A Held)");
             } else {
                 // Reset PID variables when auto-align button is released
@@ -55,7 +55,8 @@ public class TurretTestTeleop extends LinearOpMode {
                 telemetry.addData("Current Power Input", turretPower);
             }
 
-            telemetry.addData("Encoder Position Ticks", turret.getCurrentPosition());
+            telemetry.addData("Turret Position (0-1)", turret.getPosition());
+            telemetry.addData("At Limit", turret.atLimit());
             telemetry.update();
         } // end of while loop
     } // end of run opmode
