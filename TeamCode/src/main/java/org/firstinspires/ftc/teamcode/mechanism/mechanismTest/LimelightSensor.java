@@ -101,6 +101,8 @@ public class LimelightSensor {
         myTelemetry.addData("Y", "%.3f m", y);
         myTelemetry.addData("Z", "%.3f m", z);
 
+        myTelemetry.update();
+
         return distanceToTag;
 
     }
@@ -136,19 +138,19 @@ public class LimelightSensor {
                 derivative = (error - lastError) / deltaTime;
                 integralSum = integralSum + (error * deltaTime);
 
-                double motorPower = (kp * error) + (ki * integralSum) + (kd * derivative);
+                double servoPower = (kp * error) + (ki * integralSum) + (kd * derivative);
                 // Clamp power between -1.0 and 1.0
-                if (motorPower > 1.0) motorPower = 1.0;
-                if (motorPower < -1.0) motorPower = -1.0;
+                if (servoPower > 1.0) servoPower = 1.0;
+                if (servoPower < -1.0) servoPower = -1.0;
 
-                turret.setPower(motorPower);
+                turret.setPower(servoPower);
 
                 lastError = error;
                 lastTime = currentTime;
 
                 myTelemetry.addData("Limelight Target", "Tracking");
                 myTelemetry.addData("Error (tx)", error);
-                myTelemetry.addData("Motor Power", motorPower);
+                myTelemetry.addData("Turret Power", servoPower);
             } else {
                 turret.setPower(0);
                 myTelemetry.addData("Limelight Target", "Aligned (error <= 3 deg)");
