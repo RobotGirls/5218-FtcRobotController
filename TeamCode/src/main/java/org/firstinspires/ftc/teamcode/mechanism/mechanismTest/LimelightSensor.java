@@ -58,7 +58,8 @@ public class LimelightSensor {
         limelight.start();
     }
 
-    public boolean checkTag(){
+    public boolean seeValidTag(){
+
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
 
@@ -72,23 +73,27 @@ public class LimelightSensor {
             for (LLResultTypes.FiducialResult tag : fiducials) {
                 int tagID = tag.getFiducialId();
 
-                 myTag = tag;
+
 
                  for (int targetId : targetIds) {
                     if (tagID == targetId) {
                         myResult = result;
+                        myTag = tag;
+                        myTelemetry.addData("tagId", tagID);
                         return true;
+
                     }
+                 }
             }
         }
-}
         return false;
     }
 
-    public double getDistance() {
+    public double getDistance(LLResultTypes.FiducialResult tag1) {
         // Get the AprilTag's 3D pose relative to target space
         // Index 2 of translation array corresponds to z-axis (distance)
-        Pose3D tagPose = myTag.getRobotPoseTargetSpace();
+        Pose3D tagPose = tag1.getRobotPoseTargetSpace();
+        myTelemetry.addData("Distance", "Method");
 
         double x = tagPose.getPosition().x;
         double y = tagPose.getPosition().y;
@@ -101,22 +106,28 @@ public class LimelightSensor {
         myTelemetry.addData("Y", "%.3f m", y);
         myTelemetry.addData("Z", "%.3f m", z);
 
-        myTelemetry.update();
+      //  myTelemetry.update();
 
         return distanceToTag;
 
     }
     public double getXValue() {
+        myTelemetry.addData("getX", "Method");
         Pose3D tagPose = myTag.getRobotPoseTargetSpace();
 
         return tagPose.getPosition().x;
     }
 
-    public boolean isValidShooting(double xValue1, double dToTag1) {
+    public boolean isValidShooting() {
 
+        double xValue1;
+        double dToTag1;
+        dToTag1 = getDistance(myTag);
+        xValue1 = getXValue();
+        myTelemetry.addData("isValidShooting", "Method");
         myTelemetry.addData("Current X", xValue1);
         myTelemetry.addData("Distance to Tag", dToTag1);
-        myTelemetry.update();
+
 
         if (xValue1 >= Min_X && xValue1 <= Max_X && dToTag1 >= Min_D && dToTag1 <= Max_D) {
             validShooting = true;
@@ -126,6 +137,7 @@ public class LimelightSensor {
     }
 
     public void PIDAiming(Turret turret){
+        myTelemetry.addData("PID Aiming", "Method");
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
             double error = result.getTx();
@@ -151,6 +163,7 @@ public class LimelightSensor {
                 myTelemetry.addData("Limelight Target", "Tracking");
                 myTelemetry.addData("Error (tx)", error);
                 myTelemetry.addData("Turret Power", servoPower);
+                myTelemetry.update();
             } else {
                 turret.setPower(0);
                 myTelemetry.addData("Limelight Target", "Aligned (error <= 3 deg)");
@@ -166,6 +179,7 @@ public class LimelightSensor {
 
 
     public void resetPID() {
+        myTelemetry.addData("Turret", "Method");
         integralSum = 0;
         lastError = 0;
         if (timer != null) {
