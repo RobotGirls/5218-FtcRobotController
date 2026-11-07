@@ -39,7 +39,7 @@ public final class TestRoutes {
                     .build())
             .build();
     public static final Route MY_ROUTE2 = Route.builder(
-                    "My Route", Alliance.NONE, new Pose2d(-60, -60, Math.toRadians(90)))
+                    "My Route 2", Alliance.NONE, new Pose2d(-60, -60, Math.toRadians(90)))
             .follow(PurePursuitPath.builder().name("my route")
                     .to(-60, -36)
                     .to(-48, -36)
@@ -102,6 +102,15 @@ public final class TestRoutes {
                     .to(56, 40)
                     .to(40, 40)
                     .to(40, -40)
+                    .build())
+            .build();
+
+    /** Each point sets its own speed, Gluten Free style: fast up the wall, slower after the corner. */
+    public static final Route MY_ROUTE_SLOW = Route.builder(
+                    "My Route (slow)", Alliance.NONE, new Pose2d(-60, -60, Math.toRadians(90)))
+            .follow(PurePursuitPath.builder().name("my route")
+                    .to(new CurvePoint(-60, 0, 0.7, 0.6, 16, 16, Math.toRadians(60), 0.6))
+                    .to(new CurvePoint(36, 0, 0.4, 0.5, 16, 16, Math.toRadians(60), 0.6))
                     .build())
             .build();
 

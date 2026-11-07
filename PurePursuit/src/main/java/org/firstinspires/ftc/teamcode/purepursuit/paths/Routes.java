@@ -32,7 +32,10 @@ public final class Routes {
             TestRoutes.S_CURVE,
             TestRoutes.TURN_IN_PLACE,
             TestRoutes.STRAFE_SQUARE,
-            TestRoutes.TUNING_COURSE
+            TestRoutes.TUNING_COURSE,
+            TestRoutes.MY_ROUTE,
+            TestRoutes.MY_ROUTE2,
+            TestRoutes.MY_ROUTE_SLOW
     ));
 
     /** Looks a route up by name, or returns null. */
