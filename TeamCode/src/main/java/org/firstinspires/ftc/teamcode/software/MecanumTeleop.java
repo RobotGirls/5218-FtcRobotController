@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-@TeleOp(name = "MecanumTeleopBiobuzz")
+@TeleOp(name = "MecanumTeleopBiobuzz1")
 public class MecanumTeleop extends LinearOpMode {
 
 
@@ -38,7 +38,8 @@ public class MecanumTeleop extends LinearOpMode {
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Mechanisms
@@ -77,7 +78,7 @@ public class MecanumTeleop extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            intakeMotor.setPower(-gamepad2.left_stick_y);
+            intakeMotor.setPower(gamepad2.left_stick_y);
 //            forwardFlywheel.setPower(gamepad2.right_stick_y);
 //            backwardFlywheel.setPower(gamepad2.right_stick_y);
 
