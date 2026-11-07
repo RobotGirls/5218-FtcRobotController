@@ -42,7 +42,7 @@ public class MecanumTeleop extends LinearOpMode {
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Mechanisms
-        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
+        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
