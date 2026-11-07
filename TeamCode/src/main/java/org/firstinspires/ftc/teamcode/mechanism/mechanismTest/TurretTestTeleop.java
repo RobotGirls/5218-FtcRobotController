@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.mechanism.mechanismTest;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 import org.firstinspires.ftc.teamcode.mechanism.mechanismTest.LimelightSensor;
 import org.firstinspires.ftc.teamcode.mechanism.mechanismTest.RobotHardware;
 import org.firstinspires.ftc.teamcode.mechanism.Turret;
@@ -30,6 +34,18 @@ public class TurretTestTeleop extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized..press play");
         telemetry.update();
+        //Mechanisms
+        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        DcMotorEx forwardFlywheel = hardwareMap.get(DcMotorEx.class, "ForwardFlywheel");
+        forwardFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        forwardFlywheel.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        DcMotorEx backwardFlywheel = hardwareMap.get(DcMotorEx.class, "BackwardFlywheel");
+        backwardFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backwardFlywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -37,6 +53,10 @@ public class TurretTestTeleop extends LinearOpMode {
             // Chassis drive handler for gamepad 1
             robot.gamepadHandler(gamepad1);
               //   Hold 'A' on gamepad2 or gamepad1 to auto-align turret using Limelight
+
+            intakeMotor.setPower(-gamepad2.right_stick_y);
+//            forwardFlywheel.setPower(gamepad2.left_stick_y);
+//            backwardFlywheel.setPower(gamepad2.left_stick_y);
 
             if (gamepad2.a) {
                 if (autoAlign){
@@ -50,7 +70,7 @@ public class TurretTestTeleop extends LinearOpMode {
                 if (limelightSensor.seeValidTag()) {
                     limelightSensor.PIDAiming(turret);
                     telemetry.addData("Turret Mode", "Limelight Auto-Aligning (Button A Held)");
-                   
+
                     if (limelightSensor.isValidShooting()){
                         limelightSensor.PIDAiming(turret);
                         telemetry.addData("Turret Mode", "Limelight Auto-Aligning (Button A Held)");
