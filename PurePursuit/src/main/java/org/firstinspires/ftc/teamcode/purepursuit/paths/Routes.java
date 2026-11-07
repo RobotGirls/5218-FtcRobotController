@@ -35,7 +35,8 @@ public final class Routes {
             TestRoutes.TUNING_COURSE,
             TestRoutes.MY_ROUTE,
             TestRoutes.MY_ROUTE2,
-            TestRoutes.MY_ROUTE_SLOW
+            TestRoutes.MY_ROUTE_SLOW,
+            BioBuzzRoutes.BLUE_GARDEN_PARK_COPY
     ));
 
     /** Looks a route up by name, or returns null. */

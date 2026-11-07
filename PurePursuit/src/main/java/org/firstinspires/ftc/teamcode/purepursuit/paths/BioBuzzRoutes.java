@@ -210,4 +210,14 @@ public final class BioBuzzRoutes {
                 .linearHeading(Math.toRadians(fromDegrees), Math.toRadians(toDegrees))
                 .build();
     }
+
+    public static final Route BLUE_GARDEN_PARK_COPY = Route.builder(
+                    "BLUE Garden Park copy", Alliance.NONE, new Pose2d(-66, 34, Math.toRadians(0)))
+            .follow(PurePursuitPath.builder().name("blue garden park copy")
+                    .to(34, 34)
+                    .moveSpeed(0.5)
+                    .to(34, 60)
+                    .build())
+            .build();
+
 }

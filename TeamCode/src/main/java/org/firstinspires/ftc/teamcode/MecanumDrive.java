@@ -156,10 +156,10 @@ public final class MecanumDrive {
             imu = lazyImu.get();
 
             // TODO: reverse encoders if needed
-//             leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-//             rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-//            rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-//            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+             leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+             rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -277,7 +277,7 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick, pose);
 
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);

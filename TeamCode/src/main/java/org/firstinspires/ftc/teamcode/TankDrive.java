@@ -240,8 +240,8 @@ public final class TankDrive {
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         // the motors configured as left_drive/right_drive are on the opposite sides of the robot:
         // forward drove fine but every turn went the wrong way, so swap them here
-        leftMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "right_drive"));
-        rightMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "left_drive"));
+       leftMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "right_drive"));
+       rightMotors = Arrays.asList(hardwareMap.get(DcMotorEx.class, "left_drive"));
 
         for (DcMotorEx m : leftMotors) {
             m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
