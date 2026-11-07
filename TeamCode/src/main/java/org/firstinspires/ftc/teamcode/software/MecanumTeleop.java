@@ -17,10 +17,10 @@ public class MecanumTeleop extends LinearOpMode {
 
         DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        leftBack = hardwareMap.get(DcMotorEx.class, "backLeft");
+        rightBack = hardwareMap.get(DcMotorEx.class, "backRight");
+        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -46,13 +46,13 @@ public class MecanumTeleop extends LinearOpMode {
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        DcMotorEx forwardFlywheel = hardwareMap.get(DcMotorEx.class, "ForwardFlywheel");
-        forwardFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        forwardFlywheel.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        DcMotorEx backwardFlywheel = hardwareMap.get(DcMotorEx.class, "BackwardFlywheel");
-        backwardFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backwardFlywheel.setDirection(DcMotorSimple.Direction.REVERSE);
+//        DcMotorEx forwardFlywheel = hardwareMap.get(DcMotorEx.class, "ForwardFlywheel");
+//        forwardFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        forwardFlywheel.setDirection(DcMotorSimple.Direction.FORWARD);
+//
+//        DcMotorEx backwardFlywheel = hardwareMap.get(DcMotorEx.class, "BackwardFlywheel");
+//        backwardFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        backwardFlywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -78,8 +78,8 @@ public class MecanumTeleop extends LinearOpMode {
             double backRightPower = (y + x - rx) / denominator;
 
             intakeMotor.setPower(-gamepad2.left_stick_y);
-            forwardFlywheel.setPower(gamepad2.right_stick_y);
-            backwardFlywheel.setPower(gamepad2.right_stick_y);
+//            forwardFlywheel.setPower(gamepad2.right_stick_y);
+//            backwardFlywheel.setPower(gamepad2.right_stick_y);
 
 
             leftFront.setPower(frontLeftPower);
