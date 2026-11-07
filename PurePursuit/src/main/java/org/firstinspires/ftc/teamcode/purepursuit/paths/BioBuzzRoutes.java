@@ -18,6 +18,8 @@ public final class BioBuzzRoutes {
 
     /** Marker name the shooter auto maps to its launch Action. */
     public static final String SHOOT = "shoot";
+    /** Marker name the mecanum autos map to running the intake while they drive. */
+    public static final String INTAKE = "intake";
 
     public static final Route BLUE_FLOWER_PARK = Route.builder(
                     "BLUE Flower Park", Alliance.BLUE, new Pose2d(-10, 60, 0))
@@ -92,4 +94,120 @@ public final class BioBuzzRoutes {
                     .build())
             .marker(SHOOT, 3.5)
             .build();
+
+    // Mecanum autos from issue-30-autonomousBiobuzz (biobuzzautos/*Mech*Auto), written to drive
+    // like the MeepMeep preview: every leg starts where the last one ended. strafeToLinearHeading
+    // turns evenly along the leg, strafeTo keeps the heading, turn() turns by an amount the same
+    // way Road Runner does, and the intake runs alongside the pickup leg like the ParallelAction.
+
+    public static final Route BLUE_MECH_SHORT = Route.builder(
+                    "BLUE Mech Short", Alliance.BLUE, new Pose2d(-10, 60, 0))
+            .description("Shoot, pick up at the far wall, shoot again, then leave the zone.")
+            .waitSeconds(2)
+            .follow(strafeToLinearHeading("to shoot", -30, 10, 0, 0))
+            .waitSeconds(3)
+            .marker(SHOOT, 2)
+            .parallelMarker(INTAKE, 2)
+            .follow(strafeToLinearHeading("to pickup", 55, 17, 0, 5))
+            .follow(strafeToLinearHeading("into pickup", 60, 17, 5, 45))
+            .waitSeconds(3)
+            .follow(strafeToLinearHeading("to shoot 2", 35, 10, 45, 0))
+            .waitSeconds(3)
+            .marker(SHOOT, 2)
+            .follow(strafeToLinearHeading("out of zone", 40, 56, 0, 0))
+            .build();
+
+    public static final Route RED_MECH_SHORT = Route.builder(
+                    "RED Mech Short", Alliance.RED, new Pose2d(56, -34, 0))
+            .description("Drive to shoot (launcher off for now), pick up, then park.")
+            .waitSeconds(3)
+            .follow(strafeToLinearHeading("to shoot", 38, -16, 0, 0))
+            .waitSeconds(3)
+            // launcher is commented out in the Road Runner version, so no SHOOT markers yet
+            .parallelMarker(INTAKE, 2)
+            .follow(strafeToLinearHeading("to pickup", -55, -20, 0, 0))
+            .waitSeconds(3)
+            .follow(strafeTo("to park", -34, -60, 0))
+            .build();
+
+    public static final Route BLUE_MECH_CORNER = Route.builder(
+                    "BLUE Mech Corner", Alliance.BLUE, new Pose2d(56, 60, 0))
+            .description("Along the blue wall to shoot, pick up, then shoot from the middle.")
+            .waitSeconds(2)
+            .follow(strafeToLinearHeading("to shoot", -52, 56, 0, 0))
+            .turn(Math.toRadians(-90))
+            .waitSeconds(3)
+            .marker(SHOOT, 2)
+            .parallelMarker(INTAKE, 2)
+            .follow(strafeToLinearHeading("to pickup", -20, 56, -90, 0))
+            .turn(Math.toRadians(90))
+            .waitSeconds(3)
+            .follow(strafeToLinearHeading("to shoot 2", 35, 10, 90, 0))
+            .marker(SHOOT, 2)
+            .build();
+
+    public static final Route BLUE_MECH_FLOWER = Route.builder(
+                    "BLUE Mech Flower", Alliance.BLUE, new Pose2d(0, 60, 0))
+            .description("Shoot from the left, pick up by the wall, shoot from the right.")
+            .waitSeconds(2)
+            .follow(strafeToLinearHeading("to shoot", -52, 15, 0, 0))
+            .waitSeconds(3)
+            .marker(SHOOT, 2)
+            .parallelMarker(INTAKE, 2)
+            .follow(strafeTo("to pickup", -20, 56, 0))
+            .turn(Math.toRadians(90))
+            .waitSeconds(3)
+            .follow(strafeToLinearHeading("to shoot 2", 35, 60, 90, 0))
+            .marker(SHOOT, 2)
+            .build();
+
+    // starts at (0, -60) like the MeepMeep preview; the OpMode on issue-30 says (0, 60)
+    public static final Route RED_MECH_FLOWER = Route.builder(
+                    "RED Mech Flower", Alliance.RED, new Pose2d(0, -60, 0))
+            .description("Shoot from the right, pick up by the red wall, shoot from the left.")
+            .waitSeconds(2)
+            .follow(strafeToLinearHeading("to shoot", 45, -16, 0, 0))
+            .turn(Math.toRadians(180))
+            .waitSeconds(3)
+            .marker(SHOOT, 2)
+            .parallelMarker(INTAKE, 2)
+            .follow(strafeTo("to pickup", 25, -56, 180))
+            .turn(Math.toRadians(90))
+            .waitSeconds(3)
+            .follow(strafeToLinearHeading("to shoot 2", -35, -60, 270, 0))
+            .marker(SHOOT, 2)
+            .build();
+
+    public static final Route RED_MECH_CORNER = Route.builder(
+                    "RED Mech Corner", Alliance.RED, new Pose2d(-60, -60, 0))
+            .description("Along the red wall, up to shoot, pick up, then shoot from the left.")
+            .waitSeconds(2)
+            .follow(strafeToLinearHeading("along the wall", 38, -52, 0, 0))
+            .follow(strafeToLinearHeading("to shoot", 38, -15, 0, 180))
+            .waitSeconds(3)
+            .marker(SHOOT, 2)
+            .parallelMarker(INTAKE, 2)
+            .follow(strafeTo("to pickup", 20, -55, 180))
+            .turn(Math.toRadians(90))
+            .waitSeconds(3)
+            .follow(strafeToLinearHeading("to shoot 2", -34, -56, 270, 0))
+            .marker(SHOOT, 2)
+            .build();
+
+    /** Road Runner's strafeTo: drive straight to (x, y) keeping the heading (degrees). */
+    private static PurePursuitPath strafeTo(String name, double x, double y, double headingDegrees) {
+        return PurePursuitPath.builder().name(name)
+                .to(x, y)
+                .fixedHeading(Math.toRadians(headingDegrees))
+                .build();
+    }
+
+    /** Road Runner's strafeToLinearHeading: turn evenly from one heading to another (degrees). */
+    private static PurePursuitPath strafeToLinearHeading(String name, double x, double y,
+                                                         double fromDegrees, double toDegrees) {
+        return PurePursuitPath.builder().name(name)
+                .to(x, y)
+                .linearHeading(Math.toRadians(fromDegrees), Math.toRadians(toDegrees))
+                .build();
+    }
 }

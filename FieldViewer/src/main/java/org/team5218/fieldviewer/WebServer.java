@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.purepursuit.PurePursuitFollower;
 import org.firstinspires.ftc.teamcode.purepursuit.PurePursuitPath;
 import org.firstinspires.ftc.teamcode.purepursuit.Route;
 import org.firstinspires.ftc.teamcode.purepursuit.RouteSimulation;
+import org.firstinspires.ftc.teamcode.purepursuit.TuningFile;
 import org.firstinspires.ftc.teamcode.purepursuit.ViewerFrame;
 import org.firstinspires.ftc.teamcode.purepursuit.paths.Routes;
 
@@ -64,6 +65,8 @@ final class WebServer {
     private final AtomicReference<ViewerFrame> liveFrame = new AtomicReference<>();
     private final AtomicLong liveVersion = new AtomicLong();
     private volatile String liveHost = "";
+    /** The robot's saved tuning; frames only carry it now and then, so it's kept here. */
+    private volatile String liveTuning;
 
     /** @param webRoot folder holding the built UI (index.html), or null if it isn't built */
     WebServer(int port, File webRoot) throws IOException {
@@ -84,7 +87,11 @@ final class WebServer {
         server.createContext("/api/live/connect", ex -> safely(ex, () -> {
             Object host = readJson(ex).get("host");
             liveHost = host == null ? "192.168.43.1" : host.toString().trim();
+            liveTuning = null;
             live.start(liveHost, frame -> {
+                if (frame.tuning != null) {
+                    liveTuning = frame.tuning;
+                }
                 liveFrame.set(frame);
                 liveVersion.incrementAndGet();
             });
@@ -156,10 +163,12 @@ final class WebServer {
             } else if (step instanceof Route.Marker) {
                 Route.Marker marker = (Route.Marker) step;
                 sb.append("{\"type\":\"marker\",\"name\":").append(Json.quote(marker.name))
-                        .append(",\"seconds\":").append(Json.num(marker.seconds)).append('}');
+                        .append(",\"seconds\":").append(Json.num(marker.seconds))
+                        .append(",\"parallel\":").append(marker.parallel).append('}');
             } else {
-                sb.append("{\"type\":\"turn\",\"heading\":")
-                        .append(Json.num(((Route.Turn) step).heading)).append('}');
+                Route.Turn turn = (Route.Turn) step;
+                sb.append("{\"type\":\"turn\",\"heading\":").append(Json.num(turn.heading))
+                        .append(",\"relative\":").append(turn.relative).append('}');
             }
         }
         return sb.append("]}").toString();
@@ -388,7 +397,7 @@ final class WebServer {
                 ViewerFrame frame = liveFrame.get();
                 if (version != sentVersion && frame != null) {
                     sentVersion = version;
-                    out.write(("event: frame\ndata: " + liveFrameJson(frame) + "\n\n").getBytes(StandardCharsets.UTF_8));
+                    out.write(("event: frame\ndata: " + liveFrameJson(frame, liveTuning) +"\n\n").getBytes(StandardCharsets.UTF_8));
                     out.flush();
                 }
                 Thread.sleep(33);
@@ -398,7 +407,7 @@ final class WebServer {
         }
     }
 
-    private static String liveFrameJson(ViewerFrame f) {
+    private static String liveFrameJson(ViewerFrame f, String tuning) {
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"seq\":").append(f.seq)
                 .append(",\"route\":").append(Json.quote(f.routeName))
@@ -414,7 +423,21 @@ final class WebServer {
                         : "[" + Json.num(f.powers.linearVel.x) + "," + Json.num(f.powers.linearVel.y) + "," + Json.num(f.powers.angVel) + "]")
                 .append(",\"path\":").append(points(f.path))
                 .append(",\"colliding\":").append(f.pose != null && BioBuzzField.hitsCenterStructure(
-                        f.pose, BioBuzzField.ROBOT_LENGTH, BioBuzzField.ROBOT_WIDTH));
+                        f.pose, BioBuzzField.ROBOT_LENGTH, BioBuzzField.ROBOT_WIDTH))
+                .append(",\"tuning\":").append(tuning == null ? "null" : tuningJson(TuningFile.decode(tuning)));
+        return sb.append('}').toString();
+    }
+
+    private static String tuningJson(TuningFile t) {
+        return "{\"savedAt\":" + Json.quote(t.savedAt) + ",\"follower\":" + numbers(t.follower)
+                + ",\"drive\":" + numbers(t.drive) + "}";
+    }
+
+    private static String numbers(Map<String, Double> values) {
+        StringBuilder sb = new StringBuilder("{");
+        for (Map.Entry<String, Double> e : values.entrySet()) {
+            sb.append(sb.length() > 1 ? "," : "").append(Json.quote(e.getKey())).append(':').append(Json.num(e.getValue()));
+        }
         return sb.append('}').toString();
     }
 

@@ -10,6 +10,7 @@ import {
   F,
   type Frame,
   type LiveFrame,
+  type RobotTuning,
   type LiveStatus,
   type Pose,
   type Recording,
@@ -510,9 +511,27 @@ function onLiveStatus(status: LiveStatus): void {
   $('live-badge').hidden = !(state.mode === 'live' && receiving);
 }
 
+const ROBOT_TUNING_KEY = 'fieldviewer.robotTuning.v1';
+
+/**
+ * Uses the robot's saved auto tuner values in the simulator. Each saved set is applied once, so
+ * sliders you move afterwards stay put until the robot is tuned again.
+ */
+function applyRobotTuning(robot: RobotTuning): void {
+  if (!tuning) return;
+  const id = JSON.stringify(robot);
+  let applied: string | null = null;
+  try { applied = localStorage.getItem(ROBOT_TUNING_KEY); } catch { /* storage off: apply every session */ }
+  if (applied === id) return;
+  try { localStorage.setItem(ROBOT_TUNING_KEY, id); } catch { /* ignore */ }
+  tuning.applyRobotTuning(robot);
+  toast(`Simulator now uses the robot's tuning${robot.savedAt ? ` (saved ${robot.savedAt})` : ''}`);
+}
+
 function onLiveFrame(frame: LiveFrame): void {
   const live = state.live;
   recorder.add(frame);
+  if (frame.tuning) applyRobotTuning(frame.tuning);
   if (frame.route !== live.route) {
     live.route = frame.route;
     live.trail = [];
@@ -755,7 +774,10 @@ function stepLabel(step: Step): string {
   switch (step.type) {
     case 'follow': return step.name;
     case 'marker': return step.name;
-    case 'turn': return `turn to ${Math.round((step.heading * 180) / Math.PI)}°`;
+    case 'turn': {
+      const degrees = Math.round((step.heading * 180) / Math.PI);
+      return step.relative ? `turn ${degrees > 0 ? '+' : ''}${degrees}°` : `turn to ${degrees}°`;
+    }
   }
 }
 
@@ -769,7 +791,7 @@ function stepDetail(step: Step): string {
       if (step.endHeading !== null) parts.push(`→ ${Math.round((step.endHeading * 180) / Math.PI)}°`);
       return parts.join(' · ');
     }
-    case 'marker': return `${step.seconds.toFixed(1)} s`;
+    case 'marker': return step.parallel ? 'while driving' : `${step.seconds.toFixed(1)} s`;
     case 'turn': return 'in place';
   }
 }

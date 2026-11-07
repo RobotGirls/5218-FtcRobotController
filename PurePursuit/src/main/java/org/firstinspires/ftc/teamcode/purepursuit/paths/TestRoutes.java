@@ -130,6 +130,23 @@ public final class TestRoutes {
             .turnTo(0)
             .build();
 
+    /**
+     * The legs PP Auto Tuner drives while matching the robot to the coded paths (mecanum; a tank
+     * drive skips the strafes). Put the robot at this start pose before running the tuner.
+     */
+    public static final Route TUNING_COURSE = Route.builder(
+                    "TEST Tuning Course", Alliance.NONE, new Pose2d(-48, -48, 0))
+            .description("What PP Auto Tuner drives: forward and back, strafe and back, turns.")
+            .follow(PurePursuitPath.builder().name("forward").to(0, -48).fixedHeading(0).build())
+            .follow(PurePursuitPath.builder().name("backward").to(-48, -48).fixedHeading(0).build())
+            .turn(Math.toRadians(90))
+            .follow(PurePursuitPath.builder().name("strafe").to(0, -48).fixedHeading(Math.toRadians(90)).build())
+            .follow(PurePursuitPath.builder().name("strafe back").to(-48, -48).fixedHeading(Math.toRadians(90)).build())
+            .turn(Math.toRadians(-90))
+            .turn(Math.toRadians(180))
+            .turn(Math.toRadians(-180))
+            .build();
+
     /** A sine wave along the bottom of the field, below the central structure. */
     private static Route sCurve() {
         PurePursuitPath.Builder path = PurePursuitPath.builder().name("sine")

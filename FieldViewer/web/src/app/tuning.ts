@@ -1,4 +1,4 @@
-import type { Defaults, Tuning } from './types.js';
+import type { Defaults, RobotTuning, Tuning } from './types.js';
 
 /**
  * The tuning panel: sliders for PurePursuitFollower.Params (what the robot uses), the
@@ -97,6 +97,18 @@ export class TuningPanel {
 
   robotSize(): [number, number] {
     return [this.values.robot.length, this.values.robot.width];
+  }
+
+  /** Takes the robot's auto tuner results so the simulator behaves like the real robot. */
+  applyRobotTuning(tuning: RobotTuning): void {
+    for (const group of ['follower', 'drive'] as const) {
+      for (const [key, value] of Object.entries(tuning[group])) {
+        if (key in this.defaults[group] && Number.isFinite(value)) this.values[group][key] = value;
+      }
+    }
+    this.save();
+    this.refresh();
+    this.onChange();
   }
 
   changedCount(): number {

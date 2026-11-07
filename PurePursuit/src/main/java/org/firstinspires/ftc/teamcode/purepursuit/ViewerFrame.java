@@ -22,6 +22,7 @@ import java.util.Locale;
  * PT,x,y,radius       point the robot is facing + its circle
  * CP,x,y              closest point on the path
  * PA,x1,y1,x2,y2,...  path being followed
+ * TU,key=value;...    the robot's saved auto tuner values (TuningFile), sent now and then
  * </pre>
  */
 public final class ViewerFrame {
@@ -29,6 +30,8 @@ public final class ViewerFrame {
     public double time;
     public String routeName = "";
     public String status = "";
+    /** {@link TuningFile#encode()} of the robot's saved tuning, or null when this frame has none. */
+    public String tuning;
     public Pose2d pose;
     public PoseVelocity2d powers;
     public Vector2d followPoint, pointToPoint, clippedPoint;
@@ -84,6 +87,9 @@ public final class ViewerFrame {
             }
             sb.append('\n');
         }
+        if (tuning != null) {
+            sb.append("TU,").append(clean(tuning)).append('\n');
+        }
         return sb.toString();
     }
 
@@ -104,6 +110,9 @@ public final class ViewerFrame {
                         break;
                     case "ST":
                         frame.status = rest;
+                        break;
+                    case "TU":
+                        frame.tuning = rest;
                         break;
                     default:
                         decodeNumbers(frame, type, rest.split(","));

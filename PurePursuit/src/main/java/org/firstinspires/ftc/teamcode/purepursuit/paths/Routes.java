@@ -18,6 +18,12 @@ public final class Routes {
             BioBuzzRoutes.RED_FLOWER_PARK,
             BioBuzzRoutes.RED_GARDEN_PARK,
             BioBuzzRoutes.RED_CORNER_PARK,
+            BioBuzzRoutes.BLUE_MECH_SHORT,
+            BioBuzzRoutes.BLUE_MECH_CORNER,
+            BioBuzzRoutes.BLUE_MECH_FLOWER,
+            BioBuzzRoutes.RED_MECH_SHORT,
+            BioBuzzRoutes.RED_MECH_CORNER,
+            BioBuzzRoutes.RED_MECH_FLOWER,
             TestRoutes.STRAIGHT_24,
             TestRoutes.STRAIGHT,
             TestRoutes.OUT_AND_BACK,
@@ -25,7 +31,8 @@ public final class Routes {
             TestRoutes.U_TURN,
             TestRoutes.S_CURVE,
             TestRoutes.TURN_IN_PLACE,
-            TestRoutes.STRAFE_SQUARE
+            TestRoutes.STRAFE_SQUARE,
+            TestRoutes.TUNING_COURSE
     ));
 
     /** Looks a route up by name, or returns null. */

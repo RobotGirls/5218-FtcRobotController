@@ -127,6 +127,11 @@ public final class RouteSimulation {
             return;
         }
         powers = STOPPED;
+        // parallel markers don't stop the robot; the mechanism isn't simulated, so skip them
+        while (!isRouteDone() && route.steps.get(stepIndex) instanceof Route.Marker
+                && ((Route.Marker) route.steps.get(stepIndex)).parallel) {
+            nextStep();
+        }
 
         if (isRouteDone()) {
             // motors are off, let the robot coast to a stop so we see where it really ends up
@@ -143,7 +148,7 @@ public final class RouteSimulation {
             if (follower == null) {
                 follower = step instanceof Route.Follow
                         ? new PurePursuitFollower(((Route.Follow) step).path, followerParams, holonomic)
-                        : PurePursuitFollower.turnTo(((Route.Turn) step).heading, followerParams, holonomic);
+                        : turnFollower((Route.Turn) step);
             }
             output = follower.update(drive.getPose(), drive.getVelocity());
             if (output.phase == PurePursuitFollower.Phase.FOLLOWING) {
@@ -186,11 +191,17 @@ public final class RouteSimulation {
         output = null;
     }
 
+    private PurePursuitFollower turnFollower(Route.Turn turn) {
+        return turn.relative
+                ? PurePursuitFollower.turnBy(turn.heading, followerParams, holonomic)
+                : PurePursuitFollower.turnTo(turn.heading, followerParams, holonomic);
+    }
+
     private static String stepName(Route.Step step) {
         if (step instanceof Route.Follow) {
             return ((Route.Follow) step).path.name;
         } else if (step instanceof Route.Turn) {
-            return String.format(Locale.US, "turn to %.0f deg", Math.toDegrees(((Route.Turn) step).heading));
+            return ((Route.Turn) step).describe();
         }
         return ((Route.Marker) step).name;
     }

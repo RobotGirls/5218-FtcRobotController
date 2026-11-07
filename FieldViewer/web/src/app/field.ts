@@ -371,9 +371,10 @@ export class FieldView {
         }
         at = points[points.length - 1];
       } else if (step.type === 'marker') {
-        this.tag(at, `${step.name} · ${step.seconds.toFixed(1)}s`, '#fbbf24');
+        this.tag(at, step.parallel ? `${step.name} (while driving)` : `${step.name} · ${step.seconds.toFixed(1)}s`, '#fbbf24');
       } else {
-        this.tag(at, `turn ${Math.round((step.heading * 180) / Math.PI)}°`, '#a78bfa');
+        const degrees = Math.round((step.heading * 180) / Math.PI);
+        this.tag(at, step.relative ? `turn ${degrees > 0 ? '+' : ''}${degrees}°` : `turn to ${degrees}°`, '#a78bfa');
       }
     }
   }

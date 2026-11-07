@@ -17,6 +17,9 @@ import java.util.List;
 public final class Route {
     public enum Alliance { RED, BLUE, NONE }
 
+    /** Marker name waitSeconds() uses; nothing runs at it, the robot just waits. */
+    public static final String WAIT = "wait";
+
     public abstract static class Step {
         private Step() {}
     }
@@ -34,19 +37,33 @@ public final class Route {
     public static final class Marker extends Step {
         public final String name;
         public final double seconds;
+        /**
+         * Start the mechanism and go straight on to the next step while it runs, like Road
+         * Runner's ParallelAction.
+         */
+        public final boolean parallel;
 
-        Marker(String name, double seconds) {
+        Marker(String name, double seconds, boolean parallel) {
             this.name = name;
             this.seconds = seconds;
+            this.parallel = parallel;
         }
     }
 
-    /** Turn in place to a field heading. */
+    /** Turn in place to a field heading, or by an amount if relative. */
     public static final class Turn extends Step {
+        /** Field heading (rad), or the signed amount to turn (rad, + is counter-clockwise). */
         public final double heading;
+        public final boolean relative;
 
-        Turn(double heading) {
+        Turn(double heading, boolean relative) {
             this.heading = heading;
+            this.relative = relative;
+        }
+
+        public String describe() {
+            return String.format(java.util.Locale.US, relative ? "turn %+.0f deg" : "turn to %.0f deg",
+                    Math.toDegrees(heading));
         }
     }
 
@@ -55,7 +72,7 @@ public final class Route {
     public final Alliance alliance;
     public final Pose2d startPose;
     public final List<Step> steps;
-    /** True if a path uses fixedHeading (strafing), which a tank drive can't do. */
+    /** True if a path uses fixedHeading or linearHeading (strafing), which a tank drive can't do. */
     public final boolean requiresHolonomic;
 
     private Route(String name, String description, Alliance alliance, Pose2d startPose,
@@ -119,16 +136,31 @@ public final class Route {
 
         /** A named stop where the OpMode can run a mechanism Action. */
         public Builder marker(String name, double estimatedSeconds) {
-            steps.add(new Marker(name, estimatedSeconds));
+            steps.add(new Marker(name, estimatedSeconds, false));
+            return this;
+        }
+
+        /**
+         * Starts the OpMode's Action for this marker and keeps going while it runs, like
+         * Road Runner's ParallelAction. The route still waits for it before it finishes.
+         */
+        public Builder parallelMarker(String name, double estimatedSeconds) {
+            steps.add(new Marker(name, estimatedSeconds, true));
             return this;
         }
 
         public Builder waitSeconds(double seconds) {
-            return marker("wait", seconds);
+            return marker(WAIT, seconds);
         }
 
         public Builder turnTo(double heading) {
-            steps.add(new Turn(heading));
+            steps.add(new Turn(heading, false));
+            return this;
+        }
+
+        /** Turn by this much (rad, + is counter-clockwise), like Road Runner's turn(). */
+        public Builder turn(double radians) {
+            steps.add(new Turn(radians, true));
             return this;
         }
 

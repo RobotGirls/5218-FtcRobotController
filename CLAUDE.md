@@ -43,8 +43,8 @@ the window also stops the backend.
 | --- | --- |
 | `PurePursuit/` | Plain Java library (no Android), shared by the robot and FieldViewer. The follower, paths, routes, a drive simulator, and the routes themselves in `purepursuit/paths/` (`BioBuzzRoutes`, `TestRoutes`, `Routes.ALL`). README has the tuning guide. |
 | `TeamCode/.../purepursuit/ftc/` | Robot side: `PurePursuitConfig` (`@Config`; drive type and follower tuning), `PurePursuitDrive` (runs routes on `TankDrive` / `MecanumDrive` / `Comp5218MecanumDrive`). |
-| `TeamCode/.../purepursuitautos/` | `PP` OpModes: park autos for both alliances, Garden + Shooter, Path Tester (dpad picks a route), FieldViewer localization test. |
-| `TeamCode/.../biobuzzautos/` | The original Road Runner autos. Left untouched; keep them working. |
+| `TeamCode/.../purepursuitautos/` | `PP` OpModes: park autos for both alliances, Garden + Shooter, Path Tester (dpad picks a route), FieldViewer localization test, Auto Tuner (`AutoTuner` measures the robot, tunes the follower and saves the result on the Control Hub). |
+| `TeamCode/.../biobuzzautos/` | The original Road Runner autos (left untouched; keep them working), plus the `*Mech*Auto` mecanum autos, which run `BioBuzzRoutes` with pure pursuit through `BioBuzzMechAuto`. |
 | `FieldViewer/src/main/java/` | Backend on `localhost:5218`: route simulation API, path editor sketches → Java, UDP link to the robot, SSE live stream. |
 | `FieldViewer/web/` | TypeScript UI (`src/app/`, plain `tsc` ES modules, canvas), Electron shell (`src/electron/main.ts`), `static/` HTML/CSS. |
 | `MeepMeepTesting/` | Old MeepMeep visualizer. FieldViewer reads the field image from its resources. |

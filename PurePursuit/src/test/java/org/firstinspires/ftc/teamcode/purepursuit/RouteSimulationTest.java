@@ -90,6 +90,52 @@ public class RouteSimulationTest {
     }
 
     @Test
+    public void relativeTurnOf180GoesCounterClockwiseLikeRoadRunner() {
+        Route route = Route.builder("turn 180", Route.Alliance.NONE, new Pose2d(0, -48, 0))
+                .turn(Math.PI)
+                .build();
+        RouteSimulation sim = new RouteSimulation(route, true);
+        double lowest = 0;
+        while (!sim.isFinished()) {
+            sim.loop();
+            lowest = Math.min(lowest, PurePursuitMath.angleWrap(sim.getPose().heading.toDouble()));
+            if (Math.abs(sim.getPose().heading.toDouble()) > 3) {
+                break; // reached the far side, past the wrap
+            }
+        }
+        sim.runToEnd(MAX_SECONDS);
+        assertTrue("turned clockwise to " + Math.toDegrees(lowest) + " deg", lowest > Math.toRadians(-5));
+        assertEquals(Math.PI, Math.abs(sim.getPose().heading.toDouble()), Math.toRadians(4));
+    }
+
+    @Test
+    public void linearHeadingTurnsEvenlyAlongTheLeg() {
+        Route route = Route.builder("linear", Route.Alliance.NONE, new Pose2d(-48, -48, 0))
+                .follow(PurePursuitPath.builder().to(48, -48)
+                        .linearHeading(0, Math.toRadians(90)).build())
+                .build();
+        RouteSimulation sim = new RouteSimulation(route, true);
+        while (!sim.isFinished() && sim.getPose().position.x < 0) {
+            sim.loop();
+        }
+        // halfway along, the heading should be about halfway round
+        assertEquals(45, Math.toDegrees(sim.getPose().heading.toDouble()), 12);
+        sim.runToEnd(MAX_SECONDS);
+        assertEquals(90, Math.toDegrees(sim.getPose().heading.toDouble()), 5);
+    }
+
+    @Test
+    public void parallelMarkerDoesNotStopTheRobot() {
+        Route.Builder base = Route.builder("p", Route.Alliance.NONE, new Pose2d(-24, -48, 0));
+        RouteSimulation with = new RouteSimulation(base.parallelMarker("intake", 2)
+                .follow(PurePursuitPath.builder().to(24, -48).build()).build(), false);
+        with.runToEnd(MAX_SECONDS);
+        RouteSimulation without = new RouteSimulation(TestRoutes.STRAIGHT, false);
+        without.runToEnd(MAX_SECONDS);
+        assertEquals(without.getRouteDoneTime(), with.getRouteDoneTime(), 0.05);
+    }
+
+    @Test
     public void markerStepWaitsItsTime() {
         RouteSimulation withShooter = new RouteSimulation(BioBuzzRoutes.BLUE_GARDEN_SHOOTER, false);
         withShooter.runToEnd(MAX_SECONDS);

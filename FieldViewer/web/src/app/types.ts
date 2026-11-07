@@ -22,11 +22,15 @@ export interface MarkerStep {
   type: 'marker';
   name: string;
   seconds: number;
+  /** Runs while the robot keeps driving (Road Runner's ParallelAction). */
+  parallel: boolean;
 }
 
 export interface TurnStep {
   type: 'turn';
+  /** Field heading, or the signed amount to turn if relative. */
   heading: number;
+  relative: boolean;
 }
 
 export type Step = FollowStep | MarkerStep | TurnStep;
@@ -106,6 +110,15 @@ export interface LiveFrame {
   powers: [number, number, number] | null;
   path: Vec[];
   colliding: boolean;
+  /** The robot's saved PP Auto Tuner values, once it has sent them. */
+  tuning: RobotTuning | null;
+}
+
+/** What PP Auto Tuner measured and saved on the robot (TuningFile). */
+export interface RobotTuning {
+  savedAt: string;
+  follower: Record<string, number>;
+  drive: Record<string, number>;
 }
 
 export interface LiveStatus {

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.purepursuit.Route;
 import org.firstinspires.ftc.teamcode.purepursuit.paths.Routes;
+import org.firstinspires.ftc.teamcode.purepursuit.ftc.PurePursuitConfig;
 import org.firstinspires.ftc.teamcode.purepursuit.ftc.PurePursuitDrive;
 
 /**
@@ -42,6 +43,7 @@ public class PurePursuitPathTester extends LinearOpMode {
             if (route.requiresHolonomic && !drive.holonomic) {
                 telemetry.addLine("WARNING: this route strafes and needs a mecanum drive");
             }
+            telemetry.addData("Tuning", PurePursuitConfig.tuningSource());
             telemetry.addData("Start pose", route.startPose);
             telemetry.update();
         }

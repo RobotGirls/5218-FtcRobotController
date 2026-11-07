@@ -300,8 +300,7 @@ public final class FieldRenderer {
                 Route.Marker marker = (Route.Marker) step;
                 drawTag(g, size, ppi, at, String.format(Locale.US, "%s %.1fs", marker.name, marker.seconds), color);
             } else if (step instanceof Route.Turn) {
-                drawTag(g, size, ppi, at, String.format(Locale.US, "turn %.0f°",
-                        Math.toDegrees(((Route.Turn) step).heading)), color);
+                drawTag(g, size, ppi, at, ((Route.Turn) step).describe(), color);
             }
         }
     }

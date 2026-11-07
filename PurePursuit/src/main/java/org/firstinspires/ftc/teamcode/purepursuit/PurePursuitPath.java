@@ -33,17 +33,24 @@ public final class PurePursuitPath {
      * along the path. Lets the robot strafe.
      */
     public final Double fixedHeading;
+    /**
+     * Mecanum only: if not null, the heading starts here and turns evenly to fixedHeading over
+     * the length of the path, like Road Runner's strafeToLinearHeading.
+     */
+    public final Double linearStartHeading;
     /** If not null, turn to this field heading (rad) after reaching the last point. */
     public final Double endHeading;
     /** Give up on the path after this many seconds. 0 means no limit. */
     public final double timeoutSeconds;
 
     private PurePursuitPath(String name, List<CurvePoint> points, double followAngle,
-                            Double fixedHeading, Double endHeading, double timeoutSeconds) {
+                            Double fixedHeading, Double linearStartHeading, Double endHeading,
+                            double timeoutSeconds) {
         this.name = name;
         this.points = Collections.unmodifiableList(new ArrayList<>(points));
         this.followAngle = followAngle;
         this.fixedHeading = fixedHeading;
+        this.linearStartHeading = linearStartHeading;
         this.endHeading = endHeading;
         this.timeoutSeconds = timeoutSeconds;
     }
@@ -70,6 +77,7 @@ public final class PurePursuitPath {
         private final List<CurvePoint> points = new ArrayList<>();
         private double followAngle = 0;
         private Double fixedHeading = null;
+        private Double linearStartHeading = null;
         private Double endHeading = null;
         private double timeoutSeconds = 0;
 
@@ -144,6 +152,18 @@ public final class PurePursuitPath {
         /** Mecanum only: keep this field heading (rad) while driving. */
         public Builder fixedHeading(double radians) {
             this.fixedHeading = radians;
+            this.linearStartHeading = null;
+            return this;
+        }
+
+        /**
+         * Mecanum only: turn evenly from startRadians to endRadians (field headings) while
+         * driving, the shorter way round, like Road Runner's strafeToLinearHeading. The start is
+         * given rather than measured so a 180 degree turn always goes the same way.
+         */
+        public Builder linearHeading(double startRadians, double endRadians) {
+            this.fixedHeading = endRadians;
+            this.linearStartHeading = startRadians;
             return this;
         }
 
@@ -162,8 +182,8 @@ public final class PurePursuitPath {
             if (points.isEmpty()) {
                 throw new IllegalStateException("path '" + name + "' needs at least one point");
             }
-            return new PurePursuitPath(name, points, followAngle, fixedHeading, endHeading,
-                    timeoutSeconds);
+            return new PurePursuitPath(name, points, followAngle, fixedHeading, linearStartHeading,
+                    endHeading, timeoutSeconds);
         }
     }
 }

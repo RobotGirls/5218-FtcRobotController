@@ -22,14 +22,16 @@ import org.firstinspires.ftc.teamcode.TankDrive;
 import org.firstinspires.ftc.teamcode.purepursuit.CurvePoint;
 import org.firstinspires.ftc.teamcode.purepursuit.DrivePowers;
 import org.firstinspires.ftc.teamcode.purepursuit.FieldViewerLink;
+import org.firstinspires.ftc.teamcode.purepursuit.MechanismBindings;
 import org.firstinspires.ftc.teamcode.purepursuit.PurePursuitFollower;
 import org.firstinspires.ftc.teamcode.purepursuit.PurePursuitPath;
 import org.firstinspires.ftc.teamcode.purepursuit.Route;
+import org.firstinspires.ftc.teamcode.purepursuit.TuningFile;
 import org.firstinspires.ftc.teamcode.purepursuit.ViewerFrame;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,7 @@ public final class PurePursuitDrive {
 
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
     private String routeName = "";
+    private double lastTuningSent = -1;
 
     public PurePursuitDrive(Hardware hardware, boolean holonomic) {
         this.hardware = hardware;
@@ -71,6 +74,7 @@ public final class PurePursuitDrive {
 
     /** Builds whichever drive {@link PurePursuitConfig#DRIVE_TYPE} says this robot has. */
     public static PurePursuitDrive create(HardwareMap hardwareMap, Pose2d startPose) {
+        PurePursuitConfig.loadSavedTuning();
         switch (PurePursuitConfig.DRIVE_TYPE) {
             case MECANUM:
                 return mecanum(new MecanumDrive(hardwareMap, startPose));
@@ -219,15 +223,32 @@ public final class PurePursuitDrive {
                 0, String.format("turn to %.0f deg", Math.toDegrees(heading)));
     }
 
+    /** Turn in place by a signed amount (radians, + is counter-clockwise), like Road Runner's turn(). */
+    public Action turnBy(double radians) {
+        return new FollowAction(PurePursuitFollower.turnBy(radians, PurePursuitConfig.FOLLOWER, holonomic),
+                0, String.format("turn %+.0f deg", Math.toDegrees(radians)));
+    }
+
     public Action run(Route route) {
-        return run(route, Collections.<String, Action>emptyMap());
+        return run(route, new MechanismBindings<Action>());
+    }
+
+    /** Older form: the same Action object is used every time its marker comes up. */
+    public Action run(Route route, Map<String, Action> markers) {
+        MechanismBindings<Action> bindings = new MechanismBindings<>();
+        for (final Map.Entry<String, Action> entry : markers.entrySet()) {
+            bindings.register(entry.getKey(), entry::getValue);
+        }
+        return run(route, bindings);
     }
 
     /**
-     * Every step of a route as one Action. Marker steps run the Action with the same name from
-     * markers, or just wait for the marker's estimated time if there isn't one.
+     * Every step of a route as one Action. Each marker step runs a fresh Action from bindings,
+     * or just waits for the marker's estimated time if nothing is registered. Parallel markers
+     * keep running alongside the following steps, and the route waits for them at the end.
      */
-    public Action run(final Route route, Map<String, Action> markers) {
+    public Action run(final Route route, MechanismBindings<Action> bindings) {
+        final List<Action> parallel = new ArrayList<>();
         List<Action> actions = new ArrayList<>();
         actions.add(packet -> {
             routeName = route.name;
@@ -237,15 +258,40 @@ public final class PurePursuitDrive {
             if (step instanceof Route.Follow) {
                 actions.add(follow(((Route.Follow) step).path));
             } else if (step instanceof Route.Turn) {
-                actions.add(turnTo(((Route.Turn) step).heading));
+                Route.Turn turn = (Route.Turn) step;
+                actions.add(turn.relative ? turnBy(turn.heading) : turnTo(turn.heading));
             } else if (step instanceof Route.Marker) {
                 Route.Marker marker = (Route.Marker) step;
-                Action action = markers.get(marker.name);
-                actions.add(new MarkerAction(marker.name,
-                        action != null ? action : new SleepAction(marker.seconds)));
+                final Action action = bindings.supports(marker.name)
+                        ? bindings.create(marker.name) : new SleepAction(marker.seconds);
+                if (marker.parallel) {
+                    actions.add(packet -> {
+                        parallel.add(action);
+                        return false;
+                    });
+                } else {
+                    actions.add(new MarkerAction(marker.name, action));
+                }
             }
         }
-        return new SequentialAction(actions);
+        final Action steps = new SequentialAction(actions);
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                for (Iterator<Action> it = parallel.iterator(); it.hasNext(); ) {
+                    if (!it.next().run(packet)) {
+                        it.remove();
+                    }
+                }
+                boolean running = steps.run(packet);
+                return running || !parallel.isEmpty();
+            }
+
+            @Override
+            public void preview(@NonNull Canvas canvas) {
+                steps.preview(canvas);
+            }
+        };
     }
 
     /** Runs a pure pursuit follower every loop until it's done. */
@@ -380,6 +426,12 @@ public final class PurePursuitDrive {
             frame.status = status;
             frame.pose = pose;
             frame.withFollower(follower, out);
+            // twice a second, tell the viewer the tuning so its simulator can match the robot
+            TuningFile tuning = PurePursuitConfig.savedTuning();
+            if (tuning != null && frame.time - lastTuningSent > 0.5) {
+                frame.tuning = tuning.encode();
+                lastTuningSent = frame.time;
+            }
             FieldViewerLink.get().publish(frame);
         }
     }

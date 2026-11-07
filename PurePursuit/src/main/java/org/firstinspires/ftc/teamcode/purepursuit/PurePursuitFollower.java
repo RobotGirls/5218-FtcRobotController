@@ -55,6 +55,8 @@ public final class PurePursuitFollower {
         public double turnDecelRadians = Math.toRadians(45);
         /** Turning fades out over the last this-many radians. */
         public double turnSmoothRadians = Math.toRadians(3);
+        /** linearHeading paths aim for the heading this many inches further along the path. */
+        public double linearHeadingLead = 6;
 
         /** Start driving straight to the last point this many inches before follow distance. */
         public double finalApproachExtra = 6;
@@ -116,7 +118,10 @@ public final class PurePursuitFollower {
     private final Params params;
     private final boolean holonomic;
     private PurePursuitPath path;
-    private final double turnOnlyHeading;
+    private double turnOnlyHeading;
+    /** For turnBy: how far to turn (rad, signed) and how far the robot has turned so far. */
+    private final double turnBy;
+    private double turned = 0, lastHeading;
 
     private List<CurvePoint> points;
     private Polyline line, extended;
@@ -132,18 +137,28 @@ public final class PurePursuitFollower {
         this.params = params;
         this.holonomic = holonomic;
         this.turnOnlyHeading = Double.NaN;
+        this.turnBy = Double.NaN;
     }
 
-    private PurePursuitFollower(double heading, Params params, boolean holonomic) {
+    private PurePursuitFollower(double heading, double turnBy, Params params, boolean holonomic) {
         this.path = null;
         this.params = params;
         this.holonomic = holonomic;
         this.turnOnlyHeading = heading;
+        this.turnBy = turnBy;
     }
 
     /** A follower that just turns in place to a field heading (Gluten Free's pointAngle). */
     public static PurePursuitFollower turnTo(double heading, Params params, boolean holonomic) {
-        return new PurePursuitFollower(heading, params, holonomic);
+        return new PurePursuitFollower(heading, Double.NaN, params, holonomic);
+    }
+
+    /**
+     * Turns in place by an amount relative to the current heading, like Road Runner's turn():
+     * positive is counter-clockwise, and a turn of 180 degrees or more goes the way it says.
+     */
+    public static PurePursuitFollower turnBy(double radians, Params params, boolean holonomic) {
+        return new PurePursuitFollower(Double.NaN, radians, params, holonomic);
     }
 
     public Phase getPhase() {
@@ -177,6 +192,10 @@ public final class PurePursuitFollower {
         Vector2d position = pose.position;
         double heading = pose.heading.toDouble();
         if (line == null) {
+            if (!Double.isNaN(turnBy)) {
+                turnOnlyHeading = heading + turnBy;
+                lastHeading = heading;
+            }
             anchor(position);
         }
 
@@ -222,7 +241,16 @@ public final class PurePursuitFollower {
                 phase = path.endHeading != null ? Phase.TURNING : Phase.DONE;
             } else {
                 double desiredHeading;
-                if (path.fixedHeading != null && holonomic) {
+                if (path.fixedHeading != null && path.linearStartHeading != null && holonomic) {
+                    // same as Road Runner's linear heading: the shorter way round, by distance
+                    double start = path.linearStartHeading;
+                    double change = Math.atan2(Math.sin(path.fixedHeading - start),
+                            Math.cos(path.fixedHeading - start));
+                    // aim a little ahead along the path, or the heading trails behind the turn
+                    double fraction = line.length() < 1e-6 ? 1
+                            : clip((progress + params.linearHeadingLead) / line.length(), 0, 1);
+                    desiredHeading = start + change * fraction;
+                } else if (path.fixedHeading != null && holonomic) {
                     desiredHeading = path.fixedHeading;
                 } else if (distance(position, pointTo) > 1e-6) {
                     desiredHeading = Math.atan2(pointTo.y - position.y, pointTo.x - position.x)
@@ -268,7 +296,15 @@ public final class PurePursuitFollower {
         }
 
         if (phase == Phase.TURNING) {
-            double turnError = angleWrap(path.endHeading - heading);
+            double turnError;
+            if (Double.isNaN(turnBy)) {
+                turnError = angleWrap(path.endHeading - heading);
+            } else {
+                // count the turn up loop by loop so a 180 goes the way it was asked to
+                turned += angleWrap(heading - lastHeading);
+                lastHeading = heading;
+                turnError = turnBy - turned;
+            }
             if (Math.abs(turnError) < params.headingTolerance) {
                 phase = Phase.DONE;
             } else {
@@ -361,7 +397,11 @@ public final class PurePursuitFollower {
 
     /** Gluten Free's pointAngle: turn power for a heading error, accounting for turn slip. */
     private double pointAngle(double turnError, PoseVelocity2d robotVel, double turnSpeed) {
-        double slipAdjusted = angleWrap(turnError - robotVel.angVel * params.turnSlipSeconds);
+        double slipAdjusted = turnError - robotVel.angVel * params.turnSlipSeconds;
+        if (Double.isNaN(turnBy)) {
+            // a turnBy error isn't wrapped, or a 180 could flip to the other direction
+            slipAdjusted = angleWrap(slipAdjusted);
+        }
         return clip(slipAdjusted / params.turnDecelRadians * turnSpeed, -turnSpeed, turnSpeed);
     }
 
