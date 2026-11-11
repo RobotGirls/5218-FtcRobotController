@@ -41,6 +41,7 @@ public class LimelightSensor {
     double kp = 0.014;
     double ki = 0;
     double kd = 0;
+    private boolean isFirstRun = true;
 
     public LimelightSensor(HardwareMap hardwareMap, Telemetry telemetry,
                            boolean isRedAlliance) {

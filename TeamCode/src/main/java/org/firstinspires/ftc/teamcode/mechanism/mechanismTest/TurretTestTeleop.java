@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.mechanism.mechanismTest.LimelightSensor;
 import org.firstinspires.ftc.teamcode.mechanism.mechanismTest.RobotHardware;
 import org.firstinspires.ftc.teamcode.mechanism.Turret;
 
-@TeleOp(name = "TurretTestBiobuzzSCUBADUBA")
+@TeleOp(name = "TurretTestBiobuzzSCUBA")
 public class TurretTestTeleop extends LinearOpMode {
 
 //    private Turret turret;
@@ -26,8 +26,7 @@ public class TurretTestTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-
-    //    robot = new RobotHardware(hardwareMap);
+        robot = new RobotHardware(hardwareMap);
         limelightSensor = new LimelightSensor(hardwareMap, telemetry, IS_RED);
         // instantiated the turret
        turret = new Turret(hardwareMap);
@@ -39,23 +38,21 @@ public class TurretTestTeleop extends LinearOpMode {
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        DcMotorEx forwardFlywheel = hardwareMap.get(DcMotorEx.class, "ForwardFlywheel");
-        forwardFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        forwardFlywheel.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        DcMotorEx backwardFlywheel = hardwareMap.get(DcMotorEx.class, "BackwardFlywheel");
-        backwardFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backwardFlywheel.setDirection(DcMotorSimple.Direction.REVERSE);
+//        DcMotorEx forwardFlywheel = hardwareMap.get(DcMotorEx.class, "ForwardFlywheel");
+//        forwardFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        forwardFlywheel.setDirection(DcMotorSimple.Direction.FORWARD);
+//
+//        DcMotorEx backwardFlywheel = hardwareMap.get(DcMotorEx.class, "BackwardFlywheel");
+//        backwardFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        backwardFlywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
         while (opModeIsActive()) {
-            intakeMotor.setPower(gamepad2.left_stick_y);
             // Chassis drive handler for gamepad 1
             robot.gamepadHandler(gamepad1);
               //   Hold 'A' on gamepad2 or gamepad1 to auto-align turret using Limelight
 
-            intakeMotor.setPower(-gamepad2.right_stick_y);
 //            forwardFlywheel.setPower(gamepad2.left_stick_y);
 //            backwardFlywheel.setPower(gamepad2.left_stick_y);
 
@@ -86,7 +83,7 @@ public class TurretTestTeleop extends LinearOpMode {
 
                 // Manual turret rotation driven by Gamepad 2 Left Stick X
                 turretPower = gamepad2.left_stick_x;
-
+                intakeMotor.setPower(gamepad2.left_stick_y);
 
                 // Apply deadzone to prevent drift
                 if (Math.abs(turretPower) < 0.05) {
