@@ -50,6 +50,7 @@ public class TurretTestTeleop extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            intakeMotor.setPower(gamepad2.left_stick_y);
             // Chassis drive handler for gamepad 1
             robot.gamepadHandler(gamepad1);
               //   Hold 'A' on gamepad2 or gamepad1 to auto-align turret using Limelight
