@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.opmodes.Limelight3ASensor;
 
-@TeleOp(name = "LimelightDistance")
+//@TeleOp(name = "LimelightDistance")
 
 public class LimeLightDistance extends LinearOpMode {
 

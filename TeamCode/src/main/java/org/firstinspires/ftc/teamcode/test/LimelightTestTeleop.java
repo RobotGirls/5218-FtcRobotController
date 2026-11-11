@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.test;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "JasmineAprilTagTestTeleop3")
+//@TeleOp(name = "JasmineAprilTagTestTeleop3")
 
 public class LimelightTestTeleop extends LinearOpMode {
 
