@@ -84,15 +84,13 @@ public final class BioBuzzRoutes {
     public static final Route BLUE_GARDEN_SHOOTER = Route.builder(
                     "BLUE Garden Park + Shooter", Alliance.BLUE, new Pose2d(-66, 34, 0))
             .description("BLUE Garden Park, then spin up the launcher and feed artifacts.")
-            .follow(PurePursuitPath.builder().name("across the field")
-                    .to(34, 34)
+            .follow(PurePursuitPath.builder().name("my route")
+                    .to(-30, 12)
+                    .to(36, 12)
+                    .to(36, 55)
+                    .marker(SHOOT, 3.5)
                     .build())
-            .follow(PurePursuitPath.builder().name("back into zone")
-                    .moveSpeed(0.5)
-                    .to(34, 60)
-                    .reversed()
-                    .build())
-            .marker(SHOOT, 3.5)
+
             .build();
 
     // Mecanum autos from issue-30-autonomousBiobuzz (biobuzzautos/*Mech*Auto), written to drive
