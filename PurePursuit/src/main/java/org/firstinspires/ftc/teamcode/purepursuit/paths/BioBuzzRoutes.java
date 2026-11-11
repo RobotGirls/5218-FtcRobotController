@@ -21,13 +21,6 @@ public final class BioBuzzRoutes {
     /** Marker name the mecanum autos map to running the intake while they drive. */
     public static final String INTAKE = "intake";
 
-    public static final Route BLUE_FLOWER_PARK = Route.builder(
-                    "BLUE Flower Park", Alliance.BLUE, new Pose2d(-10, 60, 0))
-            .description("Drive forward along the blue wall into the blue zone.")
-            .follow(PurePursuitPath.builder().name("to park")
-                    .to(30, 60)
-                    .build())
-            .build();
 
     public static final Route BLUE_GARDEN_PARK = Route.builder(
                     "BLUE Garden Park", Alliance.BLUE, new Pose2d(-66, 34, 0))
@@ -84,13 +77,15 @@ public final class BioBuzzRoutes {
     public static final Route BLUE_GARDEN_SHOOTER = Route.builder(
                     "BLUE Garden Park + Shooter", Alliance.BLUE, new Pose2d(-66, 34, 0))
             .description("BLUE Garden Park, then spin up the launcher and feed artifacts.")
-            .follow(PurePursuitPath.builder().name("my route")
-                    .to(-30, 12)
-                    .to(36, 12)
-                    .to(36, 55)
-                    .marker(SHOOT, 3.5)
+            .follow(PurePursuitPath.builder().name("across the field")
+                    .to(34, 34)
                     .build())
-
+            .follow(PurePursuitPath.builder().name("back into zone")
+                    .moveSpeed(0.5)
+                    .to(34, 60)
+                    .reversed()
+                    .build())
+            .marker(SHOOT, 3.5)
             .build();
 
     // Mecanum autos from issue-30-autonomousBiobuzz (biobuzzautos/*Mech*Auto), written to drive
@@ -217,5 +212,32 @@ public final class BioBuzzRoutes {
                     .to(34, 60)
                     .build())
             .build();
+    public static final Route BLUE_FLOWER_PARK = Route.builder(
+                    "BLUE Flower Park", Alliance.NONE, new Pose2d(-10, 60, Math.toRadians(0)))
+            .follow(PurePursuitPath.builder().name("blue flower park")
+                    .to(-10, 40)
+                    .to(36, 40)
+                    .to(36, 56)
+                    .build())
+            .build();
+    public static final Route BLUE_SHOOTER_STARTER_BOT_COPY = Route.builder(
+                    "BLUE Shooter starter bot copy", Alliance.NONE, new Pose2d(-63, 12, Math.toRadians(180)))
+            .follow(PurePursuitPath.builder().name("blue shooter starter bot copy")
+                    .to(-30, 12)
+                    .marker(SHOOT, 2)
+                    .build()
+            .follow(PurePursuitPath.builder().name("park")
+
+                    .to(-30, 60)
+                    .to(36, 12)
+                    .to(36, 60)
+                    .reversed()
+                    .build())
+            .build();
+
+
+
+
+
 
 }

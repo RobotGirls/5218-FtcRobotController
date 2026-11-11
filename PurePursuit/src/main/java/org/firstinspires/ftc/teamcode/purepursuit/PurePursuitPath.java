@@ -186,7 +186,8 @@ public final class PurePursuitPath {
                     endHeading, timeoutSeconds);
         }
 
-        public Builder marker(String shoot, double v) {
+        public void marker(String shoot, double v) {
+
         }
     }
 }
