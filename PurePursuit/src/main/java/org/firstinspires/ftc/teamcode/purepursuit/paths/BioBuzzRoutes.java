@@ -225,8 +225,8 @@ public final class BioBuzzRoutes {
     public static final Route BLUE_FLOWER_PARK = Route.builder(
                     "BLUE Flower Park", Alliance.NONE, new Pose2d(-10, 60, Math.toRadians(0)))
             .follow(PurePursuitPath.builder().name("blue flower park")
-                    .to(12, 48)
-                    .to(36, 60)
+                    .to(2, 48)
+                    .to(36, 56)
                     .build())
             .build();
 
