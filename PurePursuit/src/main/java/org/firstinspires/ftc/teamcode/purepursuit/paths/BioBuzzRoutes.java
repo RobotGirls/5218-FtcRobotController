@@ -213,27 +213,20 @@ public final class BioBuzzRoutes {
                     .build())
             .build();
 
-//    public static final Route BLUE_SHOOTER_STARTER_BOT_COPY = Route.builder(
-//                    "BLUE Shooter starter bot copy", Alliance.NONE, new Pose2d(-63, 12, Math.toRadians(180)))
-//            .follow(PurePursuitPath.builder().name("blue shooter starter bot copy")
-//                    .to(-30, 12)
-//                    .marker(SHOOT, 2)
-//                    .build()
-//            .follow(PurePursuitPath.builder().name("park")
-//
-//                    .to(-30, 60)
-//                    .to(36, 12)
-//                    .to(36, 60)
-//                    .reversed()
-//                    .build())
-//            .build();
+    public static final Route BLUE_SHOOTER_STARTER_BOT_COPY = Route.builder(
+                    "BLUE Shooter starter bot copy", Alliance.NONE, new Pose2d(-63, 12, Math.toRadians(180)))
+            .follow(PurePursuitPath.builder().name("blue shooter starter bot copy")
+                    .to(-39, 12)
+                    .reversed()
+                    .build())
+            .marker(SHOOT, 3.5)
+            .build();
 
     public static final Route BLUE_FLOWER_PARK = Route.builder(
                     "BLUE Flower Park", Alliance.NONE, new Pose2d(-10, 60, Math.toRadians(0)))
             .follow(PurePursuitPath.builder().name("blue flower park")
-                    .to(-10, 40)
-                    .to(36, 40)
-                    .to(36, 56)
+                    .to(12, 48)
+                    .to(36, 60)
                     .build())
             .build();
 
