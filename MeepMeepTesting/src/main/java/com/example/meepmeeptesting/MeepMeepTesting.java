@@ -127,29 +127,36 @@ public class MeepMeepTesting {
 //                .build()
 //        );
                     //Red Bottom Auto
-                myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(58,6,Math.toRadians(180)))
-                                //moving up and shooting the pre-loaded artifacts
-                                .strafeToLinearHeading(new Vector2d(54, 6), Math.toRadians(-205))
-                                .waitSeconds(1)
-                                //turning to the first set of balls
-                                .strafeToLinearHeading(new Vector2d(36, 25), Math.toRadians(-270))
-                                .waitSeconds(1)
-                                //picking up the balls
-                                .strafeToLinearHeading(new Vector2d(36, 45), Math.toRadians(-270))
-                                //turning back and shooting the balls
-                                .strafeToLinearHeading(new Vector2d(54, 6), Math.toRadians(-205))
-                                .waitSeconds(1)
-                                //turning to the second set of balls
-                                .strafeToLinearHeading(new Vector2d(12, 28), Math.toRadians(-270))
-                                .waitSeconds(1)
-                                //picking up the balls
-                                .strafeToLinearHeading(new Vector2d(12, 45), Math.toRadians(-270))
-                                //turning back and shooting the balls
-                                .strafeToLinearHeading(new Vector2d(-16, 10), Math.toRadians(-210))
-                                .waitSeconds(1)
-                                //park
-                                .strafeToLinearHeading(new Vector2d(30, -34), Math.toRadians(-180))
-                                .build());
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -60, 0))
+
+
+
+
+                //To shoot
+                .waitSeconds(2)
+                .strafeToLinearHeading(new Vector2d(45,-16),Math.toRadians(0))
+                .turn(Math.toRadians(180))
+                .waitSeconds(3)
+
+
+
+
+                //to get balls from flower
+                .strafeTo(new Vector2d(25,-56))
+                .turn(Math.toRadians(90))
+                .waitSeconds(3)
+//                //to park
+                .strafeToLinearHeading(new Vector2d(-35,-60), Math.toRadians(0))
+
+
+
+
+
+
+
+
+                .build());
+
 
 
 
