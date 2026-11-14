@@ -49,10 +49,15 @@ public abstract class PurePursuitAutoBase extends LinearOpMode {
     /** Turn mechanisms off; always called when the OpMode ends, even if stopped early. */
     protected void stopMechanisms() {}
 
+    /** The drive to follow with; defaults to PurePursuitConfig.DRIVE_TYPE. Override for a fixed robot. */
+    protected PurePursuitDrive createDrive(Pose2d startPose) {
+        return PurePursuitDrive.create(hardwareMap, startPose);
+    }
+
     @Override
     public void runOpMode() {
         Route route = route();
-        PurePursuitDrive drive = PurePursuitDrive.create(hardwareMap, route.startPose);
+        PurePursuitDrive drive = createDrive(route.startPose);
         drive.setRouteName(route.name);
         initMechanisms();
         MechanismBindings<Action> bindings = mechanisms();

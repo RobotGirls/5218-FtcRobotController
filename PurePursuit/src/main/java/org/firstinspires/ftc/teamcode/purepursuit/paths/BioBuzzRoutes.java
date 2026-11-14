@@ -20,6 +20,8 @@ public final class BioBuzzRoutes {
     public static final String SHOOT = "shoot";
     /** Marker name the mecanum autos map to running the intake while they drive. */
     public static final String INTAKE = "intake";
+    /** Marker name the starter bot autos map to spinning the launcher up while they drive. */
+    public static final String SPIN_UP = "spinUp";
 
     public static final Route BLUE_FLOWER_PARK = Route.builder(
                     "BLUE Flower Park", Alliance.BLUE, new Pose2d(-10, 60, 0))
@@ -94,6 +96,50 @@ public final class BioBuzzRoutes {
                     .build())
             .marker(SHOOT, 3.5)
             .build();
+
+    /** Drive and turn power for the starter bot autos (1 is full power; paths default to 0.6). */
+    public static final double STARTERBOT_SPEED = 1.0;
+    /** Feeding time in blue/redStarterBotShootAuto; the launcher is already spun up on arrival. */
+    private static final double STARTERBOT_SHOOT_SECONDS = 2;
+
+    /**
+     * Starter bot (tank): curve up the right wall and round the corner into the hive, stopping
+     * below the wall post at y = 24, with the launcher spinning up on the way. Shoot the preloads
+     * into the right side of the blue hive, then back into the blue zone without stopping to turn.
+     */
+    public static final Route BLUE_STARTERBOT_SHOOT = Route.builder(
+                    "BLUE StarterBot Shoot", Alliance.BLUE, new Pose2d(60, -60, Math.toRadians(90)))
+            .description("Up the right wall, shoot into the blue hive, then park in the blue zone.")
+            .parallelMarker(SPIN_UP, 0)
+            .follow(starterBotPath("to the hive").to(60, 10).to(40, 10)
+                    .endHeading(Math.toRadians(180)).build())
+            .marker(SHOOT, STARTERBOT_SHOOT_SECONDS)
+            .follow(starterBotPath("back to park").to(46, 24).to(40, 56)
+                    .reversed().build())
+            .build();
+
+    /**
+     * RED_STARTERBOT_SHOOT is BLUE turned 180 degrees about the field center (the field is point
+     * symmetric, not mirrored): down the left wall, shoot into the left side of the red hive,
+     * then back into the red zone.
+     */
+    public static final Route RED_STARTERBOT_SHOOT = Route.builder(
+                    "RED StarterBot Shoot", Alliance.RED, new Pose2d(-60, 60, Math.toRadians(-90)))
+            .description("Down the left wall, shoot into the red hive, then park in the red zone.")
+            .parallelMarker(SPIN_UP, 0)
+            .follow(starterBotPath("to the hive").to(-60, -10).to(-40, -10)
+                    .endHeading(Math.toRadians(0)).build())
+            .marker(SHOOT, STARTERBOT_SHOOT_SECONDS)
+            .follow(starterBotPath("back to park").to(-46, -24).to(-40, -56)
+                    .reversed().build())
+            .build();
+
+    /** A starter bot path builder at full drive and turn speed. */
+    private static PurePursuitPath.Builder starterBotPath(String name) {
+        return PurePursuitPath.builder().name(name)
+                .moveSpeed(STARTERBOT_SPEED)
+                .turnSpeed(STARTERBOT_SPEED);
+    }
 
     // Mecanum autos from issue-30-autonomousBiobuzz (biobuzzautos/*Mech*Auto), written to drive
     // like the MeepMeep preview: every leg starts where the last one ended. strafeToLinearHeading
