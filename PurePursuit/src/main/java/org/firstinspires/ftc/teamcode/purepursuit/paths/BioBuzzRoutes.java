@@ -39,10 +39,12 @@ public final class BioBuzzRoutes {
                     "BLUE Corner Park", Alliance.BLUE, new Pose2d(66, 60, 0))
             .description("Back out of the corner into the blue zone.")
             .follow(PurePursuitPath.builder().name("to park")
-                    .to(40, 60)
+                    .to(48, 60)
                     .reversed()
                     .build())
             .build();
+
+
 
     public static final Route RED_FLOWER_PARK = Route.builder(
                     "RED Flower Park", Alliance.RED, new Pose2d(10, -60, 0))
