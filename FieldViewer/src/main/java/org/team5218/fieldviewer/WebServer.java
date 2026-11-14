@@ -25,8 +25,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +49,7 @@ import javax.imageio.ImageIO;
  * GET  /api/live/events       Server-Sent Events: live robot frames + connection status
  * POST /api/live/connect      {"host": "192.168.43.1"}
  * POST /api/live/disconnect
+ * GET  /api/live/limelight    the robot's Limelight MJPEG feed, proxied from robot port 11117
  * GET  /field-dark.png        this season's field, darkened
  * GET  /api/defaults          default follower / simulated drive tuning, for the tuning panel
  * GET  /api/health            "ok" once the server is up (the Electron app waits for this)
@@ -57,6 +60,8 @@ import javax.imageio.ImageIO;
  */
 final class WebServer {
     private static final double MAX_SIM_SECONDS = 60;
+    /** Robot port where the OpMode relays the Limelight MJPEG feed (LimelightStreamRelay). */
+    private static final int LIMELIGHT_RELAY_PORT = 11117;
 
     private final HttpServer server;
     private final File webRoot;
@@ -102,6 +107,7 @@ final class WebServer {
             sendJson(ex, "{\"ok\":true}");
         }));
         server.createContext("/api/live/events", this::liveEvents);
+        server.createContext("/api/live/limelight", this::limelightStream);
         server.createContext("/field-dark.png", ex -> safely(ex, () -> send(ex, 200, "image/png", darkFieldPng)));
         server.createContext("/", ex -> safely(ex, () -> staticFile(ex)));
     }
@@ -439,6 +445,51 @@ final class WebServer {
             sb.append(sb.length() > 1 ? "," : "").append(Json.quote(e.getKey())).append(':').append(Json.num(e.getValue()));
         }
         return sb.append('}').toString();
+    }
+
+    /** Proxies the robot's MJPEG relay so the local UI can display it under its strict CSP. */
+    private void limelightStream(HttpExchange ex) throws IOException {
+        if (liveHost.isEmpty()) {
+            send(ex, 409, "text/plain; charset=utf-8",
+                    "Connect to the robot first".getBytes(StandardCharsets.UTF_8));
+            return;
+        }
+
+        HttpURLConnection camera = (HttpURLConnection) new URL(
+                "http", liveHost, LIMELIGHT_RELAY_PORT, "/").openConnection();
+        camera.setConnectTimeout(3000);
+        camera.setReadTimeout(10000);
+        camera.setRequestProperty("User-Agent", "Team5218-FieldViewer");
+        try {
+            int code = camera.getResponseCode();
+            if (code != 200) {
+                send(ex, 502, "text/plain; charset=utf-8",
+                        ("Robot camera relay returned " + code).getBytes(StandardCharsets.UTF_8));
+                return;
+            }
+
+            String type = camera.getContentType();
+            ex.getResponseHeaders().set("Content-Type", type == null
+                    ? "multipart/x-mixed-replace" : type);
+            ex.getResponseHeaders().set("Cache-Control", "no-store");
+            ex.sendResponseHeaders(200, 0);
+            try (InputStream input = camera.getInputStream();
+                 OutputStream output = ex.getResponseBody()) {
+                byte[] buffer = new byte[16 * 1024];
+                int count;
+                while ((count = input.read(buffer)) >= 0) {
+                    output.write(buffer, 0, count);
+                    output.flush();
+                }
+            } catch (IOException ignored) {
+                // The UI closed the image or the robot/camera stream ended.
+            }
+        } catch (IOException e) {
+            send(ex, 502, "text/plain; charset=utf-8",
+                    ("Robot camera relay unavailable: " + e.getMessage()).getBytes(StandardCharsets.UTF_8));
+        } finally {
+            camera.disconnect();
+        }
     }
 
     // ---- helpers ------------------------------------------------------------------------------
