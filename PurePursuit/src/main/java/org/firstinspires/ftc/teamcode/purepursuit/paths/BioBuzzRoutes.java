@@ -155,7 +155,7 @@ public final class BioBuzzRoutes {
                     "BLUE Mech Short", Alliance.BLUE, new Pose2d(-10, 60, 0))
             .description("Shoot, pick up at the far wall, shoot again, then leave the zone.")
             .waitSeconds(2)
-            .follow(strafeToLinearHeading("to shoot", -30, 10, 0, 0))
+            .follow(strafeToLinearHeading("to shoot", -48, 12, 0, 0))
             .waitSeconds(3)
             .marker(SHOOT, 2)
             .parallelMarker(INTAKE, 2)
