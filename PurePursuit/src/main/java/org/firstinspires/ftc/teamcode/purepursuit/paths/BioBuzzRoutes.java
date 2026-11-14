@@ -98,15 +98,17 @@ public final class BioBuzzRoutes {
     private static final double STARTERBOT_SHOOT_SECONDS = 2;
 
     /**
-     * Starter bot (tank): curve up the right wall and round the corner into the hive, stopping
-     * below the wall post at y = 24, with the launcher spinning up on the way. Shoot the preloads
-     * into the right side of the blue hive, then back into the blue zone without stopping to turn.
+     * Starter bot (tank), kept on the blue (upper) half the whole time. Starts against the right
+     * wall in the bottom corner of the blue side, already facing the hive so there's no turn at
+     * the start; y = 11 keeps its top corner below the wall post at y = 20.6. Drive straight in
+     * while the launcher spins up, shoot into the right side of the blue hive, then back into
+     * the blue zone without stopping to turn.
      */
     public static final Route BLUE_STARTERBOT_SHOOT = Route.builder(
-                    "BLUE StarterBot Shoot", Alliance.BLUE, new Pose2d(60, -60, Math.toRadians(90)))
-            .description("Up the right wall, shoot into the blue hive, then park in the blue zone.")
+                    "BLUE StarterBot Shoot", Alliance.BLUE, new Pose2d(63, 11, Math.toRadians(180)))
+            .description("Straight to the blue hive, shoot, then park in the blue zone; never leaves the blue half.")
             .parallelMarker(SPIN_UP, 0)
-            .follow(starterBotPath("to the hive").to(60, 10).to(40, 10)
+            .follow(starterBotPath("to the hive").to(40, 11)
                     .endHeading(Math.toRadians(180)).build())
             .marker(SHOOT, STARTERBOT_SHOOT_SECONDS)
             .follow(starterBotPath("back to park").to(46, 24).to(40, 56)
@@ -115,14 +117,14 @@ public final class BioBuzzRoutes {
 
     /**
      * RED_STARTERBOT_SHOOT is BLUE turned 180 degrees about the field center (the field is point
-     * symmetric, not mirrored): down the left wall, shoot into the left side of the red hive,
-     * then back into the red zone.
+     * symmetric, not mirrored), so it stays on the red (lower) half: start against the left wall
+     * facing the red hive, shoot into its left side, then back into the red zone.
      */
     public static final Route RED_STARTERBOT_SHOOT = Route.builder(
-                    "RED StarterBot Shoot", Alliance.RED, new Pose2d(-60, 60, Math.toRadians(-90)))
-            .description("Down the left wall, shoot into the red hive, then park in the red zone.")
+                    "RED StarterBot Shoot", Alliance.RED, new Pose2d(-63, -11, Math.toRadians(0)))
+            .description("Straight to the red hive, shoot, then park in the red zone; never leaves the red half.")
             .parallelMarker(SPIN_UP, 0)
-            .follow(starterBotPath("to the hive").to(-60, -10).to(-40, -10)
+            .follow(starterBotPath("to the hive").to(-40, -11)
                     .endHeading(Math.toRadians(0)).build())
             .marker(SHOOT, STARTERBOT_SHOOT_SECONDS)
             .follow(starterBotPath("back to park").to(-46, -24).to(-40, -56)
