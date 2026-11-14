@@ -101,7 +101,8 @@ async function startBackend(build: boolean, showProgress: boolean): Promise<void
   }
   if (build || !existsSync(SCRIPT)) {
     if (showProgress) setStatus('Building the simulator…');
-    const gradlew = WINDOWS ? 'gradlew.bat' : './gradlew';
+    // Full path: cmd.exe skips the current folder when NoDefaultCurrentDirectoryInExePath is set.
+    const gradlew = WINDOWS ? `"${path.join(REPO_ROOT, 'gradlew.bat')}"` : './gradlew';
     const gradle = run(gradlew, [':FieldViewer:installDist', '-q', '--console=plain'], REPO_ROOT);
     if ((await waitForExit(gradle)) !== 0) {
       throw new Error('Gradle build failed');

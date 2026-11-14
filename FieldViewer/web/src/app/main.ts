@@ -23,6 +23,8 @@ import {
 // ---- state ------------------------------------------------------------------------------------
 
 type Mode = 'sim' | 'live';
+/** Where the Limelight video goes in Live mode: the connection card, half the stage, or all of it. */
+type LiveLayout = 'field' | 'split' | 'camera';
 const SKETCH = '__sketch__';
 
 /** A waypoint in the path editor; speed / lookahead override the path defaults when set. */
@@ -36,6 +38,7 @@ const REC = 'rec:';
 
 const state = {
   mode: 'sim' as Mode,
+  liveLayout: 'field' as LiveLayout,
   holonomic: false,
   routes: [] as RouteInfo[],
   selected: '',
@@ -96,6 +99,7 @@ let backendDown = false;
 let lastTick = performance.now();
 let sketchTimer = 0;
 let tuningTimer = 0;
+let limelightRetry = 0;
 /** What a mouse drag on the field is doing right now. */
 let gesture: { kind: 'pan' | 'ruler' | 'point'; x: number; y: number; moved: boolean } | null = null;
 
@@ -509,6 +513,61 @@ function onLiveStatus(status: LiveStatus): void {
   $('connect').textContent = status.running ? 'Disconnect' : 'Connect';
   $('live-status').textContent = status.text;
   $('live-badge').hidden = !(state.mode === 'live' && receiving);
+  syncLimelightStream(state.mode === 'live' && status.running);
+}
+
+/** Opens or closes the proxied Limelight MJPEG feed; the error handler retries while connected. */
+function syncLimelightStream(shouldRun: boolean): void {
+  const feed = $<HTMLImageElement>('limelight-feed');
+  window.clearTimeout(limelightRetry);
+  if (!shouldRun) {
+    feed.dataset.active = 'false';
+    feed.removeAttribute('src');
+    feed.hidden = true;
+    setLimelightPlaceholders(true);
+    setLimelightBadges(false);
+    activeLimelightPlaceholder().textContent = 'Limelight video appears here';
+    $('limelight-status').textContent = 'Connect to the robot to view video';
+    return;
+  }
+  if (feed.dataset.active === 'true') return;
+
+  feed.dataset.active = 'true';
+  feed.hidden = true;
+  setLimelightPlaceholders(true);
+  activeLimelightPlaceholder().textContent = 'Connecting to Limelight…';
+  $('limelight-status').textContent = 'Opening robot camera relay…';
+  feed.src = `/api/live/limelight?time=${Date.now()}`;
+}
+
+function activeLimelightPlaceholder(): HTMLElement {
+  return state.liveLayout === 'field' ? $('limelight-placeholder') : $('limelight-stage-placeholder');
+}
+
+function setLimelightPlaceholders(show: boolean): void {
+  $('limelight-placeholder').hidden = !(show && state.liveLayout === 'field');
+  $('limelight-stage-placeholder').hidden = !(show && state.liveLayout !== 'field');
+}
+
+function setLimelightBadges(show: boolean): void {
+  $('limelight-live').hidden = !(show && state.liveLayout === 'field');
+  $('limelight-stage-live').hidden = !(show && state.liveLayout !== 'field');
+}
+
+function setLiveLayout(layout: LiveLayout): void {
+  state.liveLayout = layout;
+  document.body.classList.remove('live-layout-field', 'live-layout-split', 'live-layout-camera');
+  document.body.classList.add(`live-layout-${layout}`);
+  document.querySelectorAll<HTMLButtonElement>('#video-layout button').forEach((button) =>
+    button.classList.toggle('active', button.dataset.videoLayout === layout));
+
+  // One <img> moves between the card and the stage so the stream isn't opened twice.
+  const feed = $<HTMLImageElement>('limelight-feed');
+  (layout === 'field' ? $('limelight-preview') : $('limelight-stage-target')).prepend(feed);
+  const loaded = feed.dataset.active === 'true' && !feed.hidden;
+  setLimelightPlaceholders(!loaded);
+  setLimelightBadges(loaded);
+  invalidate();
 }
 
 const ROBOT_TUNING_KEY = 'fieldviewer.robotTuning.v1';
@@ -607,6 +666,7 @@ function addRecording(recording: Recording): string {
 function setMode(mode: Mode): void {
   state.mode = mode;
   document.body.classList.toggle('mode-live', mode === 'live');
+  if (mode === 'live') setLiveLayout(state.liveLayout);
   document.querySelectorAll<HTMLButtonElement>('#mode button').forEach((b) =>
     b.classList.toggle('active', b.dataset.mode === mode));
   const live = mode === 'live';
@@ -622,6 +682,7 @@ function setMode(mode: Mode): void {
     showRouteCard(state.selected === SKETCH ? null : state.sim.route);
   }
   if (state.live.status) onLiveStatus(state.live.status);
+  else syncLimelightStream(false);
   updateSketchHint();
   invalidate();
 }
@@ -867,6 +928,9 @@ function wireControls(): void {
   document.querySelectorAll<HTMLButtonElement>('#mode button').forEach((b) =>
     b.addEventListener('click', () => setMode(b.dataset.mode as Mode)));
 
+  document.querySelectorAll<HTMLButtonElement>('#video-layout button').forEach((button) =>
+    button.addEventListener('click', () => setLiveLayout(button.dataset.videoLayout as LiveLayout)));
+
   document.querySelectorAll<HTMLButtonElement>('#drive button').forEach((b) =>
     b.addEventListener('click', () => {
       state.holonomic = b.dataset.drive === 'mecanum';
@@ -978,6 +1042,26 @@ function wireControls(): void {
     invalidate();
   });
   $('record').addEventListener('click', toggleRecording);
+
+  const limelight = $<HTMLImageElement>('limelight-feed');
+  limelight.addEventListener('load', () => {
+    limelight.hidden = false;
+    setLimelightPlaceholders(false);
+    setLimelightBadges(true);
+    $('limelight-status').textContent = 'Live video';
+  });
+  limelight.addEventListener('error', () => {
+    if (limelight.dataset.active !== 'true') return;
+    limelight.dataset.active = 'false';
+    limelight.hidden = true;
+    setLimelightPlaceholders(true);
+    setLimelightBadges(false);
+    activeLimelightPlaceholder().textContent = 'Waiting for Limelight video';
+    $('limelight-status').textContent = 'Camera relay unavailable, retrying…';
+    if (state.mode === 'live' && state.live.status?.running) {
+      limelightRetry = window.setTimeout(() => syncLimelightStream(true), 2500);
+    }
+  });
 
   document.querySelectorAll<HTMLInputElement>('[data-layer]').forEach((input) =>
     input.addEventListener('change', () => {

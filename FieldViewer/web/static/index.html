@@ -57,6 +57,7 @@
 
   <main class="stage">
     <div class="canvas-wrap" id="canvas-wrap">
+      <div class="field-pane" id="field-pane">
       <canvas id="field"></canvas>
 
       <div class="toolbar" id="toolbar">
@@ -94,6 +95,13 @@
       <div class="hint" id="hint" hidden></div>
       <div class="toast" id="toast"></div>
       <div class="banner" id="backend-banner" hidden><span class="spin"></span>Simulator stopped, reconnecting…</div>
+      </div>
+
+      <div class="limelight-stage" id="limelight-stage" aria-label="Live Limelight camera view">
+        <div class="limelight-stage-target" id="limelight-stage-target"></div>
+        <div class="limelight-stage-placeholder" id="limelight-stage-placeholder">Waiting for Limelight video</div>
+        <span class="video-live limelight-stage-live" id="limelight-stage-live" hidden><i></i> LIMELIGHT</span>
+      </div>
     </div>
 
     <div class="graphs" id="graphs"><canvas id="chart"></canvas></div>
@@ -232,7 +240,18 @@
 
     <section class="card" id="live-card" hidden>
       <h3>Robot connection</h3>
-      <p class="muted small">Join the robot's wifi, connect, then run any <b>PP</b> OpMode.</p>
+      <p class="muted small">Join the robot's wifi, connect, then run any <b>PP</b> OpMode. Limelight video needs an OpMode that uses <b>LimelightSensor</b>.</p>
+      <div class="segmented small video-layout" id="video-layout" aria-label="Live video layout">
+        <button data-video-layout="field" class="active">Field</button>
+        <button data-video-layout="split">Half</button>
+        <button data-video-layout="camera">Camera</button>
+      </div>
+      <div class="limelight-view" id="limelight-preview">
+        <img id="limelight-feed" alt="Live Limelight camera feed" hidden>
+        <div id="limelight-placeholder">Limelight video appears here</div>
+        <span class="video-live" id="limelight-live" hidden><i></i> LIMELIGHT</span>
+      </div>
+      <p class="status mono" id="limelight-status">Connect to the robot to view video</p>
       <input class="input mono" id="host" list="hosts" value="192.168.43.1" spellcheck="false">
       <datalist id="hosts">
         <option value="192.168.43.1">Control Hub</option>
