@@ -151,8 +151,8 @@ public final class BioBuzzRoutes {
     // turns evenly along the leg, strafeTo keeps the heading, turn() turns by an amount the same
     // way Road Runner does, and the intake runs alongside the pickup leg like the ParallelAction.
 
-    public static final Route BLUE_MECH_SHORT = Route.builder(
-                    "BLUE Mech Short", Alliance.BLUE, new Pose2d(-10, 60, 0))
+    public static final Route BLUE_MECH_SHORT_TEST = Route.builder(
+                    "BLUE Mech Short Test", Alliance.BLUE, new Pose2d(-10, 60, 0))
             .description("Shoot, pick up at the far wall, shoot again, then leave the zone.")
             .waitSeconds(2)
             .follow(strafeToLinearHeading("to shoot", -48, 12, 0, 0))
@@ -167,6 +167,29 @@ public final class BioBuzzRoutes {
             .marker(SHOOT, 2)
             .follow(strafeToLinearHeading("out of zone", 40, 56, 0, 0))
             .build();
+    public static final Route BLUE_MECH_SHORT = Route.builder(
+                    "BLUE Mech Short", Alliance.BLUE, new Pose2d(-10, 60,0))
+            .description("Shoot and")
+            .follow(strafeToLinearHeading("to shoot", -58, 12, 0, 0 ))
+                    .marker(SHOOT, 3)
+                    .follow(strafeToLinearHeading("to park", 48,12,0,0))
+                    .follow(strafeToLinearHeading("to park", 60,17,0,0))
+                    .follow(strafeToLinearHeading("to park", 44,60,0,0))
+
+            .build();
+    public static final Route MY_ROUTE = Route.builder(
+                    "My Route", Alliance.NONE, new Pose2d(60, 63, Math.toRadians(-170.54)))
+            .follow(PurePursuitPath.builder().name("my route")
+                    .to(-48, 45)
+                    .to(-48, 9)
+                    .to(48, 9)
+                    .to(55, 24)
+                    .to(43, 63)
+                    .endHeading(Math.toRadians(-14))
+                    .build())
+            .build();
+
+
 
     public static final Route RED_MECH_SHORT = Route.builder(
                     "RED Mech Short", Alliance.RED, new Pose2d(56, -34, 0))
