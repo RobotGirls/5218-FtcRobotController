@@ -185,5 +185,9 @@ public final class PurePursuitPath {
             return new PurePursuitPath(name, points, followAngle, fixedHeading, linearStartHeading,
                     endHeading, timeoutSeconds);
         }
+
+        public void marker(String shoot, double v) {
+
+        }
     }
 }

@@ -23,13 +23,6 @@ public final class BioBuzzRoutes {
     /** Marker name the starter bot autos map to spinning the launcher up while they drive. */
     public static final String SPIN_UP = "spinUp";
 
-    public static final Route BLUE_FLOWER_PARK = Route.builder(
-                    "BLUE Flower Park", Alliance.BLUE, new Pose2d(-10, 60, 0))
-            .description("Drive forward along the blue wall into the blue zone.")
-            .follow(PurePursuitPath.builder().name("to park")
-                    .to(30, 60)
-                    .build())
-            .build();
 
     public static final Route BLUE_GARDEN_PARK = Route.builder(
                     "BLUE Garden Park", Alliance.BLUE, new Pose2d(-66, 34, 0))
@@ -48,10 +41,12 @@ public final class BioBuzzRoutes {
                     "BLUE Corner Park", Alliance.BLUE, new Pose2d(66, 60, 0))
             .description("Back out of the corner into the blue zone.")
             .follow(PurePursuitPath.builder().name("to park")
-                    .to(40, 60)
+                    .to(48, 60)
                     .reversed()
                     .build())
             .build();
+
+
 
     public static final Route RED_FLOWER_PARK = Route.builder(
                     "RED Flower Park", Alliance.RED, new Pose2d(10, -60, 0))
@@ -265,5 +260,28 @@ public final class BioBuzzRoutes {
                     .to(34, 60)
                     .build())
             .build();
+
+    public static final Route BLUE_SHOOTER_STARTER_BOT_COPY = Route.builder(
+                    "BLUE Shooter starter bot copy", Alliance.NONE, new Pose2d(-63, 12, Math.toRadians(180)))
+            .follow(PurePursuitPath.builder().name("blue shooter starter bot copy")
+                    .to(-39, 12)
+                    .reversed()
+                    .build())
+            .marker(SHOOT, 3.5)
+            .build();
+
+    public static final Route BLUE_FLOWER_PARK = Route.builder(
+                    "BLUE Flower Park", Alliance.NONE, new Pose2d(-10, 60, Math.toRadians(0)))
+            .follow(PurePursuitPath.builder().name("blue flower park")
+                    .to(2, 48)
+                    .to(36, 56)
+                    .build())
+            .build();
+
+
+
+
+
+
 
 }

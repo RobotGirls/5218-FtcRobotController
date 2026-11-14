@@ -274,13 +274,11 @@ public final class MecanumDrive {
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         lazyImu = new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
-
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         // Pinpoint has its own IMU, so the "imu" device is only needed by the commented line below
         localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
         // localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick, pose);
-
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
 

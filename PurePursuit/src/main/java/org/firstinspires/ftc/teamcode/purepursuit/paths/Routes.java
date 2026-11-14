@@ -26,6 +26,7 @@ public final class Routes {
             BioBuzzRoutes.RED_MECH_SHORT,
             BioBuzzRoutes.RED_MECH_CORNER,
             BioBuzzRoutes.RED_MECH_FLOWER,
+            BioBuzzRoutes.BLUE_SHOOTER_STARTER_BOT_COPY,
             TestRoutes.STRAIGHT_24,
             TestRoutes.STRAIGHT,
             TestRoutes.OUT_AND_BACK,
