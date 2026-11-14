@@ -95,39 +95,47 @@ public final class BioBuzzRoutes {
     /** Drive and turn power for the starter bot autos (1 is full power; paths default to 0.6). */
     public static final double STARTERBOT_SPEED = 1.0;
     /** Feeding time in blue/redStarterBotShootAuto; the launcher is already spun up on arrival. */
-    private static final double STARTERBOT_SHOOT_SECONDS = 2;
+    private static final double STARTERBOT_SHOOT_SECONDS = 4;
 
     /**
-     * Starter bot (tank), kept on the blue (upper) half the whole time. Starts against the right
-     * wall in the bottom corner of the blue side, already facing the hive so there's no turn at
-     * the start; y = 11 keeps its top corner below the wall post at y = 20.6. Drive straight in
-     * while the launcher spins up, shoot into the right side of the blue hive, then back into
-     * the blue zone without stopping to turn.
+     * Starter bot (tank), kept on the blue (upper) half the whole time. The hive is tipped so its
+     * left side is the one to shoot into. The launcher is on the drive's back, so the robot starts
+     * against the left wall with its back to the hive (heading 180) and no turn at the start.
+     *
+     * The shooting spot (x = -45, y = 11, back straight at the hive) is the tested distance:
+     * 19.5 in from the structure's side to the robot center. 5 in closer hit the hive's bottom.
+     *
+     * After shooting it backs over the top of the structure (y = 44 clears its y = 25.5 edge by
+     * more than half the robot) and up into the blue zone, ending at y = 54 so it stays well
+     * clear of the wall (y = 61 touched it, 57.5 was still too close).
      */
     public static final Route BLUE_STARTERBOT_SHOOT = Route.builder(
-                    "BLUE StarterBot Shoot", Alliance.BLUE, new Pose2d(63, 11, Math.toRadians(180)))
-            .description("Straight to the blue hive, shoot, then park in the blue zone; never leaves the blue half.")
+                    "BLUE StarterBot Shoot", Alliance.BLUE, new Pose2d(-63, 11, Math.toRadians(180)))
+            .description("Back straight to the left side of the blue hive, shoot, then park in the blue zone; never leaves the blue half.")
             .parallelMarker(SPIN_UP, 0)
-            .follow(starterBotPath("to the hive").to(40, 11)
+            .follow(starterBotPath("to the hive").to(-45, 11)
+                    .reversed()
                     .endHeading(Math.toRadians(180)).build())
             .marker(SHOOT, STARTERBOT_SHOOT_SECONDS)
-            .follow(starterBotPath("back to park").to(46, 24).to(40, 56)
+            .follow(starterBotPath("back to park").to(-38, 40).to(0, 44).to(40, 44).to(40, 54)
                     .reversed().build())
             .build();
 
     /**
      * RED_STARTERBOT_SHOOT is BLUE turned 180 degrees about the field center (the field is point
-     * symmetric, not mirrored), so it stays on the red (lower) half: start against the left wall
-     * facing the red hive, shoot into its left side, then back into the red zone.
+     * symmetric, not mirrored), so it stays on the red (lower) half: start against the right wall
+     * with its back to the red hive, shoot into its right side from the same tested distance, then
+     * back under the structure into the red zone.
      */
     public static final Route RED_STARTERBOT_SHOOT = Route.builder(
-                    "RED StarterBot Shoot", Alliance.RED, new Pose2d(-63, -11, Math.toRadians(0)))
-            .description("Straight to the red hive, shoot, then park in the red zone; never leaves the red half.")
+                    "RED StarterBot Shoot", Alliance.RED, new Pose2d(63, -11, Math.toRadians(0)))
+            .description("Back straight to the right side of the red hive, shoot, then park in the red zone; never leaves the red half.")
             .parallelMarker(SPIN_UP, 0)
-            .follow(starterBotPath("to the hive").to(-40, -11)
+            .follow(starterBotPath("to the hive").to(45, -11)
+                    .reversed()
                     .endHeading(Math.toRadians(0)).build())
             .marker(SHOOT, STARTERBOT_SHOOT_SECONDS)
-            .follow(starterBotPath("back to park").to(-46, -24).to(-40, -56)
+            .follow(starterBotPath("back to park").to(38, -40).to(0, -44).to(-40, -44).to(-40, -54)
                     .reversed().build())
             .build();
 

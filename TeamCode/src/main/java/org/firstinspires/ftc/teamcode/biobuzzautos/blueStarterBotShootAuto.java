@@ -34,8 +34,11 @@ public class blueStarterBotShootAuto extends PurePursuitAutoBase {
 
     private static final int LAUNCHER_TARGET_VELOCITY = 1250;
     private static final int LAUNCHER_MIN_VELOCITY = 1200;
-    /** Long enough for the windmill to feed all three preloads; keep BLUE_STARTERBOT_SHOOT's marker time in step. */
-    private static final double FEED_SECONDS = 2;
+    /**
+     * Long enough for the windmill to feed all three preloads with time to spare, since stopping
+     * too soon left artifacts stuck; keep STARTERBOT_SHOOT_SECONDS in BioBuzzRoutes in step.
+     */
+    private static final double FEED_SECONDS = 4;
     /** Give up waiting for spin-up so a bad encoder can't stall the whole auto. */
     private static final double SPIN_UP_TIMEOUT_SECONDS = 3;
 
