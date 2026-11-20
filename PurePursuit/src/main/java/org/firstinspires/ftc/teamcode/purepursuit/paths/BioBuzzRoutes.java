@@ -177,17 +177,22 @@ public final class BioBuzzRoutes {
                     .follow(strafeToLinearHeading("to park", 44,60,0,0))
 
             .build();
-    public static final Route MY_ROUTE = Route.builder(
-                    "My Route", Alliance.NONE, new Pose2d(60, 63, Math.toRadians(-170.54)))
-            .follow(PurePursuitPath.builder().name("my route")
-                    .to(-48, 45)
-                    .to(-48, 9)
-                    .to(48, 9)
-                    .to(55, 24)
-                    .to(43, 63)
-                    .endHeading(Math.toRadians(-14))
-                    .build())
+    public static final Route BLUE_CORNER_MECH = Route.builder(
+                    "Blue Corner Mech", Alliance.NONE, new Pose2d(60, 63, Math.toRadians(-170.54)))
+            .description("to shoot")
+
+                    .follow(strafeToLinearHeading("to shoot", -48, 36,0,0))
+                    .follow(strafeToLinearHeading("to shoot", -48, 12,0,45))
+                    .marker(SHOOT, 3)
+
+
+
+
+                  //  .endHeading(Math.toRadians(-14))
+
             .build();
+
+
 
 
 
