@@ -21,6 +21,7 @@ public final class Routes {
             BioBuzzRoutes.RED_GARDEN_PARK,
             BioBuzzRoutes.RED_CORNER_PARK,
             BioBuzzRoutes.BLUE_MECH_SHORT_TEST,
+            BioBuzzRoutes.MY_ROUTE,
             BioBuzzRoutes.BLUE_MECH_SHORT,
             BioBuzzRoutes.BLUE_MECH_CORNER,
             BioBuzzRoutes.BLUE_MECH_FLOWER,
